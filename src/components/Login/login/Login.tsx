@@ -22,10 +22,8 @@ const Login = () => {
 
   const submitForm = async (data: IUserInfo) => {
     if (data.username.includes("@gmail.com")) {
-      // click.handleLoginAccount();
       console.log("data ", data.username);
     } else {
-      // click.handleLoginPhoneNumber();
       console.log("data ", data.username);
     }
     data.role = "CUSTOMER";
@@ -45,7 +43,7 @@ const Login = () => {
         localStorage.setItem("full_name", responseBody.full_name);
         navigate("/");
       } else {
-        console.log("error");
+        click.handleError();
       }
     } catch (error) {
       console.error(error);
@@ -85,6 +83,7 @@ const Login = () => {
                 {errors.username.message}
               </span>
             )}
+            {!errors.username && click.error && <span className="text-red-500 font-bold">{click.error}</span>}
             <label htmlFor="password" className="">
               Mật khẩu *
             </label>
@@ -113,11 +112,13 @@ const Login = () => {
                 {errors.password.message}
               </span>
             )}
+             {!errors.password && click.error && <span className="text-red-500 font-bold">{click.error}</span>}
             <Button
               variant="contained"
               type="submit"
               className="md:w-3/10"
               style={{ backgroundColor: "#9A917A", paddingBlock: ".8rem" }}
+              onClick={() => click.resetError()}
             >
               Đăng nhập
             </Button>

@@ -45,7 +45,7 @@ const NavCover = () => {
             <li className="text-white">Tuyển dụng</li>
             <li className="text-white">
               {isActive?.full_name ? (
-                <div>
+                <div className="flex flex-row gap-[10px]">
                   Xin chào<span>{isActive.full_name}</span>
                   <span onClick={handleLogout}>Đăng xuất</span>
                 </div>

@@ -6,12 +6,15 @@ const ThemeContext = createContext({
  clickVisibleSignUp: false,
  clickVisiblePasswordConfirm: false,
  loginType: 'account',
+ error: '',
  handleClick: () => {},
  handleClickSignUp: () => {},
  handleVisibleSignUp: () => {},
  handleClickVisiblePasswordConfirm: () => {},
  handleLoginAccount: () => {},
  handleLoginPhoneNumber: () => {},
+ handleError: () => {},
+ resetError: () => {}
 });
 
 const ClickTheme = ({ children }) => {
@@ -20,6 +23,7 @@ const ClickTheme = ({ children }) => {
  const [clickVisibleSignUp, setVisibleSignUp] = useState(false);
  const [clickVisiblePasswordConfirm, setClickVisiblePasswordConfirm] = useState(false);
  const [loginType, setLoginType] = useState('');
+ const [error, setError] = useState('');
  const handleClick = () => {
     setIsClicked(prevState => !prevState);
  };
@@ -39,7 +43,16 @@ const handleLoginAccount = () => {
 const handleLoginPhoneNumber = () => {
    setLoginType('phoneNumber')
 }
- const value = {clickVisiblePasswordConfirm, clickVisibleSignUp, isClicked, clickSignUp, handleClick, handleClickSignUp, handleVisibleSignUp, handleClickVisiblePasswordConfirm, loginType, handleLoginAccount, handleLoginPhoneNumber};
+
+const handleError = () => {
+   setError('Vui lòng nhập một địa chỉ email hoặc số điện thoại hợp lệ');
+}
+
+const resetError = () => {
+   setError('');
+}
+
+ const value = {clickVisiblePasswordConfirm, clickVisibleSignUp, isClicked, clickSignUp, error, handleClick, handleClickSignUp, handleVisibleSignUp, handleClickVisiblePasswordConfirm, loginType, handleLoginAccount, handleLoginPhoneNumber, handleError, resetError};
 
  return (
     <ThemeContext.Provider value={value}>
