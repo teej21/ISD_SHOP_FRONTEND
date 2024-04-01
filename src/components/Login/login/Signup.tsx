@@ -39,7 +39,7 @@ const Signup = () => {
       if (response.ok) {
         click.handleClickSignUp();
       } else {
-        console.error("Error from server:", result.error);
+       click.handleDuplicate();
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -89,6 +89,11 @@ const Signup = () => {
                 {errors.email && (
                   <span className="text-red-500 font-bold text-xs">
                     {errors.email.message}
+                  </span>
+                )}
+                 {click.errorDuplicate && (
+                  <span className="text-red-500 font-bold text-xs">
+                    {click.errorDuplicate}
                   </span>
                 )}
                 <label htmlFor="Số điện thoại">Số điện thoại *</label>
