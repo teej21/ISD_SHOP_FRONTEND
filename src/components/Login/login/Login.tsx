@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../../../context/ClickTheme.tsx";
 import { LoginResponse } from "../../../interface/IUSerInfo";
+import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -27,9 +28,8 @@ const Login = () => {
       console.log("data ", data.username);
     }
     data.role = "CUSTOMER";
-
     try {
-      const response = await fetch("http://localhost:8686/login", {
+      const response = await fetch("http://10.30.96.125:8686/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,9 +41,10 @@ const Login = () => {
         const responseBody: any = await response.json();
         localStorage.setItem("tokens", responseBody.tokens);
         localStorage.setItem("full_name", responseBody.full_name);
+        // alert("Đăng ký thành công!");
         navigate("/");
       } else {
-        click.handleError();
+        click.handleError((await response.json()).error);
       }
     } catch (error) {
       console.error(error);
@@ -64,6 +65,12 @@ const Login = () => {
             </Link>
           </div>
           <h1 className="sm:text-3xl font-bold pb-8 text-2xl ">Đăng nhập</h1>
+          {!errors.username && !errors.password && click.error && <div className="flex flex-row gap-[5px] mx-auto">
+              <CloseIcon className="text-red-500"></CloseIcon>
+              <p className="text-red-500 font-bold text-xl  pb-4">
+                {click.error}
+              </p></div>
+          }
           <form
             className="flex flex-col justify-center align-center gap-[20px] text-lg"
             onSubmit={handleSubmit(submitForm)}
@@ -83,7 +90,6 @@ const Login = () => {
                 {errors.username.message}
               </span>
             )}
-            {!errors.username && click.error && <span className="text-red-500 font-bold">{click.error}</span>}
             <label htmlFor="password" className="">
               Mật khẩu *
             </label>
@@ -112,7 +118,6 @@ const Login = () => {
                 {errors.password.message}
               </span>
             )}
-             {!errors.password && click.error && <span className="text-red-500 font-bold">{click.error}</span>}
             <Button
               variant="contained"
               type="submit"

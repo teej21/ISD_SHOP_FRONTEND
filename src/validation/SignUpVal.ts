@@ -13,7 +13,7 @@ const schema: z.ZodType<OmitRoleId> = z.object({
 }).refine(data => data.password === data.confirm_password, {
   message: 'Mật khẩu xác nhận không khớp',
   path: ['confirm_password']
-}).refine(data => data.phone_number.charAt(0) === '0', {
+}).refine(data => data.phone_number.substring(0,2) === '09', {
   message: 'Số điện thoại không hợp lệ!'
 });
 
