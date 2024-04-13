@@ -26,3 +26,12 @@ export interface LoginResponse {
   };
   full_name: string;
 }
+
+export type Customer = {
+  id: number;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  gender: string;
+ };

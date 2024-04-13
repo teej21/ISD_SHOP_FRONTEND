@@ -26,7 +26,7 @@ const Signup = () => {
       console.log("Form submitted with data:", formData);
       formData.role = "CUSTOMER";
 
-      const response: any = await fetch("http://10.30.96.125:8686/register", {
+      const response: any = await fetch("http://localhost:8686/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +83,6 @@ const Signup = () => {
                 />
                 {errors.full_name && (
                   <div className="flex flex-row gap-[5px]">
-                    <CloseIcon className="text-red-500"></CloseIcon>
                     <span className="text-red-500 font-bold text-xs w-full">
                       {errors.full_name.message}
                     </span>

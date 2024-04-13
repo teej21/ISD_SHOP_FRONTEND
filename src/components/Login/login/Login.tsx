@@ -12,6 +12,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import schema from "../../../validation/SignInVal.ts";
 import { useNavigate } from "react-router-dom";
+import SystemErrorMessage from "./SystemErrorMessage.tsx";
 const Login = () => {
   const click = useContext(ThemeContext);
   const navigate = useNavigate();
@@ -22,14 +23,9 @@ const Login = () => {
   } = useForm<IUserInfo>({ resolver: zodResolver(schema) });
 
   const submitForm = async (data: IUserInfo) => {
-    if (data.username.includes("@gmail.com")) {
-      console.log("data ", data.username);
-    } else {
-      console.log("data ", data.username);
-    }
     data.role = "CUSTOMER";
     try {
-      const response = await fetch("http://10.30.96.125:8686/login", {
+      const response = await fetch("http://localhost:8686/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,16 +37,15 @@ const Login = () => {
         const responseBody: any = await response.json();
         localStorage.setItem("tokens", responseBody.tokens);
         localStorage.setItem("full_name", responseBody.full_name);
-        // alert("Đăng ký thành công!");
         navigate("/");
       } else {
         click.handleError((await response.json()).error);
       }
+ 
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <div>
       <Container>
@@ -65,11 +60,7 @@ const Login = () => {
             </Link>
           </div>
           <h1 className="sm:text-3xl font-bold pb-8 text-2xl ">Đăng nhập</h1>
-          {!errors.username && !errors.password && click.error && <div className="flex flex-row gap-[5px] mx-auto">
-              <CloseIcon className="text-red-500"></CloseIcon>
-              <p className="text-red-500 font-bold text-xl  pb-4">
-                {click.error}
-              </p></div>
+          {!errors.username && !errors.password && click.error && <SystemErrorMessage message={click.error}/>
           }
           <form
             className="flex flex-col justify-center align-center gap-[20px] text-lg"
