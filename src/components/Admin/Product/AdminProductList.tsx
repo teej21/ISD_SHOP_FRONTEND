@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from "react";
-import { AddUser, Customer } from "../../interface/IUSerInfo";
+import { AddUser, Customer } from "../../../interface/IUSerInfo";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-import { ClickAdmin } from "../../context/AdminController.tsx";
+import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-const AdminContent = () => {
-  const [customerInfo, setCustomerInfo] = useState<AddUser[]>([]);
+const AdminProductList = () => {
+  const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
@@ -20,12 +20,10 @@ const AdminContent = () => {
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "full_name", headerName: "Họ và tên", width: 250 },
-    { field: "email", headerName: "Email", width: 250 },
-    { field: "phone_number", headerName: "Số điện thoại", width: 200 },
-    { field: "address", headerName: "Địa chỉ", width: 300 },
-    { field: "date_of_birth", headerName: "Ngày sinh", width: 200 },
-    { field: "gender", headerName: "Giới tính", width: 100 },
+    { field: "thumbnail", headerName: "", width: 200 },
+    { field: "name", headerName: "Tên sản phẩm", width: 200 },
+    { field: "name", headerName: "Tên danh mục", width: 200 },
+    { field: "price", headerName: "Giá tiền", width: 200 },
     {
       field: "",
       headerName: "",
@@ -56,10 +54,10 @@ const AdminContent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCustomerList = async () => {
+    const fetchImage = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8686/admin/users/role=CUSTOMER"
+          "http://localhost:8686/products"
         );
         if (response.ok) {
           const data = await response.json();
@@ -73,26 +71,47 @@ const AdminContent = () => {
       }
     };
 
-    fetchCustomerList();
+    fetchImage();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchProductList = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8686/products"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCustomerInfo(data);
+        } else {
+          const errorData = await response.json();
+          setEmptyMessage(errorData.error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchProductList();
   }, []);
 
   const handleRowClick = (params: any) => {
-    const customerId = params.row.id;
-    console.log(customerId);
-    navigate(`/admin/users/${customerId}`);
-    navHeader.handleSetMode("customer-detail");
+    const productId = params.row.id;
+    console.log(productId);
+    navigate(`/admin/products/${productId}`);
   };
 
   const handleEditClick = (params: any) => {
-    const customerId = params.row.id;
-    navigate(`/admin/users/${customerId}/modify_customer`);
+    const productId = params.row.id;
+    navigate(`/admin/products/${productId}/modify_product`);
   };
 
   const handleDeleteClick = async (params: any) => {
-    const customerId = params.row.id;
+    const productId = params.row.id;
     
     const response = await fetch(
-      `http://localhost:8686/admin/users/${customerId}`,
+      `http://localhost:8686/categories/${productId}`,
       {
         method: "DELETE",
         headers: {
@@ -103,7 +122,7 @@ const AdminContent = () => {
     const deletedData = await response.json();
     if (response.ok) {
       setSuccessMessage(deletedData.result);
-      setCustomerInfo(data => data.filter((customer) => customer.id !== customerId));
+      setCustomerInfo(data => data.filter((product) => product.id !== productId));
     }
 
   };
@@ -112,7 +131,7 @@ const AdminContent = () => {
       <div>
         <div className="flex flex-row justify-between items-center px-8 py-4">
           <div>
-            <h1 className="font-bold text-2xl">Quản lý khách hàng</h1>
+            <h1 className="font-bold text-2xl">Quản lý hàng hóa</h1>
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
             <div className="relative">
@@ -128,11 +147,11 @@ const AdminContent = () => {
             <Button
               variant="contained"
               className="bg-[#899BE0]"
-              onClick={() => navigate("/admin/users/add_customers")}
+              onClick={() => navigate("/admin/categories/add_category")}
             >
               <div className="flex items-center gap-[10px]">
                 <GroupAddIcon />
-                <span>Thêm khách hàng</span>
+                <span>Thêm Danh Mục</span>
               </div>
             </Button>
           </div>
@@ -158,4 +177,4 @@ const AdminContent = () => {
   );
 };
 
-export default AdminContent;
+export default AdminProductList;

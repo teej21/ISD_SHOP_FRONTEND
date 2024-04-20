@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import WindowIcon from "@mui/icons-material/Window";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
@@ -8,13 +8,19 @@ import Box from "../../assets/box.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import Admin from "../../assets/admin_icon.png"
+import Admin from "../../assets/admin_icon.png";
+import { ClickAdmin } from "../../context/AdminController.tsx";
 const AdminNavigation = () => {
   const [clickExpand, setClickPlan] = useState(false);
-
+  const navigatePage = useContext(ClickAdmin);
   const handleExpand = () => {
     setClickPlan((state) => !state);
   };
+  const handleClickCustomer = () => {
+    navigatePage.handleSetMode("customer");
+    console.log(navigatePage.handleSetMode("customer"));
+    
+  }
   return (
     <div className="flex flex-row justify-between items-start">
       <div className=" flex flex-col gap-20 shadow-shadow_primary w-[20%] p-8 h-screen">
@@ -38,7 +44,7 @@ const AdminNavigation = () => {
                 </div>
               </li>
               <li>
-                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
+                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px] cursor-pointer" onClick={handleClickCustomer}>
                   <GroupIcon className="text-blue-900"></GroupIcon>
                   <span className="text-[#6E6E6E] text-lg">
                     Quản Lý Khách Hàng
@@ -46,7 +52,7 @@ const AdminNavigation = () => {
                 </div>
               </li>
               <li>
-                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
+                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]" onClick={() => navigatePage.handleSetMode("employee")}>
                   <BusinessCenterIcon className="text-blue-900"></BusinessCenterIcon>
                   <span className="text-[#6E6E6E] text-lg">
                     Quản Lý Nhân Viên
@@ -54,7 +60,7 @@ const AdminNavigation = () => {
                 </div>
               </li>
               <li>
-                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
+                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]" onClick={() => navigatePage.handleSetMode("bills")}>
                   <img
                     src={MoneyBag}
                     alt="icon"
@@ -62,48 +68,48 @@ const AdminNavigation = () => {
                   />
                   <span className="text-[#6E6E6E] text-lg">Đơn hàng</span>
                 </div>
-                <li className="mt-[10px]">
-                  <div
-                    className="flex flex-row justify-between items-center hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]"
-                    onClick={handleExpand}
-                  >
-                    <div className="flex flex-row items-center gap-[5px]">
-                      <img src={Box} alt="icon" className="w-[20px] h-[20px]" />
-                      <span className="text-[#6E6E6E] text-lg">
-                        Quản Lý Hàng Hóa
-                      </span>
-                    </div>
-                    {clickExpand ? (
-                      <ExpandLessIcon className="text-blue-500"></ExpandLessIcon>
-                    ) : (
-                      <ExpandMoreIcon className="text-blue-500"></ExpandMoreIcon>
-                    )}
+              </li>
+              <li className="mt-[10px]">
+                <div
+                  className="flex flex-row justify-between items-center hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]"
+                  onClick={handleExpand}
+                >
+                  <div className="flex flex-row items-center gap-[5px]">
+                    <img src={Box} alt="icon" className="w-[20px] h-[20px]" />
+                    <span className="text-[#6E6E6E] text-lg">
+                      Quản Lý Hàng Hóa
+                    </span>
                   </div>
-                  {clickExpand && (
-                    <ul className="flex flex-col ml-6 mt-[10px] gap-[10px]">
-                      <li key="danh-muc" className="text-[#6E6E6E] text-lg">
-                        <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
-                          <img
-                            src={Box}
-                            alt="icon"
-                            className="w-[20px] h-[20px]"
-                          />
-                          Danh mục
-                        </div>
-                      </li>
-                      <li key="hang-hoa" className="text-[#6E6E6E] text-lg">
-                        <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
-                          <img
-                            src={Box}
-                            alt="icon"
-                            className="w-[20px] h-[20px]"
-                          />
-                          Hàng hóa
-                        </div>
-                      </li>
-                    </ul>
+                  {clickExpand ? (
+                    <ExpandLessIcon className="text-blue-500"></ExpandLessIcon>
+                  ) : (
+                    <ExpandMoreIcon className="text-blue-500"></ExpandMoreIcon>
                   )}
-                </li>
+                </div>
+                {clickExpand && (
+                  <ul className="flex flex-col ml-6 mt-[10px] gap-[10px]">
+                    <li key="danh-muc" className="text-[#6E6E6E] text-lg" onClick={() => navigatePage.handleSetMode("lists")} >
+                      <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
+                        <img
+                          src={Box}
+                          alt="icon"
+                          className="w-[20px] h-[20px]"
+                        />
+                        Danh mục
+                      </div>
+                    </li>
+                    <li key="hang-hoa" className="text-[#6E6E6E] text-lg" onClick={() => navigatePage.handleSetMode("products")}>
+                      <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
+                        <img
+                          src={Box}
+                          alt="icon"
+                          className="w-[20px] h-[20px]"
+                        />
+                        Hàng hóa
+                      </div>
+                    </li>
+                  </ul>
+                )}
               </li>
             </ul>
           </div>
@@ -111,13 +117,21 @@ const AdminNavigation = () => {
       </div>
 
       <div className="w-full shadow-shadow_primary flex flex-row items-center gap-[10px] p-4 justify-end">
-        <div className="w-[30px] h-[30px]"><NotificationsNoneIcon className="w-full h-full object-cover text-[#A2A3A6]"></NotificationsNoneIcon></div>
+        <div className="w-[30px] h-[30px]">
+          <NotificationsNoneIcon className="w-full h-full object-cover text-[#A2A3A6]"></NotificationsNoneIcon>
+        </div>
         <div className="w-[50px] h-[50px]">
-            <div><img src={Admin} alt="admin" className="w-full h-full object-cover"></img></div>
+          <div>
+            <img
+              src={Admin}
+              alt="admin"
+              className="w-full h-full object-cover"
+            ></img>
+          </div>
         </div>
         <div className="flex flex-col text-xl">
-            <span>Chào mừng, Tiến Thành</span>
-            <span>Admin</span>
+          <span>Chào mừng, Tiến Thành</span>
+          <span>Admin</span>
         </div>
       </div>
     </div>

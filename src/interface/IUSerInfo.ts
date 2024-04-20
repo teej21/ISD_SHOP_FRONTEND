@@ -28,10 +28,26 @@ export interface LoginResponse {
 }
 
 export type Customer = {
-  id: number;
+  id: string;
   full_name: string;
   email: string;
   phone_number: string;
   address: string;
   gender: string;
+  role: string,
+  date_of_birth: string,
  };
+
+ export interface AddUser{
+  id: string,
+  email: string,
+  password: string, 
+  gender: string,
+  address?: string; 
+  phone_number: string,
+  role: string,
+  full_name: string,
+  date_of_birth?: string; 
+ }
+
+ 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { AddUser, Customer } from "../../interface/IUSerInfo";
+import { Customer } from "../../interface/IUSerInfo";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -9,10 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-const AdminContent = () => {
-  const [customerInfo, setCustomerInfo] = useState<AddUser[]>([]);
+const AdminEmployeeContent = () => {
+  const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
@@ -20,12 +19,13 @@ const AdminContent = () => {
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "full_name", headerName: "Họ và tên", width: 250 },
+    { field: "full_name", headerName: "Họ và tên", width: 150 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "phone_number", headerName: "Số điện thoại", width: 200 },
-    { field: "address", headerName: "Địa chỉ", width: 300 },
-    { field: "date_of_birth", headerName: "Ngày sinh", width: 200 },
-    { field: "gender", headerName: "Giới tính", width: 100 },
+    { field: "address", headerName: "Địa chỉ", width: 200 },
+    { field: "date_of_birth", headerName: "Ngày sinh", width: 150 },
+    { field: "role", headerName: "Chức vụ", width: 200 },
+    { field: "gender", headerName: "Giới tính", width: 100 }, 
     {
       field: "",
       headerName: "",
@@ -58,34 +58,33 @@ const AdminContent = () => {
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8686/admin/users/role=CUSTOMER"
+        const roles = ['ADMIN', 'MANAGER', 'EMPLOYEE'];
+        const fetchPromises = roles.map(role =>
+          fetch(`http://localhost:8686/admin/users/role=${role}`)
         );
-        if (response.ok) {
-          const data = await response.json();
-          setCustomerInfo(data);
-        } else {
-          const errorData = await response.json();
-          setEmptyMessage(errorData.error);
-        }
+
+        const responses = await Promise.all(fetchPromises);
+        const data = await Promise.all(responses.map(response => response.json()));
+        const combinedData = data.reduce((acc, curr) => acc.concat(curr), []);
+        setCustomerInfo(combinedData);
       } catch (error) {
         console.log(error);
+        setEmptyMessage('Error fetching data');
       }
     };
 
     fetchCustomerList();
-  }, []);
+ }, []);
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
-    console.log(customerId);
     navigate(`/admin/users/${customerId}`);
     navHeader.handleSetMode("customer-detail");
   };
 
   const handleEditClick = (params: any) => {
     const customerId = params.row.id;
-    navigate(`/admin/users/${customerId}/modify_customer`);
+    navigate(`/admin/users/${customerId}/modify_employee`);
   };
 
   const handleDeleteClick = async (params: any) => {
@@ -100,19 +99,17 @@ const AdminContent = () => {
         },
       }
     );
-    const deletedData = await response.json();
     if (response.ok) {
-      setSuccessMessage(deletedData.result);
       setCustomerInfo(data => data.filter((customer) => customer.id !== customerId));
-    }
+    }}
 
-  };
+
   return (
     <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       <div>
         <div className="flex flex-row justify-between items-center px-8 py-4">
           <div>
-            <h1 className="font-bold text-2xl">Quản lý khách hàng</h1>
+            <h1 className="font-bold text-2xl">Quản lý nhân viên</h1>
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
             <div className="relative">
@@ -125,29 +122,27 @@ const AdminContent = () => {
                 <SearchIcon className="text-[#A2A3A6]" />
               </div>
             </div>
-            <Button
-              variant="contained"
-              className="bg-[#899BE0]"
-              onClick={() => navigate("/admin/users/add_customers")}
-            >
-              <div className="flex items-center gap-[10px]">
-                <GroupAddIcon />
-                <span>Thêm khách hàng</span>
-              </div>
-            </Button>
+            <div>
+              <Button variant="contained" className="bg-[#899BE0]">
+                <div className="flex items-center gap-[10px]" onClick={() => navigate('/admin/users/add_employees')}>
+                  <GroupAddIcon />
+                  <span>Thêm nhân viên</span>
+                </div>
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
+      <div>
         {customerInfo ? (
-          <div>
-            <DataGrid
-              rows={customerInfo}
-              columns={columns}
-              onRowClick={handleRowClick}
-              paginationModel={paginationModel}
-              onPaginationModelChange={(model) => setPaginationModel(model)}
-              pageSizeOptions={[10]}
-            />
-          </div>
+         <DataGrid
+         rows={customerInfo}
+         columns={columns}
+         onRowClick={handleRowClick}
+         paginationModel={paginationModel}
+         onPaginationModelChange={(model) => setPaginationModel(model)}
+         pageSizeOptions={[10]} 
+       />
         ) : (
           <div className="text-center py-4">
             <h1 className="text-2xl text-red-500">{emptyMessage}</h1>
@@ -158,4 +153,4 @@ const AdminContent = () => {
   );
 };
 
-export default AdminContent;
+export default AdminEmployeeContent;

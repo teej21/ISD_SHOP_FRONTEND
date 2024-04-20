@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from "react";
-import { AddUser, Customer } from "../../interface/IUSerInfo";
+import { AddUser, Customer } from "../../../interface/IUSerInfo";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-import { ClickAdmin } from "../../context/AdminController.tsx";
+import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 const AdminContent = () => {
-  const [customerInfo, setCustomerInfo] = useState<AddUser[]>([]);
+  const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
@@ -20,12 +20,9 @@ const AdminContent = () => {
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "full_name", headerName: "Họ và tên", width: 250 },
-    { field: "email", headerName: "Email", width: 250 },
-    { field: "phone_number", headerName: "Số điện thoại", width: 200 },
-    { field: "address", headerName: "Địa chỉ", width: 300 },
-    { field: "date_of_birth", headerName: "Ngày sinh", width: 200 },
-    { field: "gender", headerName: "Giới tính", width: 100 },
+    { field: "name", headerName: "Tên Danh Mục", width: 400 },
+    { field: "description", headerName: "Mô Tả", width: 600 },
+
     {
       field: "",
       headerName: "",
@@ -58,9 +55,7 @@ const AdminContent = () => {
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8686/admin/users/role=CUSTOMER"
-        );
+        const response = await fetch("http://localhost:8686/categories");
         if (response.ok) {
           const data = await response.json();
           setCustomerInfo(data);
@@ -77,42 +72,48 @@ const AdminContent = () => {
   }, []);
 
   const handleRowClick = (params: any) => {
-    const customerId = params.row.id;
-    console.log(customerId);
-    navigate(`/admin/users/${customerId}`);
+    const categoryId = params.row.id;
+    console.log(categoryId);
+    navigate(`/admin/categories/${categoryId}`);
     navHeader.handleSetMode("customer-detail");
   };
 
   const handleEditClick = (params: any) => {
-    const customerId = params.row.id;
-    navigate(`/admin/users/${customerId}/modify_customer`);
+    const categoryId = params.row.id;
+    navigate(`/admin/categories/${categoryId}/modify_category`);
   };
 
   const handleDeleteClick = async (params: any) => {
-    const customerId = params.row.id;
-    
+    const categoryId = params.row.id;
+    const controller = new AbortController();
+    const signal = controller.signal;
     const response = await fetch(
-      `http://localhost:8686/admin/users/${customerId}`,
+      `http://localhost:8686/categories/${categoryId}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
+        signal: signal
       }
     );
     const deletedData = await response.json();
     if (response.ok) {
-      setSuccessMessage(deletedData.result);
-      setCustomerInfo(data => data.filter((customer) => customer.id !== customerId));
-    }
-
+        setSuccessMessage(deletedData.result); 
+        setTimeout(() => {
+          setSuccessMessage(''); 
+        }, 3000);
+        setCustomerInfo((data) =>
+          data.filter((category) => category.id !== categoryId)
+        );
+      }
   };
   return (
     <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       <div>
         <div className="flex flex-row justify-between items-center px-8 py-4">
           <div>
-            <h1 className="font-bold text-2xl">Quản lý khách hàng</h1>
+            <h1 className="font-bold text-2xl">Quản lý danh mục</h1>
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
             <div className="relative">
@@ -128,15 +129,20 @@ const AdminContent = () => {
             <Button
               variant="contained"
               className="bg-[#899BE0]"
-              onClick={() => navigate("/admin/users/add_customers")}
+              onClick={() => navigate("/admin/categories/add_category")}
             >
               <div className="flex items-center gap-[10px]">
                 <GroupAddIcon />
-                <span>Thêm khách hàng</span>
+                <span>Thêm Danh Mục</span>
               </div>
             </Button>
           </div>
         </div>
+        {successMessage && (
+          <h1 className="text-green-500 text-xl font-bold ml-[20px]">
+            {successMessage}
+          </h1>
+        )}
         {customerInfo ? (
           <div>
             <DataGrid
