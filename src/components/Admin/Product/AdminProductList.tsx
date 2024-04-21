@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import { AddUser, Customer } from "../../../interface/IUSerInfo";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -9,20 +8,21 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Product } from "../../../interface/IProduct.ts";
 const AdminProductList = () => {
-  const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
+  const [productInfo, setProductInfo] = useState<Product[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
   });
+  const [searchResult, setSearchResult] = useState<string>('');
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "thumbnail", headerName: "", width: 200 },
     { field: "name", headerName: "Tên sản phẩm", width: 200 },
-    { field: "name", headerName: "Tên danh mục", width: 200 },
     { field: "price", headerName: "Giá tiền", width: 200 },
     {
       field: "",
@@ -61,7 +61,7 @@ const AdminProductList = () => {
         );
         if (response.ok) {
           const data = await response.json();
-          setCustomerInfo(data);
+          setProductInfo(data);
         } else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
@@ -83,7 +83,7 @@ const AdminProductList = () => {
         );
         if (response.ok) {
           const data = await response.json();
-          setCustomerInfo(data);
+          setProductInfo(data);
         } else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
@@ -96,6 +96,9 @@ const AdminProductList = () => {
     fetchProductList();
   }, []);
 
+  const handleSearch = (e: any) => {
+    setSearchResult(e.target.value);
+  }
   const handleRowClick = (params: any) => {
     const productId = params.row.id;
     console.log(productId);
@@ -115,14 +118,14 @@ const AdminProductList = () => {
       {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/formData",
         },
       }
     );
     const deletedData = await response.json();
     if (response.ok) {
       setSuccessMessage(deletedData.result);
-      setCustomerInfo(data => data.filter((product) => product.id !== productId));
+      setProductInfo(data => data.filter((product) => product.id !== productId));
     }
 
   };
@@ -140,26 +143,26 @@ const AdminProductList = () => {
                 placeholder="Tìm kiếm"
                 className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
               />
-              <div className="absolute right-3 top-3">
+              <div className="absolute right-3 top-3" onChange={handleSearch}>
                 <SearchIcon className="text-[#A2A3A6]" />
               </div>
             </div>
             <Button
               variant="contained"
               className="bg-[#899BE0]"
-              onClick={() => navigate("/admin/categories/add_category")}
+              onClick={() => navigate("/admin/products/add_product")}
             >
               <div className="flex items-center gap-[10px]">
                 <GroupAddIcon />
-                <span>Thêm Danh Mục</span>
+                <span>Thêm Hàng Hóa</span>
               </div>
             </Button>
           </div>
         </div>
-        {customerInfo ? (
+        {productInfo ? (
           <div>
             <DataGrid
-              rows={customerInfo}
+              rows={productInfo.filter((product) => product.name.toLowerCase().includes(searchResult.toLowerCase()))}
               columns={columns}
               onRowClick={handleRowClick}
               paginationModel={paginationModel}

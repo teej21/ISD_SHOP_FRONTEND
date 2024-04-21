@@ -44,7 +44,7 @@ const AdminNavigation = () => {
                 </div>
               </li>
               <li>
-                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px] cursor-pointer" onClick={handleClickCustomer}>
+                <div onClick={handleClickCustomer} className={ navigatePage.mode === "customer" ? "flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 rounded-[10px] cursor-pointer bg-[#DBDCDE] " : "flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px] cursor-pointer"} >
                   <GroupIcon className="text-blue-900"></GroupIcon>
                   <span className="text-[#6E6E6E] text-lg">
                     Quản Lý Khách Hàng
@@ -52,7 +52,7 @@ const AdminNavigation = () => {
                 </div>
               </li>
               <li>
-                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]" onClick={() => navigatePage.handleSetMode("employee")}>
+                <div onClick={() => navigatePage.handleSetMode("employee")} className={ navigatePage.mode === "employee" ? "flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 rounded-[10px] cursor-pointer bg-[#DBDCDE] " : "flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px] cursor-pointer"}>
                   <BusinessCenterIcon className="text-blue-900"></BusinessCenterIcon>
                   <span className="text-[#6E6E6E] text-lg">
                     Quản Lý Nhân Viên
@@ -60,7 +60,7 @@ const AdminNavigation = () => {
                 </div>
               </li>
               <li>
-                <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]" onClick={() => navigatePage.handleSetMode("bills")}>
+                <div onClick={() => navigatePage.handleSetMode("bills")} className={ navigatePage.mode === "bills" ? "flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 rounded-[10px] cursor-pointer bg-[#DBDCDE] " : "flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px] cursor-pointer"}>
                   <img
                     src={MoneyBag}
                     alt="icon"
@@ -88,7 +88,7 @@ const AdminNavigation = () => {
                 </div>
                 {clickExpand && (
                   <ul className="flex flex-col ml-6 mt-[10px] gap-[10px]">
-                    <li key="danh-muc" className="text-[#6E6E6E] text-lg" onClick={() => navigatePage.handleSetMode("lists")} >
+                    <li key="danh-muc" onClick={() => navigatePage.handleSetMode("lists")} className={navigatePage.mode === "lists" ?"text-[#6E6E6E] text-lg bg-[#DBDCDE] rounded-[10px]" : "text-[#6E6E6E] text-lg" } >
                       <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
                         <img
                           src={Box}
@@ -98,7 +98,7 @@ const AdminNavigation = () => {
                         Danh mục
                       </div>
                     </li>
-                    <li key="hang-hoa" className="text-[#6E6E6E] text-lg" onClick={() => navigatePage.handleSetMode("products")}>
+                    <li onClick={() => navigatePage.handleSetMode("products")} key="hang-hoa" className={navigatePage.mode === "products" ? "text-[#6E6E6E] text-lg bg-[#DBDCDE] rounded-[10px]" : "text-[#6E6E6E] text-lg" }>
                       <div className="flex flex-row items-center gap-[5px] hover:bg-[#DBDCDE] p-2 hover:rounded-[10px]">
                         <img
                           src={Box}

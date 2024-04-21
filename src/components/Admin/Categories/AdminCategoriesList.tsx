@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { AddUser, Customer } from "../../../interface/IUSerInfo";
+import { ICategories } from "../../../interface/ICategory.ts";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -10,13 +10,14 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 const AdminContent = () => {
-  const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
+  const [customerInfo, setCustomerInfo] = useState<ICategories[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
   });
+  const [searchResult, setSearchResult] = useState('');
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
@@ -71,6 +72,10 @@ const AdminContent = () => {
     fetchCustomerList();
   }, []);
 
+  const handleSearch = (e: any) => {
+    setSearchResult(e.target.value);
+  };
+
   const handleRowClick = (params: any) => {
     const categoryId = params.row.id;
     console.log(categoryId);
@@ -121,6 +126,8 @@ const AdminContent = () => {
                 type="text"
                 placeholder="Tìm kiếm"
                 className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
+                value={searchResult}
+                onChange={handleSearch}
               />
               <div className="absolute right-3 top-3">
                 <SearchIcon className="text-[#A2A3A6]" />
@@ -143,10 +150,10 @@ const AdminContent = () => {
             {successMessage}
           </h1>
         )}
-        {customerInfo ? (
+     {customerInfo ? (
           <div>
             <DataGrid
-              rows={customerInfo}
+           rows={customerInfo.filter((category) => category.name.toLowerCase().includes(searchResult.toLowerCase()))}
               columns={columns}
               onRowClick={handleRowClick}
               paginationModel={paginationModel}

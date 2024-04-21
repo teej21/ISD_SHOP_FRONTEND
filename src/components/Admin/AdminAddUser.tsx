@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
+import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 const AdminAddUser = () => {
   const {
     register,
@@ -18,7 +19,7 @@ const AdminAddUser = () => {
     formState: { errors },
     reset,
   } = useForm<AddUser>({ resolver: zodResolver(schema) });
-  const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
@@ -89,7 +90,7 @@ const AdminAddUser = () => {
                   onClick={handleNavigation}
                 >
                   <div className="flex items-center gap-[10px]">
-                    <GroupAddIcon></GroupAddIcon>
+                    <KeyboardReturn></KeyboardReturn>
                     <span>Trở về</span>
                   </div>
                 </Button>

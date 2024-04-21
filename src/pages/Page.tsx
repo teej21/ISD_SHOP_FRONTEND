@@ -15,6 +15,7 @@ import AdminCategoryDetail from '../components/Admin/Categories/AdminCategoryDet
 import AdminCategoryAdd from '../components/Admin/Categories/AdminCategoriesAdd.tsx'
 import AdminCategoriesModify from '../components/Admin/Categories/AdminCategoriesModify.tsx'
 import AdminModifyEmployee from '../components/Admin/AdminModifyEmployee.tsx'
+import AdminProductAdd from '../components/Admin/Product/AdminProductAdd.tsx'
 const Page = () => {
   return (
     <div>
@@ -34,6 +35,9 @@ const Page = () => {
         <Route path='/admin/categories/:id' element={<AdminCategoryDetail></AdminCategoryDetail>}/>
         <Route path='/admin/categories/add_category' element={<AdminCategoryAdd></AdminCategoryAdd>}/>
         <Route path='/admin/categories/:id/modify_category' element={<AdminCategoriesModify/>}></Route>
+        <Route path='/admin/products/:id' element={<AdminPageDetail/>}></Route>
+        <Route path='/admin/products/add_product' element={<AdminProductAdd></AdminProductAdd>}/>
+        <Route path='/admin/products/:id/modify_product' element={<AdminCategoriesModify/>}></Route>
         <Route path='*' element={<Error_page/>}></Route>
     </Routes>    
     </div>

@@ -7,6 +7,7 @@ import AdminNavigation from ".././AdminNavigation.tsx";
 import { useNavigate } from 'react-router-dom';
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
+import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 const AdminCategoryDetail = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -59,7 +60,7 @@ const AdminCategoryDetail = () => {
             <div>
               <Button variant="contained" className="bg-[#899BE0]" onClick={() => navigate('/admin')}>
                 <div className="flex items-center gap-[10px]">
-                  <GroupAddIcon></GroupAddIcon>
+                <KeyboardReturn></KeyboardReturn>
                   <span>Trở về</span>
                 </div>
               </Button>

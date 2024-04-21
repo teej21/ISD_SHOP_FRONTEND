@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import { AddUser } from "../../interface/IUSerInfo.ts";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
+import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 const AdminModify = () => {
   const {
     register,
@@ -20,7 +21,7 @@ const AdminModify = () => {
     resolver: zodResolver(schema),
   });
 
-  const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [message, setMessage] = useState<string>("");
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
@@ -44,7 +45,7 @@ const AdminModify = () => {
         const data = await response.json();
         if (response.ok) {
           setCustomerDetail(data);
-          console.log(data);
+          console.log(data.date_of_birth);
           
         }
       } catch (error) {
@@ -54,13 +55,29 @@ const AdminModify = () => {
     fetchCustomerDetails()
   }, [id]);
 
-  const handleInfo = (e: any) => {
-    setCustomerDetail((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-   }));
-   }
+  const resetInfo = () => {
+    setCustomerDetail({
+      id: "",
+      email: "",
+      password: "",
+      gender: "",
+      address: "",
+      phone_number: "",
+      role: "",
+      full_name: "",
+      date_of_birth: "",
+    });
+  }
 
+  const handleInfo = (e: any) => {
+    const { name, value } = e.target;
+    setCustomerDetail(value);
+    console.log(customerDetail);
+    setCustomerDetail((prevState) => ({
+       ...prevState,
+       [name]: value,
+    }));
+   };
   const submitCustomer = async (data: any) => {
     data.password = "camonquykhach";
     console.log(data);
@@ -74,7 +91,7 @@ const AdminModify = () => {
       if (response.ok) {
         const responseBody = await response.json();
         setMessage(responseBody.result);
-        reset();
+        resetInfo();
       } else {
         setTimeout(() => {
           setErrorMessage([]);
@@ -124,7 +141,7 @@ const AdminModify = () => {
                   onClick={handleNavigation}
                 >
                   <div className="flex items-center gap-[10px]">
-                    <GroupAddIcon></GroupAddIcon>
+                    <KeyboardReturn></KeyboardReturn>
                     <span>Trở về</span>
                   </div>
                 </Button>
@@ -140,6 +157,7 @@ const AdminModify = () => {
                 Họ và tên:
                 <input
                   type="text"
+                  id="full_name"
                   className="w-full p-2 border-2 border-solid border-black"
                   {...register('full_name')}
                   value={customerDetail.full_name}
@@ -150,6 +168,7 @@ const AdminModify = () => {
                 Số điện thoại:
                 <input
                   type="text"
+                  id="phone_number"
                   className="w-full p-2 border-2 border-solid border-black"
                   {...register('phone_number')}
                   value={customerDetail.phone_number}
@@ -160,6 +179,7 @@ const AdminModify = () => {
                 Địa chỉ:
                 <input
                   type="text"
+                  id="address"
                   className="w-full p-2 border-2 border-solid border-black"
                   value={customerDetail.address}
                   {...register('address')}
@@ -194,6 +214,7 @@ const AdminModify = () => {
                 Email:
                 <input
                   type="email"
+                  id="email"
                   className="w-full p-2 border-2 border-solid border-black"
                   value={customerDetail.email}
                   {...register('email')}
@@ -204,6 +225,7 @@ const AdminModify = () => {
                 Ngày sinh:
                 <input
                   type="date"
+                  id="date"
                   className="w-full p-2 border-2 border-solid border-black"
                   value={customerDetail.date_of_birth}
                   {...register('date_of_birth')}
@@ -219,7 +241,7 @@ const AdminModify = () => {
             >
               Thêm
             </Button>
-            <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold">
+            <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold" onClick={resetInfo}>
               Đặt lại
             </Button>
           </div>

@@ -17,6 +17,7 @@ const AdminContent = () => {
     pageSize: 10,
     page: 0,
   });
+  const [searchResult, setSearchResult] = useState("");
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
@@ -63,7 +64,13 @@ const AdminContent = () => {
         );
         if (response.ok) {
           const data = await response.json();
-          setCustomerInfo(data);
+          const updatedData = data.map((customer) => ({
+            ...customer,
+            date_of_birth: new Date(customer.date_of_birth)
+              .toISOString()
+              .split("T")[0],
+          }));
+          setCustomerInfo(updatedData);
         } else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
@@ -75,6 +82,10 @@ const AdminContent = () => {
 
     fetchCustomerList();
   }, []);
+
+  const handleSearch = (e: any) => {
+    setSearchResult(e.target.value);
+  };
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
@@ -90,7 +101,7 @@ const AdminContent = () => {
 
   const handleDeleteClick = async (params: any) => {
     const customerId = params.row.id;
-    
+
     const response = await fetch(
       `http://localhost:8686/admin/users/${customerId}`,
       {
@@ -103,9 +114,10 @@ const AdminContent = () => {
     const deletedData = await response.json();
     if (response.ok) {
       setSuccessMessage(deletedData.result);
-      setCustomerInfo(data => data.filter((customer) => customer.id !== customerId));
+      setCustomerInfo((data) =>
+        data.filter((customer) => customer.id !== customerId)
+      );
     }
-
   };
   return (
     <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
@@ -120,7 +132,10 @@ const AdminContent = () => {
                 type="text"
                 placeholder="Tìm kiếm"
                 className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
+                value={searchResult}
+                onChange={handleSearch}
               />
+
               <div className="absolute right-3 top-3">
                 <SearchIcon className="text-[#A2A3A6]" />
               </div>
@@ -140,7 +155,10 @@ const AdminContent = () => {
         {customerInfo ? (
           <div>
             <DataGrid
-              rows={customerInfo}
+              rows={customerInfo.filter((customer) =>
+                customer.full_name.toLowerCase()
+                  .includes(searchResult.toLowerCase())
+              )}
               columns={columns}
               onRowClick={handleRowClick}
               paginationModel={paginationModel}

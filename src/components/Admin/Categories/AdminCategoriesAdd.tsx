@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import SystemErrorMessage from "../../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
@@ -20,8 +21,7 @@ const AdminCategoryAdd = () => {
     reset,
   } = useForm<ICategories>({ resolver: zodResolver(schema) });
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
-  const [id, setID] = useState("");
+  const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const submitCategories = async (data: ICategories) => {
@@ -36,7 +36,6 @@ const AdminCategoryAdd = () => {
       if (response.ok) {
         const responseBody = await response.json();
         console.log(responseBody);
-        setID(responseBody.id);
         setMessage(responseBody.result);
         setTimeout(() => {
           setMessage('');
@@ -48,12 +47,16 @@ const AdminCategoryAdd = () => {
     }
   };
 
+  const resetInfo = () => {
+    reset();
+  }
+
   const onFormError: SubmitErrorHandler<ICategories> = (errors, event) => {
     console.log("Form submission error:", errors);
   };
 
   const handleNavigation = () => {
-    nav.handleSetMode("customer");
+    nav.handleSetMode("lists");
     navigate(-1);
   };
 
@@ -85,7 +88,7 @@ const AdminCategoryAdd = () => {
                   onClick={handleNavigation}
                 >
                   <div className="flex items-center gap-[10px]">
-                    <GroupAddIcon></GroupAddIcon>
+                   <KeyboardReturnIcon></KeyboardReturnIcon>
                     <span>Trở về</span>
                   </div>
                 </Button>
@@ -139,6 +142,7 @@ const AdminCategoryAdd = () => {
               </Button>
               <Button
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+                onClick={resetInfo}
               >
                 Đặt lại
               </Button>

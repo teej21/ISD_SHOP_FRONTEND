@@ -12,7 +12,7 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import SystemErrorMessage from "../../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
-
+import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 const AdminCategoriesModify = () => {
  const {
     register,
@@ -93,7 +93,7 @@ const AdminCategoriesModify = () => {
                  onClick={handleNavigation}
                 >
                  <div className="flex items-center gap-[10px]">
-                    <GroupAddIcon></GroupAddIcon>
+                 <KeyboardReturn></KeyboardReturn>
                     <span>Trở về</span>
                  </div>
                 </Button>

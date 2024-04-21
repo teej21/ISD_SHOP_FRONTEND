@@ -16,6 +16,7 @@ const AdminEmployeeContent = () => {
     pageSize: 10,
     page: 0,
   });
+  const [searchResult, setSearchResult] = useState('');
   const navHeader = useContext(ClickAdmin);
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
@@ -25,7 +26,7 @@ const AdminEmployeeContent = () => {
     { field: "address", headerName: "Địa chỉ", width: 200 },
     { field: "date_of_birth", headerName: "Ngày sinh", width: 150 },
     { field: "role", headerName: "Chức vụ", width: 200 },
-    { field: "gender", headerName: "Giới tính", width: 100 }, 
+    { field: "gender", headerName: "Giới tính", width: 100 },
     {
       field: "",
       headerName: "",
@@ -58,23 +59,36 @@ const AdminEmployeeContent = () => {
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
-        const roles = ['ADMIN', 'MANAGER', 'EMPLOYEE'];
-        const fetchPromises = roles.map(role =>
+        const roles = ["ADMIN", "MANAGER", "EMPLOYEE"];
+        const fetchPromises = roles.map((role) =>
           fetch(`http://localhost:8686/admin/users/role=${role}`)
         );
 
         const responses = await Promise.all(fetchPromises);
-        const data = await Promise.all(responses.map(response => response.json()));
+        const data = await Promise.all(
+          responses.map((response) => response.json())
+        );
         const combinedData = data.reduce((acc, curr) => acc.concat(curr), []);
         setCustomerInfo(combinedData);
+        const updatedData = combinedData.map((customer) => ({
+          ...customer,
+          date_of_birth: new Date(customer.date_of_birth)
+            .toISOString()
+            .split("T")[0],
+        }));
+        setCustomerInfo(updatedData);
       } catch (error) {
         console.log(error);
-        setEmptyMessage('Error fetching data');
+        setEmptyMessage("Error fetching data");
       }
     };
 
     fetchCustomerList();
- }, []);
+  }, []);
+
+  const handleSearch = (e: any) => {
+    setSearchResult(e.target.value);
+  };
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
@@ -89,7 +103,7 @@ const AdminEmployeeContent = () => {
 
   const handleDeleteClick = async (params: any) => {
     const customerId = params.row.id;
-    
+
     const response = await fetch(
       `http://localhost:8686/admin/users/${customerId}`,
       {
@@ -100,9 +114,11 @@ const AdminEmployeeContent = () => {
       }
     );
     if (response.ok) {
-      setCustomerInfo(data => data.filter((customer) => customer.id !== customerId));
-    }}
-
+      setCustomerInfo((data) =>
+        data.filter((customer) => customer.id !== customerId)
+      );
+    }
+  };
 
   return (
     <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
@@ -117,6 +133,7 @@ const AdminEmployeeContent = () => {
                 type="text"
                 placeholder="Tìm kiếm"
                 className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
+                onChange={handleSearch}
               />
               <div className="absolute right-3 top-3">
                 <SearchIcon className="text-[#A2A3A6]" />
@@ -124,7 +141,10 @@ const AdminEmployeeContent = () => {
             </div>
             <div>
               <Button variant="contained" className="bg-[#899BE0]">
-                <div className="flex items-center gap-[10px]" onClick={() => navigate('/admin/users/add_employees')}>
+                <div
+                  className="flex items-center gap-[10px]"
+                  onClick={() => navigate("/admin/users/add_employees")}
+                >
                   <GroupAddIcon />
                   <span>Thêm nhân viên</span>
                 </div>
@@ -135,14 +155,17 @@ const AdminEmployeeContent = () => {
       </div>
       <div>
         {customerInfo ? (
-         <DataGrid
-         rows={customerInfo}
-         columns={columns}
-         onRowClick={handleRowClick}
-         paginationModel={paginationModel}
-         onPaginationModelChange={(model) => setPaginationModel(model)}
-         pageSizeOptions={[10]} 
-       />
+          <DataGrid
+          rows={customerInfo.filter((customer) =>
+            customer.full_name.toLowerCase()
+              .includes(searchResult.toLowerCase())
+          )}
+            columns={columns}
+            onRowClick={handleRowClick}
+            paginationModel={paginationModel}
+            onPaginationModelChange={(model) => setPaginationModel(model)}
+            pageSizeOptions={[10]}
+          />
         ) : (
           <div className="text-center py-4">
             <h1 className="text-2xl text-red-500">{emptyMessage}</h1>

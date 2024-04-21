@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
+import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 const AdminAddEmployee = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AddUser>({ resolver: zodResolver(schema) });
     const [errorMessage, setErrorMessage] = useState<string[]>([]);
@@ -79,7 +80,7 @@ const AdminAddEmployee = () => {
               <div>
                 <Button variant="contained" className="bg-[#899BE0]" onClick={() => navigate('/admin')}>
                   <div className="flex items-center gap-[10px]">
-                    <GroupAddIcon></GroupAddIcon>
+                  <KeyboardReturn></KeyboardReturn>
                     <span>Trở về</span>
                   </div>
                 </Button>
