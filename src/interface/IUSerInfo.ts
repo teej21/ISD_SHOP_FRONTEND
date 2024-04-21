@@ -1,7 +1,6 @@
 export interface IUserInfo {
   username: string;
   password: string;
-  role: string;
 }
 
 export interface IUserSignUp {
@@ -19,10 +18,36 @@ export interface INewPassword {
   newPassword: string;
 }
 
-export interface LoginResponse {
+export interface ResponseBody {
+  fullName: string,
   tokens: {
     access_token: string;
     refresh_token: string;
   };
-  full_name: string;
+  role: string;
 }
+
+export type Customer = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  gender: string;
+  role: string,
+  date_of_birth: string,
+ };
+
+ export interface AddUser{
+  id: string,
+  email: string,
+  password: string, 
+  gender: string,
+  address?: string; 
+  phone_number: string,
+  role: string,
+  full_name: string,
+  date_of_birth?: string; 
+ }
+
+ 

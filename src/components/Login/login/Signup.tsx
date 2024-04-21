@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SuccessfulMessage from "./SuccessfulMessage.tsx";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import CloseIcon from "@mui/icons-material/Close";
 import schema from "../../../validation/SignUpVal.ts";
 const Signup = () => {
   const click = useContext(ThemeContext);
@@ -39,7 +40,7 @@ const Signup = () => {
       if (response.ok) {
         click.handleClickSignUp();
       } else {
-        console.error("Error from server:", result.error);
+        click.handleDuplicate(result.error);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -56,6 +57,14 @@ const Signup = () => {
           <h1 className="sm:text-3xl font-bold pb-8 text-2xl text-center">
             Đăng ký
           </h1>
+          {click.errorDuplicate && (
+            <div className="flex flex-row gap-[5px] mx-auto">
+              <CloseIcon className="text-red-500"></CloseIcon>
+              <p className="text-red-500 font-bold text-xl  pb-4">
+                {click.errorDuplicate}
+              </p>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex md:flex-row flex-col justify-center align-center md:gap-[50px] gap-[10px] text-lg">
               <div className="flex flex-col justify-center align-center gap-[10px] text-lg">
@@ -73,9 +82,11 @@ const Signup = () => {
                   })}
                 />
                 {errors.full_name && (
-                  <span className="text-red-500 font-bold text-xs w-full">
-                    {errors.full_name.message}
-                  </span>
+                  <div className="flex flex-row gap-[5px]">
+                    <span className="text-red-500 font-bold text-xs w-full">
+                      {errors.full_name.message}
+                    </span>
+                  </div>
                 )}
                 <label htmlFor="Email">Email *</label>
                 <TextField

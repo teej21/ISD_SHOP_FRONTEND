@@ -1,16 +1,16 @@
 import { Paper, Container, TextField, Button, Icon } from "@mui/material";
 import React, { useContext } from "react";
-import { IUserInfo } from "../../../interface/IUSerInfo";
+import { IUserInfo, ResponseBody } from "../../../interface/IUSerInfo";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../../../context/ClickTheme.tsx";
-import { LoginResponse } from "../../../interface/IUSerInfo";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import schema from "../../../validation/SignInVal.ts";
 import { useNavigate } from "react-router-dom";
+import SystemErrorMessage from "./SystemErrorMessage.tsx";
 const Login = () => {
   const click = useContext(ThemeContext);
   const navigate = useNavigate();
@@ -21,13 +21,6 @@ const Login = () => {
   } = useForm<IUserInfo>({ resolver: zodResolver(schema) });
 
   const submitForm = async (data: IUserInfo) => {
-    if (data.username.includes("@gmail.com")) {
-      console.log("data ", data.username);
-    } else {
-      console.log("data ", data.username);
-    }
-    data.role = "CUSTOMER";
-
     try {
       const response = await fetch("http://localhost:8686/login", {
         method: "POST",
@@ -38,18 +31,26 @@ const Login = () => {
       });
       console.log(response);
       if (response.ok) {
-        const responseBody: any = await response.json();
-        localStorage.setItem("tokens", responseBody.tokens);
-        localStorage.setItem("full_name", responseBody.full_name);
-        navigate("/");
+        const responseBody: ResponseBody = await response.json();
+        localStorage.setItem("full_name", responseBody.fullName);
+        localStorage.setItem("access_token", responseBody.tokens.access_token);
+        localStorage.setItem("refresh_token", responseBody.tokens.refresh_token);
+        localStorage.setItem("role", responseBody.role);
+        if(responseBody.tokens && responseBody.role !== 'CUSTOMER')
+          {
+            navigate('/admin');
+          }
+          else{
+            navigate('/')
+          }
       } else {
-        click.handleError();
+        click.handleError((await response.json()).error);
       }
+ 
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <div>
       <Container>
@@ -64,6 +65,8 @@ const Login = () => {
             </Link>
           </div>
           <h1 className="sm:text-3xl font-bold pb-8 text-2xl ">Đăng nhập</h1>
+          {!errors.username && !errors.password && click.error && <SystemErrorMessage message={click.error}/>
+          }
           <form
             className="flex flex-col justify-center align-center gap-[20px] text-lg"
             onSubmit={handleSubmit(submitForm)}
@@ -83,7 +86,6 @@ const Login = () => {
                 {errors.username.message}
               </span>
             )}
-            {!errors.username && click.error && <span className="text-red-500 font-bold">{click.error}</span>}
             <label htmlFor="password" className="">
               Mật khẩu *
             </label>
@@ -112,7 +114,6 @@ const Login = () => {
                 {errors.password.message}
               </span>
             )}
-             {!errors.password && click.error && <span className="text-red-500 font-bold">{click.error}</span>}
             <Button
               variant="contained"
               type="submit"

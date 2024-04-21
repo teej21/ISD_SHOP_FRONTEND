@@ -4,15 +4,20 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ClickBarContext } from "../../../context/ClickForHomepage.tsx";
+import { useNavigate } from "react-router-dom";
 const ToolBar = () => {
   const clickBar = useContext(ClickBarContext);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate('/');
+  }
   return (
     <div className="bg-white md:flex md:flex-row md:justify-evenly md:items-center md:gap-[20px] md:my-[30px] max-w-[1500px] mx-auto md:shadow-none md:border-none md:w-full lg:px-8 shadow-shadow_primary border-2 border-solid w-8/10 p-4 z-10">
       <div className="md:block flex flex-row justify-between items-center ">
         <div className="md:hidden block">
           <MenuIcon onClick={clickBar.handleBarClick}></MenuIcon>
         </div>
-        <span className="font-beau text-red-500 xl:text-5xl text-4xl font-bold">
+        <span className="font-beau text-red-500 xl:text-5xl text-4xl font-bold" onClick={handleNavigate}>
           <span className="text-[#89A8A4] xl:text-5xl text-4xl font-aladin">
             AN
           </span>

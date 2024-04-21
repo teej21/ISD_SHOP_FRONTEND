@@ -16,7 +16,7 @@ const PictureFrame = () => {
           return <PictureFrameComponent key={productID} />;
         })}
       </div>
-      <div className="mx-auto my-8 bg-red-500 relative w-[300px] p-2 rounded-[15px] flex gap-[15px] ">
+      <div className="mx-auto my-8 bg-red-500 relative w-[300px] p-2 rounded-[15px] flex gap-[15px] hover:bg-orange-500 transition duration-300 ">
         <AddIcon className="text-white font-bold"/>
         <Link to="/" className="text-white font-bold flex">Xem Thêm Khung Tranh Khác</Link>
       </div>
