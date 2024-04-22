@@ -15,55 +15,95 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminCategoriesModify = () => {
- const {
+  const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
- } = useForm<ICategories>({
+  } = useForm<ICategories>({
     resolver: zodResolver(schema),
- });
- const [errorMessage, setErrorMessage] = useState<string[]>([]);
- const [message, setMessage] = useState<string>("");
- const navigate = useNavigate();
- const { id } = useParams();
- const nav = useContext(ClickAdmin);
-const access_token = useAccessToken();
- const submitCategories = async (data: ICategories) => {
+  });
+  const [categoryDetail, setCategoryDetail] = useState<ICategories>({
+    id: "",
+    name: "",
+    description: "",
+  });
+  const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [message, setMessage] = useState<string>("");
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const nav = useContext(ClickAdmin);
+  const access_token = useAccessToken();
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCategoryDetail(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+    console.log('abc');
+    
+  };
+
+
+  const resetInfo = () => {
+    setCategoryDetail({id: "", name: "", description: ""});
+  }
+  useEffect(() => {
+    const fetchCustomerDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:8686/categories/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setCategoryDetail(data);
+          console.log(categoryDetail);
+        } else {
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCustomerDetails();
+  }, [access_token]);
+
+  const submitCategories = async (data: ICategories) => {
     console.log(data);
     try {
-      const response = await fetch(
-        `http://localhost:8686/categories/${id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", 
-            "Authorization" : `Bearer ${access_token}`
-           },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`http://localhost:8686/categories/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify(data),
+      });
 
       if (response.ok) {
-        const responseBody = await response.json();
-        setMessage(responseBody.result);
-        reset();
+        alert("Chỉnh sửa thành công!")
+        handleNavigation();
+       resetInfo();
       }
     } catch (error) {
       console.error("Error adding user:", error);
     }
- };
+  };
 
- const onFormError: SubmitErrorHandler<ICategories> = (errors, event) => {
+  const onFormError: SubmitErrorHandler<ICategories> = (errors, event) => {
     console.log("Form submission error:", errors);
- };
+  };
 
- const handleNavigation = () => {
+  const handleNavigation = () => {
     nav.handleSetMode("lists");
     navigate(-1);
- };
+  };
 
-
- return (
+  return (
     <div>
       <AdminNavigation />
       <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
@@ -80,24 +120,24 @@ const access_token = useAccessToken();
             <div className="flex flex-row justify-between items-center gap-[20px]">
               <div className="relative">
                 <input
-                 type="text"
-                 placeholder="Tìm kiếm"
-                 className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
+                  type="text"
+                  placeholder="Tìm kiếm"
+                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
                 />
                 <div className="absolute right-3 top-3">
-                 <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
+                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
                 </div>
               </div>
               <div>
                 <Button
-                 variant="contained"
-                 className="bg-[#899BE0]"
-                 onClick={handleNavigation}
+                  variant="contained"
+                  className="bg-[#899BE0]"
+                  onClick={handleNavigation}
                 >
-                 <div className="flex items-center gap-[10px]">
-                 <KeyboardReturn></KeyboardReturn>
+                  <div className="flex items-center gap-[10px]">
+                    <KeyboardReturn></KeyboardReturn>
                     <span>Trở về</span>
-                 </div>
+                  </div>
                 </Button>
               </div>
             </div>
@@ -112,31 +152,35 @@ const access_token = useAccessToken();
             <div className="flex flex-col justify-between h-full gap-[30px]">
               <div className="flex flex-row justify-between w-full ">
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
-                 Tên danh mục: *
-                 <input
+                  Tên danh mục: *
+                  <input
                     type="text"
+                    value={categoryDetail.name}
                     {...register("name")}
+                    onChange={handleInput}
                     className="w-full p-2 border-2 border-solid border-black"
-                 />
-                 {errors.name && (
+                  />
+                  {errors.name && (
                     <h1 className="text-red-500 font-bold text-xl">
                       {errors.name.message}
                     </h1>
-                 )}
+                  )}
                 </label>
               </div>
               <div className="flex-1">
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
-                 Mô tả
-                 <textarea
+                  Mô tả
+                  <textarea
+                    value={categoryDetail.description}
                     {...register("description")}
+                    onChange={handleInput}
                     className="w-full h-[300px] p-2 border-2 border-solid border-black"
-                 />
-                 {errors.description && (
+                  />
+                  {errors.description && (
                     <h1 className="text-red-500 font-bold text-xl">
                       {errors.description.message}
                     </h1>
-                 )}
+                  )}
                 </label>
               </div>
             </div>
@@ -147,9 +191,7 @@ const access_token = useAccessToken();
               >
                 Thêm
               </Button>
-              <Button
-                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-              >
+              <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold">
                 Đặt lại
               </Button>
             </div>
@@ -157,7 +199,7 @@ const access_token = useAccessToken();
         </div>
       </div>
     </div>
- );
+  );
 };
 
 export default AdminCategoriesModify;

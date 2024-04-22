@@ -20,17 +20,18 @@ const AdminContent = () => {
   });
   const [searchResult, setSearchResult] = useState('');
   const navHeader = useContext(ClickAdmin);
+  const role = localStorage.getItem("role");
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "name", headerName: "Tên Danh Mục", width: 400 },
     { field: "description", headerName: "Mô Tả", width: 600 },
-
     {
       field: "",
       headerName: "",
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -39,6 +40,8 @@ const AdminContent = () => {
           >
             <EditIcon className="text-blue-500" />
           </div>
+        )}
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -47,7 +50,8 @@ const AdminContent = () => {
           >
             <DeleteIcon className="text-red-500" />
           </div>
-        </div>
+        )}
+      </div>
       ),
     },
   ];
@@ -148,6 +152,7 @@ const AdminContent = () => {
               variant="contained"
               className="bg-[#899BE0]"
               onClick={() => navigate("/admin/categories/add_category")}
+              disabled={role !== 'ADMIN'}
             >
               <div className="flex items-center gap-[10px]">
                 <GroupAddIcon />

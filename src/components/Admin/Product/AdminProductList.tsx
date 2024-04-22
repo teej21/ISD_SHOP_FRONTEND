@@ -23,6 +23,11 @@ const AdminProductList = () => {
   });
   const [searchResult, setSearchResult] = useState<string>('');
   const [categories, setCategories] = useState<ICategories[]>([]);
+  const flattenedProducts = productInfo.map(product => ({
+    ...product,
+    categoryName: product.category.name, 
+   }));
+   const [productFull, setProductFull] = useState({...productInfo, imgList: {}});
   const navHeader = useContext(ClickAdmin);
   const access_token = useAccessToken();
   const columns: GridColDef[] = [
@@ -31,7 +36,7 @@ const AdminProductList = () => {
     { field: "name", headerName: "Tên sản phẩm", width: 200 },
     { field: "description", headerName: "Miêu tả", width: 200 },
     { field: "material", headerName: "Chất liệu", width: 200 },
-    { field: "category", headerName: "Tên tranh", width: 200 },
+    { field: `categoryName`, headerName: "Tên tranh", width: 200 },
     { field: "price", headerName: "Giá tiền", width: 200 },
     { field: "width", headerName: "Chiều rộng", width: 200 },
     { field: "height", headerName: "Chiều dài", width: 200 },
@@ -65,19 +70,23 @@ const AdminProductList = () => {
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
     const fetchImage = async () => {
+      console.log(localStorage.getItem("file"));
       try{
       const imageName = localStorage.getItem("file");
       const response = await fetch(`localhost:8686/products/images/${imageName}`);
       if(response.ok){
-        
+        setProductFull({...productFull, imgList: response.json()})
+        console.log(productFull);
       }
       }catch(error){
-
+        console.log(error);
       }
     }
-  })
+    fetchImage();
+  }, [])
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -135,10 +144,13 @@ const AdminProductList = () => {
     const fetchProductList = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8686/products"
+          "http://localhost:8686/products", {
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json', Authorization : `Bearer ${access_token}` }
+          }
         );
         if (response.ok) {
-          const data = await response.json();
+          const data : Product[] = await response.json();
           setProductInfo(data);
           console.log(data);
         } else {
@@ -232,7 +244,7 @@ const AdminProductList = () => {
         {productInfo ? (
           <div>
             <DataGrid
-              rows={productInfo.filter((product) => product.name.toLowerCase().includes(searchResult.toLowerCase()))}
+              rows={flattenedProducts.filter((product) => product.name.toLowerCase().includes(searchResult.toLowerCase()))}
               columns={columns}
               onRowClick={handleRowClick}
               paginationModel={paginationModel}

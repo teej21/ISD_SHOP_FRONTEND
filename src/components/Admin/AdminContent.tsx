@@ -36,6 +36,7 @@ const AdminContent = () => {
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -44,6 +45,8 @@ const AdminContent = () => {
           >
             <EditIcon className="text-blue-500" />
           </div>
+        )}
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -52,7 +55,8 @@ const AdminContent = () => {
           >
             <DeleteIcon className="text-red-500" />
           </div>
-        </div>
+        )}
+      </div>
       ),
     },
   ];

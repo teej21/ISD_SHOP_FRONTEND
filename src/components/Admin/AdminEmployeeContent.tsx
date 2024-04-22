@@ -36,6 +36,7 @@ const AdminEmployeeContent = () => {
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -44,6 +45,8 @@ const AdminEmployeeContent = () => {
           >
             <EditIcon className="text-blue-500" />
           </div>
+        )}
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -52,7 +55,8 @@ const AdminEmployeeContent = () => {
           >
             <DeleteIcon className="text-red-500" />
           </div>
-        </div>
+        )}
+      </div>
       ),
     },
   ];
@@ -155,7 +159,7 @@ const AdminEmployeeContent = () => {
               </div>
             </div>
             <div>
-              <Button variant="contained" className="bg-[#899BE0]">
+              <Button variant="contained" className="bg-[#899BE0]" disabled={role !== 'ADMIN'}>
                 <div
                   className="flex items-center gap-[10px]"
                   onClick={() => navigate("/admin/users/add_employees")}

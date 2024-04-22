@@ -17,6 +17,7 @@ import AdminCategoriesModify from '../components/Admin/Categories/AdminCategorie
 import AdminModifyEmployee from '../components/Admin/AdminModifyEmployee.tsx'
 import AdminProductAdd from '../components/Admin/Product/AdminProductAdd.tsx'
 import AdminProductModify from '../components/Admin/Product/AdminProductModify.tsx'
+import AdminProductDetail from '../components/Admin/Product/AdminProductDetail.tsx'
 const Page = () => {
   const [role, setRole] = useState<string | null>('');
   useEffect(() => {
@@ -42,7 +43,7 @@ const Page = () => {
         {role !== 'CUSTOMER' && <Route path='/admin/categories/:id' element={<AdminCategoryDetail></AdminCategoryDetail>}/>}
         {role !== 'CUSTOMER' && <Route path='/admin/categories/add_category' element={<AdminCategoryAdd></AdminCategoryAdd>}/>}
         {role !== 'CUSTOMER' && <Route path='/admin/categories/:id/modify_category' element={<AdminCategoriesModify/>}></Route>}
-        {role !== 'CUSTOMER' && <Route path='/admin/products/:id' element={<AdminPageDetail/>}></Route>}
+        {role !== 'CUSTOMER' && <Route path='/admin/products/:id' element={<AdminProductDetail/>}></Route>}
         {role !== 'CUSTOMER' && <Route path='/admin/products/add_product' element={<AdminProductAdd></AdminProductAdd>}/>}
         {role !== 'CUSTOMER' && <Route path='/admin/products/:id/modify_product' element={<AdminProductModify/>}></Route>}
         <Route path='*' element={<Error_page/>}></Route>

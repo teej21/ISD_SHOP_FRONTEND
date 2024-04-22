@@ -83,7 +83,9 @@ const AdminModifyEmployee = () => {
 
       if (response.ok) {
         const responseBody = await response.json();
+        alert("Chỉnh sửa thành công!")
         setMessage(responseBody.result);
+        handleNavigation();
         setTimeout(() => {
           setMessage("");
         }, 3000);

@@ -7,7 +7,7 @@ import schema from "../../../validation/AddProductForm.ts";
 import { AddUser } from "../../../interface/IUSerInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import { ICategories } from "../../../interface/ICategory.ts";
@@ -21,8 +21,8 @@ const AdminProductModify = () => {
     formState: { errors },
     reset,
   } = useForm<Product>({ resolver: zodResolver(schema) });
-  const [errorMessage, setErrorMessage] = useState<String>();
-  const [message, setMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<String[]>([]);
+  const [message, setMessage] = useState<"">("");
   const [productInfo, setProductInfo] = useState<Product>({
     id: "",
     name: "",
@@ -43,14 +43,13 @@ const AdminProductModify = () => {
       description: "",
     },
   ]);
-
-  const [file, setFile] = useState<File | undefined>();
+  
+  const [preview, setPreview] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
-  const { id } = useParams();
   useEffect(() => {
-    const fetchCategoryList = async () => {
+    const fetchCustomerList = async () => {
       try {
         const response = await fetch("http://localhost:8686/categories", {
           method: "GET",
@@ -59,12 +58,11 @@ const AdminProductModify = () => {
             Authorization: `Bearer ${access_token}`,
           },
         });
-
         if (response.ok) {
           const data = await response.json();
-          if (data.length > 0) {
-            setCategories(data);
-          }
+          console.log(data);
+
+          setCategories(data);
         } else {
           const errorData = await response.json();
         }
@@ -73,87 +71,39 @@ const AdminProductModify = () => {
       }
     };
 
-    fetchCategoryList();
-  }, [access_token]);
+    fetchCustomerList();
+  }, []);
 
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:8686/products/${id}`, {
-          method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setProductInfo(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProductDetails()
-  }, [access_token, id]);
-
-  const resetInfo = () => {
-    setProductInfo({
-      id: "",
-      name: "",
-      description: "",
-      price: 0,
-      thumbnail: null,
-      category: { id: "", name: "", description: "" },
-      material: "",
-      width: 0,
-      status: "",
-      height: 0,
-      publishYear: 0,
-    });
-  }
-
-  const handleInfo = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setProductInfo(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-   
   const submitProduct = async () => {
     try {
       const formData = new FormData();
       formData.append("name", productInfo.name);
       formData.append("description", productInfo.description);
-      formData.append("id", String(productInfo.category.id));
+      formData.append("id", productInfo.category.id);
       formData.append("material", productInfo.material);
       formData.append("width", String(productInfo.width));
       formData.append("height", String(productInfo.height));
       formData.append("publishYear", String(productInfo.publishYear));
-      if (file) {
-        formData.append("thumbnailImage", file);
+      if (productInfo.thumbnail) {
+        formData.append("thumbnail", productInfo.thumbnail);
         console.log("Image found");
       }
-      console.log(formData);
-
+      formData.append("status", productInfo.status);
+      const productObject = Object.fromEntries(formData.entries()) as unknown as Product;
+      console.log(productObject.category)
+      
       const response = await fetch("http://localhost:8686/products", {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token}`,
+          Authorization: `Bearer ${access_token}`,
         },
         body: formData,
       });
-
-      if (response.ok) {
-        const responseBody = await response.json();
-        setMessage(responseBody.result);
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
-        reset();
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.error);
-        console.log(response);
+      if(response.ok){
+        alert("Chỉnh sửa thành công!")
+        handleNavigation();
+       resetInfo();
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -171,20 +121,25 @@ const AdminProductModify = () => {
 
   const handleImageChange = (e: React.FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement & {
-      files: FileList;
+      files: File;
     };
-    setFile(target.files[0]);
-
-    localStorage.setItem("file", target.files[0].name);
+    const fileURL = URL.createObjectURL(target.files[0]);
+    setPreview(fileURL);
+    const file = new File([target.files[0]], target.files[0].name, {
+      type: target.files[0].type,
+    });
+    
+    setProductInfo((product) => ({ ...product, thumbnail: file }));
   };
 
+  const resetInfo = () => {
+    reset();
+  };
 
   return (
     <div>
       <AdminNavigation />
       <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-        {/* {message && <SystemSuccessMessage message={message}/>}
-      {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>} */}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
@@ -232,8 +187,6 @@ const AdminProductModify = () => {
                     type="text"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("name")}
-                    onChange={handleInfo}
-                    value={productInfo.name}
                   />
                   {errors.name && (
                     <h1 className="text-red-500 font-bold text-base">
@@ -245,8 +198,6 @@ const AdminProductModify = () => {
                   Mô tả:
                   <textarea
                     {...register("description")}
-                    onChange={handleInfo}
-                    value={productInfo.description}
                     className="w-full p-2 border-2 border-solid border-black"
                   />
                   {errors.description && (
@@ -259,7 +210,6 @@ const AdminProductModify = () => {
                   Danh mục
                   <select
                     {...register("category.name")}
-                    onChange={handleInfo}
                     className="w-full p-2 border-2 border-solid border-black"
                   >
                     {categories.map((category, index) => (
@@ -280,8 +230,6 @@ const AdminProductModify = () => {
                     type="number"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("price")}
-                    onChange={handleInfo}
-                    value={productInfo.price}
                   />
                   {errors.price && (
                     <h1 className="text-red-500 font-bold text-base">
@@ -294,31 +242,42 @@ const AdminProductModify = () => {
                 <div className="flex flex-row justify-between items-center">
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Ảnh sản phẩm
-                    <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
-                      <div className="w-[60px] h-[60px] mx-auto my-2">
-                        <AddPhotoAlternateIcon className="w-full h-full"></AddPhotoAlternateIcon>
-                      </div>
-                      <div className="px-4">
-                        <span className="text-base">
-                          Kéo hình ảnh vào đây hoặc{" "}
-                          <span className="underline text-[#2A3598]">
-                            tải tệp lên
+                    <div className="flex flex-row justify-between items-center gap-[100px]">
+                      <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
+                        <div className="w-[60px] h-[60px] mx-auto my-2">
+                          <AddPhotoAlternateIcon className="w-full h-full"></AddPhotoAlternateIcon>
+                        </div>
+                        <div className="px-4">
+                          <span className="text-base">
+                            Kéo hình ảnh vào đây hoặc{" "}
+                            <span className="underline text-[#2A3598]">
+                              tải tệp lên
+                            </span>
                           </span>
-                        </span>
+                        </div>
+                        <input
+                          type="file"
+                          className="w-full h-full hidden"
+                          {...register("thumbnail")}
+                          onChange={handleImageChange}
+                          accept="image/png, image/jpg"
+                        ></input>
                       </div>
-                      <input
-                        type="file"
-                        className="w-full h-full hidden"
-                        {...register("thumbnail")}
-                        onChange={handleImageChange}
-                        accept="image/png, image/jpg"
-                      ></input>
+                      {preview && (
+                        <div className="w-[200px] h-[150px]">
+                          <img
+                            src={preview}
+                            alt="preview"
+                            className="w-full h-full object-contain"
+                          ></img>
+                        </div>
+                      )}
+                      {errors.thumbnail && (
+                        <h1 className="text-red-500 font-bold text-base">
+                          {errors.thumbnail.message}
+                        </h1>
+                      )}
                     </div>
-                    {errors.thumbnail && (
-                      <h1 className="text-red-500 font-bold text-base">
-                        {errors.thumbnail.message}
-                      </h1>
-                    )}
                   </label>
                 </div>
                 <div className="flex flex-row justify-between items-center gap-[30px] ">
@@ -328,8 +287,6 @@ const AdminProductModify = () => {
                       type="text"
                       className="w-full p-2 border-2 border-solid border-black"
                       {...register("material")}
-                      onChange={handleInfo}
-                      value={productInfo.material}
                     ></input>
                     {errors.material && (
                       <h1 className="text-red-500 font-bold text-base">
@@ -342,8 +299,6 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("publishYear")}
-                      onChange={handleInfo}
-                      value={productInfo.publishYear}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.publishYear && (
@@ -359,8 +314,6 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("height")}
-                      onChange={handleInfo}
-                      value={productInfo.height}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.height && (
@@ -374,8 +327,6 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("width")}
-                      onChange={handleInfo}
-                      value={productInfo.width}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.width && (

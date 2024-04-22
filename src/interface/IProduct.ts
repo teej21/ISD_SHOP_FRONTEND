@@ -5,7 +5,7 @@ export interface Product {
     name: string,
     description: string,
     price: number,
-    thumbnail: FileList | null,
+    thumbnail: File | null,
     category: ICategories,
     material: string,
     width: Number,

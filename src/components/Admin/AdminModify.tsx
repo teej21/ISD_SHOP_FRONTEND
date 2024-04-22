@@ -97,6 +97,8 @@ const AdminModify = () => {
       if (response.ok) {
         const responseBody = await response.json();
         setMessage(responseBody.result);
+        alert("Chỉnh sửa thành công!")
+        handleNavigation();
         resetInfo();
       } else {
         setTimeout(() => {

@@ -14,6 +14,7 @@ const AdminPageDetail = () => {
   const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
    useEffect(() => {
     const fetchCustomerDetails = async () => {
@@ -25,8 +26,6 @@ const AdminPageDetail = () => {
         const data = await response.json();
         if (response.ok) {
           setCustomerDetail(data);
-          console.log(data);
-          
         } else {
           setEmptyMessage(data.error);
         }
@@ -35,7 +34,7 @@ const AdminPageDetail = () => {
       }
     };
     fetchCustomerDetails()
-  }, [id]);
+  }, [access_token]);
 
   if (!customerDetail) {
     return <p>Loading...</p>;
@@ -62,7 +61,8 @@ const AdminPageDetail = () => {
               </div>
             </div>
             <div>
-              <Button variant="contained" className="bg-[#899BE0]" onClick={() => navigate(-1)}>
+              <Button variant="contained" className="bg-[#899BE0]" onClick={() => {nav.handleSetMode("customer") 
+              navigate('/admin')}}>
                 <div className="flex items-center gap-[10px]">
                   <GroupAddIcon></GroupAddIcon>
                   <span>Trở về</span>

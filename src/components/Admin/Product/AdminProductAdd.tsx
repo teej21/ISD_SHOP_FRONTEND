@@ -1,4 +1,4 @@
-import React, { useContext, useEffect , useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
@@ -12,7 +12,7 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import { ICategories } from "../../../interface/ICategory.ts";
 import { Product, Status } from "../../../interface/IProduct.ts";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminProductAdd = () => {
   const {
@@ -43,7 +43,7 @@ const AdminProductAdd = () => {
       description: "",
     },
   ]);
-  const [file, setFile] = useState<File | undefined>();
+  const [preview, setPreview] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
@@ -54,13 +54,13 @@ const AdminProductAdd = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${access_token}`,
+            Authorization: `Bearer ${access_token}`,
           },
         });
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-          
+
           setCategories(data);
         } else {
           const errorData = await response.json();
@@ -73,31 +73,31 @@ const AdminProductAdd = () => {
     fetchCustomerList();
   }, []);
 
-  const submitProduct = async () => {
+  const submitProduct = async (data : Product) => {
+    console.log(data);
+    
     try {
       const formData = new FormData();
       formData.append("name", productInfo.name);
       formData.append("description", productInfo.description);
       formData.append("id", String(productInfo.category.id));
-      formData.append("material", productInfo.material);
+      formData.append("material", String(productInfo.material));
       formData.append("width", String(productInfo.width));
       formData.append("height", String(productInfo.height));
       formData.append("publishYear", String(productInfo.publishYear));
-      if (file) {
-        formData.append("thumbnailImage", file);
+      if (productInfo.thumbnail) {
+        formData.append("thumbnail", productInfo.thumbnail);
         console.log("Image found");
       }
-      console.log(formData);
-
+      
       const response = await fetch("http://localhost:8686/products", {
-        method: "PUT",
+        method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token}`,
+          "Content-Type": "multipart/formData",
+          Authorization: `Bearer ${access_token}`,
         },
         body: formData,
       });
-
 
       if (response.ok) {
         const responseBody = await response.json();
@@ -105,6 +105,7 @@ const AdminProductAdd = () => {
         setTimeout(() => {
           setMessage("");
         }, 3000);
+        setProductInfo(responseBody);
         reset();
       } else {
         const errorData = await response.json();
@@ -126,12 +127,16 @@ const AdminProductAdd = () => {
   };
 
   const handleImageChange = (e: React.FormEvent<HTMLInputElement>) => {
-   const target = e.target as HTMLInputElement & {
-    files: FileList;
-   }
-   setFile(target.files[0]);
-   
-   localStorage.setItem("file", target.files[0].name);
+    const target = e.target as HTMLInputElement & {
+      files: File;
+    };
+    const fileURL = URL.createObjectURL(target.files[0]);
+    setPreview(fileURL);
+    const file = new File([target.files[0]], target.files[0].name, {
+      type: target.files[0].type,
+    });
+    
+    setProductInfo((product) => ({ ...product, thumbnail: file }));
   };
 
   const resetInfo = () => {
@@ -212,7 +217,10 @@ const AdminProductAdd = () => {
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Danh mục
-                  <select {...register("category.name")} className="w-full p-2 border-2 border-solid border-black">
+                  <select
+                    {...register("category.name")}
+                    className="w-full p-2 border-2 border-solid border-black"
+                  >
                     {categories.map((category, index) => (
                       <option key={index} value={category.name}>
                         {category.name}
@@ -227,7 +235,11 @@ const AdminProductAdd = () => {
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Giá Tiền
-                  <input type="number" className="w-full p-2 border-2 border-solid border-black" {...register("price")}/>
+                  <input
+                    type="number"
+                    className="w-full p-2 border-2 border-solid border-black"
+                    {...register("price")}
+                  />
                   {errors.price && (
                     <h1 className="text-red-500 font-bold text-base">
                       {errors.price.message}
@@ -239,82 +251,111 @@ const AdminProductAdd = () => {
                 <div className="flex flex-row justify-between items-center">
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Ảnh sản phẩm
-                    <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
-                    <div className="w-[60px] h-[60px] mx-auto my-2"><AddPhotoAlternateIcon className="w-full h-full"></AddPhotoAlternateIcon></div>
-                    <div className="px-4"><span className="text-base">Kéo hình ảnh vào đây hoặc <span className="underline text-[#2A3598]">tải tệp lên</span></span></div>
-                      <input type="file" className="w-full h-full hidden" {...register("thumbnail")} onChange={handleImageChange}accept="image/png, image/jpg"
-                      ></input>
+                    <div className="flex flex-row justify-between items-center gap-[100px]">
+                      <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
+                        <div className="w-[60px] h-[60px] mx-auto my-2">
+                          <AddPhotoAlternateIcon className="w-full h-full"></AddPhotoAlternateIcon>
+                        </div>
+                        <div className="px-4">
+                          <span className="text-base">
+                            Kéo hình ảnh vào đây hoặc{" "}
+                            <span className="underline text-[#2A3598]">
+                              tải tệp lên
+                            </span>
+                          </span>
+                        </div>
+                        <input
+                          type="file"
+                          className="w-full h-full hidden"
+                          {...register("thumbnail")}
+                          onChange={handleImageChange}
+                          accept="image/png, image/jpg"
+                        ></input>
+                      </div>
+                      {preview && (
+                        <div className="w-[200px] h-[150px]">
+                          <img
+                            src={preview}
+                            alt="preview"
+                            className="w-full h-full object-contain"
+                          ></img>
+                        </div>
+                      )}
+                      {errors.thumbnail && (
+                        <h1 className="text-red-500 font-bold text-base">
+                          {errors.thumbnail.message}
+                        </h1>
+                      )}
                     </div>
-                    {errors.thumbnail && (
-                      <h1 className="text-red-500 font-bold text-base">
-                        {errors.thumbnail.message}
-                      </h1>
-                    )}
                   </label>
-                  </div>
-                  <div className="flex flex-row justify-between items-center gap-[30px] ">
+                </div>
+                <div className="flex flex-row justify-between items-center gap-[30px] ">
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Chất liệu
-                    <input type="text" className="w-full p-2 border-2 border-solid border-black" {...register("material")}></input>
+                    <input
+                      type="text"
+                      className="w-full p-2 border-2 border-solid border-black"
+                      {...register("material")}
+                    ></input>
                     {errors.material && (
                       <h1 className="text-red-500 font-bold text-base">
                         {errors.material.message}
                       </h1>
                     )}
                   </label>
-                <label className="flex flex-col text-xl font-bold gap-[10px]">
-                  Năm sáng tác
-                  <input
-                   type="number" 
-                    {...register("publishYear")}
-                    className="w-full p-2 border-2 border-solid border-black"
-                  />
-                  {errors.publishYear && (
-                    <h1 className="text-red-500 font-bold text-base">
-                      {errors.publishYear.message}
-                    </h1>
-                  )}
-                </label>
+                  <label className="flex flex-col text-xl font-bold gap-[10px]">
+                    Năm sáng tác
+                    <input
+                      type="number"
+                      {...register("publishYear")}
+                      className="w-full p-2 border-2 border-solid border-black"
+                    />
+                    {errors.publishYear && (
+                      <h1 className="text-red-500 font-bold text-base">
+                        {errors.publishYear.message}
+                      </h1>
+                    )}
+                  </label>
                 </div>
                 <div className="flex flex-row justify-between items-center gap-[30px]">
-                <label className="flex flex-col text-xl font-bold gap-[10px]">
-                 Chiều dài
-                  <input
-                   type="number" 
-                    {...register("height")}
-                    className="w-full p-2 border-2 border-solid border-black"
-                  />
-                  {errors.height && (
-                    <h1 className="text-red-500 font-bold text-base">
-                      {errors.height.message}
-                    </h1>
-                  )}
-                </label>
-                <label className="flex flex-col text-xl font-bold gap-[10px]">
-                 Chiều rộng
-                  <input
-                   type="number" 
-                    {...register("width")}
-                    className="w-full p-2 border-2 border-solid border-black"
-                  />
-                  {errors.width && (
-                    <h1 className="text-red-500 font-bold text-base">
-                      {errors.width.message}
-                    </h1>
-                  )}
-                </label>
+                  <label className="flex flex-col text-xl font-bold gap-[10px]">
+                    Chiều dài
+                    <input
+                      type="number"
+                      {...register("height")}
+                      className="w-full p-2 border-2 border-solid border-black"
+                    />
+                    {errors.height && (
+                      <h1 className="text-red-500 font-bold text-base">
+                        {errors.height.message}
+                      </h1>
+                    )}
+                  </label>
+                  <label className="flex flex-col text-xl font-bold gap-[10px]">
+                    Chiều rộng
+                    <input
+                      type="number"
+                      {...register("width")}
+                      className="w-full p-2 border-2 border-solid border-black"
+                    />
+                    {errors.width && (
+                      <h1 className="text-red-500 font-bold text-base">
+                        {errors.width.message}
+                      </h1>
+                    )}
+                  </label>
                 </div>
                 <div className="w-full">
-                <label className="flex flex-col text-xl font-bold gap-[10px]">
-                 Tình trạng
-                 <select className="w-full p-2 border-2 border-solid border-black">
-                    <option value="STOCKOUT">Đã bán</option>
-                    <option value="AVAILABLE">Đang bán</option>
-                    <option value="ORDERED">Có người đặt</option>
-                 </select>
-                </label>
+                  <label className="flex flex-col text-xl font-bold gap-[10px]">
+                    Tình trạng
+                    <select className="w-full p-2 border-2 border-solid border-black">
+                      <option value="STOCKOUT">Đã bán</option>
+                      <option value="AVAILABLE">Đang bán</option>
+                      <option value="ORDERED">Có người đặt</option>
+                    </select>
+                  </label>
                 </div>
-            </div>
+              </div>
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
               <Button
@@ -336,6 +377,5 @@ const AdminProductAdd = () => {
     </div>
   );
 };
-
 
 export default AdminProductAdd;

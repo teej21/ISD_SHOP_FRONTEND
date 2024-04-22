@@ -63,7 +63,8 @@ const AdminCategoryDetail = () => {
               </div>
             </div>
             <div>
-              <Button variant="contained" className="bg-[#899BE0]" onClick={() => navigate('/admin')}>
+              <Button variant="contained" className="bg-[#899BE0]" onClick={() => {handleNav.handleSetMode("lists") 
+              navigate('/admin')}}>
                 <div className="flex items-center gap-[10px]">
                 <KeyboardReturn></KeyboardReturn>
                   <span>Trở về</span>

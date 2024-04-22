@@ -21,11 +21,13 @@ const AdminCategoryAdd = () => {
     formState: { errors },
     reset,
   } = useForm<ICategories>({ resolver: zodResolver(schema) });
+  const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
+  
   const submitCategories = async (data: ICategories) => {
     console.log(data);
     try {
