@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, accordionClasses } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import { useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import SystemErrorMessage from "../../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminCategoriesModify = () => {
  const {
     register,
@@ -21,14 +22,13 @@ const AdminCategoriesModify = () => {
     reset,
  } = useForm<ICategories>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "abc" },
  });
  const [errorMessage, setErrorMessage] = useState<string[]>([]);
  const [message, setMessage] = useState<string>("");
  const navigate = useNavigate();
  const { id } = useParams();
  const nav = useContext(ClickAdmin);
-
+const access_token = useAccessToken();
  const submitCategories = async (data: ICategories) => {
     console.log(data);
     try {
@@ -36,7 +36,9 @@ const AdminCategoriesModify = () => {
         `http://localhost:8686/categories/${id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", 
+            "Authorization" : `Bearer ${access_token}`
+           },
           body: JSON.stringify(data),
         }
       );
@@ -56,7 +58,7 @@ const AdminCategoriesModify = () => {
  };
 
  const handleNavigation = () => {
-    nav.handleSetMode("customer");
+    nav.handleSetMode("lists");
     navigate(-1);
  };
 

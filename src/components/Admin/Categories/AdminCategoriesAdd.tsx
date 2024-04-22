@@ -13,6 +13,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import SystemErrorMessage from "../../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminCategoryAdd = () => {
   const {
     register,
@@ -24,12 +25,13 @@ const AdminCategoryAdd = () => {
   const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
+  const access_token = useAccessToken();
   const submitCategories = async (data: ICategories) => {
     console.log(data);
     try {
       const response = await fetch("http://localhost:8686/categories", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", 'Authorization' : `Bearer ${access_token}` },
         body: JSON.stringify(data),
       });
 

@@ -11,9 +11,9 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import { ICategories } from "../../../interface/ICategory.ts";
-import { Product } from "../../../interface/IProduct.ts";
+import { Product, Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminProductAdd = () => {
   const {
     register,
@@ -23,6 +23,19 @@ const AdminProductAdd = () => {
   } = useForm<Product>({ resolver: zodResolver(schema) });
   const [errorMessage, setErrorMessage] = useState<String[]>([]);
   const [message, setMessage] = useState<"">("");
+  const [productInfo, setProductInfo] = useState<Product>({
+    id: "",
+    name: "",
+    description: "",
+    price: 0,
+    thumbnail: null,
+    category: { id: "", name: "", description: "" },
+    material: "",
+    width: 0,
+    status: "",
+    height: 0,
+    publishYear: 0,
+  });
   const [categories, setCategories] = useState<ICategories[]>([
     {
       id: "",
@@ -33,13 +46,21 @@ const AdminProductAdd = () => {
   const [file, setFile] = useState<File | undefined>();
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
-
+  const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
-        const response = await fetch("http://localhost:8686/categories");
+        const response = await fetch("http://localhost:8686/categories", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access_token}`,
+          },
+        });
         if (response.ok) {
           const data = await response.json();
+          console.log(data);
+          
           setCategories(data);
         } else {
           const errorData = await response.json();
@@ -52,26 +73,31 @@ const AdminProductAdd = () => {
     fetchCustomerList();
   }, []);
 
-  const submitProduct = async (data : Product) => {
+  const submitProduct = async () => {
     try {
       const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("description", data.description);
-      formData.append("categoryId", String(data.categoryId));
-      formData.append("material", data.material);
-      formData.append("width", String(data.width));
-      formData.append("height", String(data.height));
-      formData.append("publishYear", String(data.publishYear));
+      formData.append("name", productInfo.name);
+      formData.append("description", productInfo.description);
+      formData.append("id", String(productInfo.category.id));
+      formData.append("material", productInfo.material);
+      formData.append("width", String(productInfo.width));
+      formData.append("height", String(productInfo.height));
+      formData.append("publishYear", String(productInfo.publishYear));
       if (file) {
         formData.append("thumbnailImage", file);
+        console.log("Image found");
       }
-      formData.append("status", String(data.status))
       console.log(formData);
-      
+
       const response = await fetch("http://localhost:8686/products", {
-        method: "POST",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${access_token}`,
+        },
         body: formData,
       });
+
 
       if (response.ok) {
         const responseBody = await response.json();
@@ -105,6 +131,7 @@ const AdminProductAdd = () => {
    }
    setFile(target.files[0]);
    
+   localStorage.setItem("file", target.files[0].name);
   };
 
   const resetInfo = () => {
@@ -185,16 +212,16 @@ const AdminProductAdd = () => {
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Danh mục
-                  <select {...register("categoryId")} className="w-full p-2 border-2 border-solid border-black">
+                  <select {...register("category.name")} className="w-full p-2 border-2 border-solid border-black">
                     {categories.map((category, index) => (
                       <option key={index} value={category.name}>
                         {category.name}
                       </option>
                     ))}
                   </select>
-                  {errors.categoryId && (
+                  {errors.category?.name && (
                     <h1 className="text-red-500 font-bold text-base">
-                      {errors.categoryId.message}
+                      {errors.category?.name.message}
                     </h1>
                   )}
                 </label>
@@ -215,12 +242,12 @@ const AdminProductAdd = () => {
                     <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
                     <div className="w-[60px] h-[60px] mx-auto my-2"><AddPhotoAlternateIcon className="w-full h-full"></AddPhotoAlternateIcon></div>
                     <div className="px-4"><span className="text-base">Kéo hình ảnh vào đây hoặc <span className="underline text-[#2A3598]">tải tệp lên</span></span></div>
-                      <input type="file" className="w-full h-full hidden" {...register("thumbnailImage")} onChange={handleImageChange}accept="image/png, image/jpg"
+                      <input type="file" className="w-full h-full hidden" {...register("thumbnail")} onChange={handleImageChange}accept="image/png, image/jpg"
                       ></input>
                     </div>
-                    {errors.thumbnailImage && (
+                    {errors.thumbnail && (
                       <h1 className="text-red-500 font-bold text-base">
-                        {errors.thumbnailImage.message}
+                        {errors.thumbnail.message}
                       </h1>
                     )}
                   </label>
@@ -280,16 +307,11 @@ const AdminProductAdd = () => {
                 <div className="w-full">
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                  Tình trạng
-                 <select className="w-full p-2 border-2 border-solid border-black" {...register("status")}>
-                    <option value="SOLD">Đã bán</option>
-                    <option value="SELLING">Đang bán</option>
-                    <option value="ORDERING">Có người đặt</option>
+                 <select className="w-full p-2 border-2 border-solid border-black">
+                    <option value="STOCKOUT">Đã bán</option>
+                    <option value="AVAILABLE">Đang bán</option>
+                    <option value="ORDERED">Có người đặt</option>
                  </select>
-                  {errors.status && (
-                    <h1 className="text-red-500 font-bold text-base">
-                      {errors.status.message}
-                    </h1>
-                  )}
                 </label>
                 </div>
             </div>

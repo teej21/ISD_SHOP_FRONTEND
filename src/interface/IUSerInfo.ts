@@ -19,7 +19,7 @@ export interface INewPassword {
 }
 
 export interface ResponseBody {
-  fullName: string,
+  full_name: string,
   tokens: {
     access_token: string;
     refresh_token: string;

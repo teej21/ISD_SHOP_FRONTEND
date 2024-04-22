@@ -8,19 +8,25 @@ import AdminNavigation from "./AdminNavigation.tsx";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import { useNavigate } from 'react-router-dom';
 import AdminModify from "./AdminModify.tsx";
+import useAccessToken from "../../composables/getAccessToken.ts";
 const AdminPageDetail = () => {
   const [customerDetail, setCustomerDetail] = useState<Customer | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
+  const access_token = useAccessToken();
    useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8686/admin/users/${id}`);
+        const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
+          method: 'GET',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+        });
         const data = await response.json();
         if (response.ok) {
           setCustomerDetail(data);
+          console.log(data);
+          
         } else {
           setEmptyMessage(data.error);
         }

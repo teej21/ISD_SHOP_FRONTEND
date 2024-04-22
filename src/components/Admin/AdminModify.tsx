@@ -12,6 +12,7 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import { AddUser } from "../../interface/IUSerInfo.ts";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../composables/getAccessToken.ts";
 const AdminModify = () => {
   const {
     register,
@@ -37,15 +38,17 @@ const AdminModify = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { id } = useParams();
-
+  const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8686/admin/users/${id}`);
+        const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
+          method: 'GET',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+        });
         const data = await response.json();
         if (response.ok) {
           setCustomerDetail(data);
-          console.log(data.date_of_birth);
           
         }
       } catch (error) {
@@ -53,7 +56,7 @@ const AdminModify = () => {
       }
     };
     fetchCustomerDetails()
-  }, [id]);
+  }, [access_token, id]);
 
   const resetInfo = () => {
     setCustomerDetail({
@@ -78,13 +81,16 @@ const AdminModify = () => {
        [name]: value,
     }));
    };
+
   const submitCustomer = async (data: any) => {
     data.password = "camonquykhach";
     console.log(data);
     try {
       const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "Authorization" : `Bearer ${access_token}`
+         },
         body: JSON.stringify(data),
       });
 
@@ -94,7 +100,7 @@ const AdminModify = () => {
         resetInfo();
       } else {
         setTimeout(() => {
-          setErrorMessage([]);
+          setErrorMessage("");
         }, 3000)        
         setErrorMessage((await response.json()).error);
       }

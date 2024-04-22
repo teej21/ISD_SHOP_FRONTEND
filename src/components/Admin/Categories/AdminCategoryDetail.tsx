@@ -8,16 +8,21 @@ import { useNavigate } from 'react-router-dom';
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminCategoryDetail = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleNav = useContext(ClickAdmin);
+  const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8686/categories/${id}`);
+        const response = await fetch(`http://localhost:8686/categories/${id}`, {
+          method: 'GET',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+        });
         const data = await response.json();
         if (response.ok) {
           setCategoryDetail(data);
@@ -74,7 +79,7 @@ const AdminCategoryDetail = () => {
           <DetailRow label="Tên danh mục" value={categoryDetail.name} />
           <DetailRow label="ID" value={categoryDetail.id} />
         </div>
-        <div className="w-full">
+        <div className="w-full h-[300px]">
           <DetailRow label="Mô tả" value={categoryDetail.description} />
         </div>
       </div>

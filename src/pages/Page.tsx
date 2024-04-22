@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Login from '../components/Login/login/Login.tsx'
 import Signup from '../components/Login/login/Signup.tsx'
 import ForgetPassword from '../components/Login/login/ForgetPassword.tsx'
@@ -16,7 +16,14 @@ import AdminCategoryAdd from '../components/Admin/Categories/AdminCategoriesAdd.
 import AdminCategoriesModify from '../components/Admin/Categories/AdminCategoriesModify.tsx'
 import AdminModifyEmployee from '../components/Admin/AdminModifyEmployee.tsx'
 import AdminProductAdd from '../components/Admin/Product/AdminProductAdd.tsx'
+import AdminProductModify from '../components/Admin/Product/AdminProductModify.tsx'
 const Page = () => {
+  const [role, setRole] = useState<string | null>('');
+  useEffect(() => {
+    const userRole = localStorage.getItem("role");
+    setRole(userRole);
+  }, [])
+  
   return (
     <div>
     <Routes>
@@ -26,18 +33,18 @@ const Page = () => {
         <Route path='/' element={<Homepage></Homepage>}>
         </Route>
         <Route path='/id' element={<Product_detail></Product_detail>}></Route>
-        <Route path='/admin' element={<Admin></Admin>}></Route>
-        <Route path="/admin/users/:id" element={<AdminPageDetail></AdminPageDetail>} />
-        <Route path='/admin/users/add_customers' element={<AdminAddUser></AdminAddUser>}/>
-        <Route path='/admin/users/add_employees' element={<AdminAddEmployee></AdminAddEmployee>}/>
-        <Route path='/admin/users/:id/modify_customer' element={<AdminModify></AdminModify>}/>
-        <Route path='/admin/users/:id/modify_employee' element={<AdminModifyEmployee></AdminModifyEmployee>}/>
-        <Route path='/admin/categories/:id' element={<AdminCategoryDetail></AdminCategoryDetail>}/>
-        <Route path='/admin/categories/add_category' element={<AdminCategoryAdd></AdminCategoryAdd>}/>
-        <Route path='/admin/categories/:id/modify_category' element={<AdminCategoriesModify/>}></Route>
-        <Route path='/admin/products/:id' element={<AdminPageDetail/>}></Route>
-        <Route path='/admin/products/add_product' element={<AdminProductAdd></AdminProductAdd>}/>
-        <Route path='/admin/products/:id/modify_product' element={<AdminCategoriesModify/>}></Route>
+        {role !== 'CUSTOMER' && <Route path='/admin' element={<Admin></Admin>}></Route>}
+        {role !== 'CUSTOMER' && <Route path="/admin/users/:id" element={<AdminPageDetail></AdminPageDetail>} />}
+        {role !== 'CUSTOMER' && <Route path='/admin/users/add_customers' element={<AdminAddUser></AdminAddUser>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/users/add_employees' element={<AdminAddEmployee></AdminAddEmployee>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/users/:id/modify_customer' element={<AdminModify></AdminModify>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/users/:id/modify_employee' element={<AdminModifyEmployee></AdminModifyEmployee>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/categories/:id' element={<AdminCategoryDetail></AdminCategoryDetail>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/categories/add_category' element={<AdminCategoryAdd></AdminCategoryAdd>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/categories/:id/modify_category' element={<AdminCategoriesModify/>}></Route>}
+        {role !== 'CUSTOMER' && <Route path='/admin/products/:id' element={<AdminPageDetail/>}></Route>}
+        {role !== 'CUSTOMER' && <Route path='/admin/products/add_product' element={<AdminProductAdd></AdminProductAdd>}/>}
+        {role !== 'CUSTOMER' && <Route path='/admin/products/:id/modify_product' element={<AdminProductModify/>}></Route>}
         <Route path='*' element={<Error_page/>}></Route>
     </Routes>    
     </div>

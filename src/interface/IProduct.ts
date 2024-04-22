@@ -1,12 +1,20 @@
+import { ICategories } from "./ICategory";
+
 export interface Product {
-    name: string;
-    description: string;
-    price: string;
-    categoryId: string;
-    material: string;
-    width: string;
-    height: string;
-    publishYear: string;
-    thumbnailImage: FileList; 
-    status: string;
+    id: string,
+    name: string,
+    description: string,
+    price: number,
+    thumbnail: FileList | null,
+    category: ICategories,
+    material: string,
+    width: Number,
+    status: string,
+    height: Number,
+    publishYear: Number,
   }
+
+  export enum Status{
+    AVAILABLE, STOCKOUT, ORDERED
+  }
+

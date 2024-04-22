@@ -12,19 +12,21 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../composables/getAccessToken.ts";
 const AdminAddEmployee = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AddUser>({ resolver: zodResolver(schema) });
-    const [errorMessage, setErrorMessage] = useState<string[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string>("");
     const [message, setMessage] = useState<string>("");
     const navigate = useNavigate();
+    const access_token = useAccessToken();
     const nav = useContext(ClickAdmin);
     const submitCustomer = async (data: AddUser) => {
        data.password="admin1"
         console.log(data);
       try {
-        const response = await fetch("http://localhost:8686/admin/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch("http://localhost:8686/admin/users",{
+          method: 'POST',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`},
           body: JSON.stringify(data),
         });
   
@@ -37,7 +39,7 @@ const AdminAddEmployee = () => {
           reset(); 
         } else {
           setTimeout(() => {
-            setErrorMessage([]);
+            setErrorMessage("");
           }, 3000)
           setErrorMessage((await response.json()).error);
         }
@@ -50,10 +52,6 @@ const AdminAddEmployee = () => {
         console.log("Form submission error:", errors);
       };
 
-      const handleNavigation = () => {
-        nav.handleSetMode("employee")
-        navigate('/admin');
-      }
   const resetInfo = () => {reset()};
   return (
     <div>

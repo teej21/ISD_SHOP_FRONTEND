@@ -9,6 +9,10 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Product } from "../../../interface/IProduct.ts";
+import { ICategories } from "../../../interface/ICategory.ts";
+import useAccessToken from "../../../composables/getAccessToken.ts";
+import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
+
 const AdminProductList = () => {
   const [productInfo, setProductInfo] = useState<Product[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -18,12 +22,20 @@ const AdminProductList = () => {
     page: 0,
   });
   const [searchResult, setSearchResult] = useState<string>('');
+  const [categories, setCategories] = useState<ICategories[]>([]);
   const navHeader = useContext(ClickAdmin);
+  const access_token = useAccessToken();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "thumbnail", headerName: "", width: 200 },
+    { field: "thumbnail", headerName: "Ảnh minh họa", width: 200 },
     { field: "name", headerName: "Tên sản phẩm", width: 200 },
+    { field: "description", headerName: "Miêu tả", width: 200 },
+    { field: "material", headerName: "Chất liệu", width: 200 },
+    { field: "category", headerName: "Tên tranh", width: 200 },
     { field: "price", headerName: "Giá tiền", width: 200 },
+    { field: "width", headerName: "Chiều rộng", width: 200 },
+    { field: "height", headerName: "Chiều dài", width: 200 },
+    { field: "status", headerName: "Trạng thái", width: 200 },
     {
       field: "",
       headerName: "",
@@ -55,9 +67,29 @@ const AdminProductList = () => {
 
   useEffect(() => {
     const fetchImage = async () => {
+      try{
+      const imageName = localStorage.getItem("file");
+      const response = await fetch(`localhost:8686/products/images/${imageName}`);
+      if(response.ok){
+        
+      }
+      }catch(error){
+
+      }
+    }
+  })
+
+  useEffect(() => {
+    const fetchProduct = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8686/products"
+          "http://localhost:8686/products",
+          {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${access_token}`
+            },
+          }
         );
         if (response.ok) {
           const data = await response.json();
@@ -71,9 +103,33 @@ const AdminProductList = () => {
       }
     };
 
-    fetchImage();
+    fetchProduct();
   }, []);
 
+  useEffect(() => {
+    const fetchCustomerList = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8686/categories",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${access_token}`
+            },
+          }
+        );
+        if (response.ok) {
+          const data : ICategories[] = await response.json();
+          setCategories(data);
+        } 
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCustomerList();
+  }, []);
 
   useEffect(() => {
     const fetchProductList = async () => {
@@ -84,6 +140,7 @@ const AdminProductList = () => {
         if (response.ok) {
           const data = await response.json();
           setProductInfo(data);
+          console.log(data);
         } else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
@@ -110,28 +167,41 @@ const AdminProductList = () => {
     navigate(`/admin/products/${productId}/modify_product`);
   };
 
-  const handleDeleteClick = async (params: any) => {
-    const productId = params.row.id;
-    
-    const response = await fetch(
-      `http://localhost:8686/categories/${productId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "multipart/formData",
-        },
-      }
-    );
-    const deletedData = await response.json();
-    if (response.ok) {
-      setSuccessMessage(deletedData.result);
-      setProductInfo(data => data.filter((product) => product.id !== productId));
-    }
+    const handleDeleteClick = async (params : any) => {
+      const param = params.row.id;
+      try {
+        const response = await fetch(
+          `http://localhost:8686/products/${param}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${access_token}`
+            },
+          }
+        );
+        if (response.ok) {
+          const data : Product[] = await response.json();
+          setProductInfo(data);
+          setSuccessMessage('Xóa sản phẩm thành công!')
 
-  };
+          setTimeout(() => {
+            setSuccessMessage(''); 
+          }, 3000);
+          setProductInfo(
+            productInfo.filter((product) => product.id !== param)
+          );
+          
+        } 
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
   return (
     <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       <div>
+      {successMessage && <SystemSuccessMessage message={successMessage}/>}
         <div className="flex flex-row justify-between items-center px-8 py-4">
           <div>
             <h1 className="font-bold text-2xl">Quản lý hàng hóa</h1>

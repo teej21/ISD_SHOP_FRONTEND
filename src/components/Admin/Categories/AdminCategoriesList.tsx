@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<ICategories[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -52,13 +53,22 @@ const AdminContent = () => {
   ];
 
   const navigate = useNavigate();
-
+   const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
-        const response = await fetch("http://localhost:8686/categories");
+        const response = await fetch(
+          "http://localhost:8686/categories",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${access_token}`
+            },
+          }
+        );
         if (response.ok) {
-          const data = await response.json();
+          const data : ICategories[] = await response.json();
           setCustomerInfo(data);
         } else {
           const errorData = await response.json();
@@ -98,6 +108,7 @@ const AdminContent = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`
         },
         signal: signal
       }

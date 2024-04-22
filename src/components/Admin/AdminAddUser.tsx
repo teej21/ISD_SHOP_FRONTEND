@@ -12,6 +12,7 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../composables/getAccessToken.ts";
 const AdminAddUser = () => {
   const {
     register,
@@ -23,13 +24,14 @@ const AdminAddUser = () => {
   const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
+  const access_token = useAccessToken();
   const submitCustomer = async (data: AddUser) => {
     data.password = "camonquykhach";
     console.log(data);
     try {
-      const response = await fetch("http://localhost:8686/admin/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch("http://localhost:8686/admin/users",{
+        method: 'POST',
+        headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`},
         body: JSON.stringify(data),
       });
 
@@ -42,7 +44,7 @@ const AdminAddUser = () => {
         reset();
       } else {
         setTimeout(() => {
-          setErrorMessage([]);
+          setErrorMessage("");
         }, 3000)
         setErrorMessage((await response.json()).error);
       }
