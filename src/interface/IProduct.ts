@@ -5,7 +5,7 @@ export interface Product {
     name: string,
     description: string,
     price: number,
-    thumbnail: File | null,
+    thumbnailImage: File | null,
     category: ICategories,
     material: string,
     width: Number,
@@ -15,6 +15,6 @@ export interface Product {
   }
 
   export enum Status{
-    AVAILABLE, STOCKOUT, ORDERED
+    AVAILABLE ="AVAILABLE", STOCKOUT = "STOCKOUT", ORDERED ="ORDERED"
   }
 

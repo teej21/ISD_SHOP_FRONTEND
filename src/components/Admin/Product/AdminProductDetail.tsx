@@ -21,7 +21,7 @@ const AdminProductDetail = () => {
     name: "",
     description: "",
     price: 0,
-    thumbnail: null,
+    thumbnailImage: null,
     category: { id: "", name: "", description: "" },
     material: "",
     width: 0,
@@ -134,8 +134,8 @@ const AdminProductDetail = () => {
                     Ảnh sản phẩm:
                     <div className="flex flex-row justify-between items-center gap-[100px]">
                       <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
-                        {productInfo.thumbnail ? <img
-                          src={productInfo.thumbnail.name}
+                        {productInfo.thumbnailImage ? <img
+                          src={productInfo.thumbnailImage.name}
                           alt="product thumbnail"
                           className="w-full h-full object-contain"
                         /> : <p>No image</p>}
@@ -153,7 +153,7 @@ const AdminProductDetail = () => {
                  <div className="flex flex-col text-xl font-bold gap-[10px]">
                     Năm sáng tác:
                     <div className="w-full p-2 border-2 border-solid border-black">
-                      {productInfo.publishYear}
+                      {+productInfo.publishYear}
                     </div>
                  </div>
                 </div>
@@ -161,13 +161,13 @@ const AdminProductDetail = () => {
                  <div className="flex flex-col text-xl font-bold gap-[10px]">
                     Chiều dài:
                     <div className="w-full p-2 border-2 border-solid border-black">
-                      {productInfo.height}
+                      {+productInfo.height}
                     </div>
                  </div>
                  <div className="flex flex-col text-xl font-bold gap-[10px]">
                     Chiều rộng:
                     <div className="w-full p-2 border-2 border-solid border-black">
-                      {productInfo.width}
+                      {+productInfo.width}
                     </div>
                  </div>
                 </div>

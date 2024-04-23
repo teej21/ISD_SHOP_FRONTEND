@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, formControlClasses } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminNavigation from "../AdminNavigation.tsx";
@@ -28,7 +28,7 @@ const AdminProductAdd = () => {
     name: "",
     description: "",
     price: 0,
-    thumbnail: null,
+    thumbnailImage: null,
     category: { id: "", name: "", description: "" },
     material: "",
     width: 0,
@@ -78,22 +78,27 @@ const AdminProductAdd = () => {
     
     try {
       const formData = new FormData();
-      formData.append("name", productInfo.name);
-      formData.append("description", productInfo.description);
-      formData.append("id", String(productInfo.category.id));
-      formData.append("material", String(productInfo.material));
-      formData.append("width", String(productInfo.width));
-      formData.append("height", String(productInfo.height));
-      formData.append("publishYear", String(productInfo.publishYear));
-      if (productInfo.thumbnail) {
-        formData.append("thumbnail", productInfo.thumbnail);
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("id", data.category.id);
+      formData.append("material", data.material);
+      formData.append("width", String(data.width));
+      formData.append("height", String(data.height));
+      formData.append("publishYear", String(data.publishYear));
+      if (data.thumbnailImage) {
+        formData.append("thumbnailImage", String(data.thumbnailImage));
         console.log("Image found");
       }
+      formData.append("status", data.status);
+  
+      // Convert formData to an object and assert its type as Product
+      const productObject = Object.fromEntries(formData.entries()) as unknown as Product;
+  
+      console.log(productObject);
       
       const response = await fetch("http://localhost:8686/products", {
         method: "POST",
         headers: {
-          "Content-Type": "multipart/formData",
           Authorization: `Bearer ${access_token}`,
         },
         body: formData,
@@ -114,6 +119,7 @@ const AdminProductAdd = () => {
       }
     } catch (error) {
       console.error("Error adding product:", error);
+      
     }
   };
 

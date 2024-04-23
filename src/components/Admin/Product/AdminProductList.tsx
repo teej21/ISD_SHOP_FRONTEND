@@ -73,7 +73,6 @@ const AdminProductList = () => {
 
   useEffect(() => {
     const fetchImage = async () => {
-      console.log(localStorage.getItem("file"));
       try{
       const imageName = localStorage.getItem("file");
       const response = await fetch(`localhost:8686/products/images/${imageName}`);

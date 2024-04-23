@@ -7,7 +7,7 @@ import schema from "../../../validation/AddProductForm.ts";
 import { AddUser } from "../../../interface/IUSerInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import { ICategories } from "../../../interface/ICategory.ts";
@@ -28,7 +28,7 @@ const AdminProductModify = () => {
     name: "",
     description: "",
     price: 0,
-    thumbnail: null,
+    thumbnailImage: null,
     category: { id: "", name: "", description: "" },
     material: "",
     width: 0,
@@ -48,6 +48,7 @@ const AdminProductModify = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
+  const { id } = useParams();
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
@@ -74,28 +75,39 @@ const AdminProductModify = () => {
     fetchCustomerList();
   }, []);
 
+  const handleInput = (fieldName) => {
+    return (event) => {
+      const value = event?.target.value;
+      return setProductInfo(prev => {
+        return {
+          ...prev,
+          [fieldName]: value
+        }
+      })
+    }
+  }
+
+  console.log(productInfo.name)
+
   const submitProduct = async () => {
+    
     try {
       const formData = new FormData();
-      formData.append("name", productInfo.name);
-      formData.append("description", productInfo.description);
-      formData.append("id", productInfo.category.id);
-      formData.append("material", productInfo.material);
-      formData.append("width", String(productInfo.width));
-      formData.append("height", String(productInfo.height));
-      formData.append("publishYear", String(productInfo.publishYear));
-      if (productInfo.thumbnail) {
-        formData.append("thumbnail", productInfo.thumbnail);
-        console.log("Image found");
-      }
-      formData.append("status", productInfo.status);
-      const productObject = Object.fromEntries(formData.entries()) as unknown as Product;
-      console.log(productObject.category)
+      Object.entries(productInfo).forEach(([key, value]) => {
+        if (key === "category") {
+          Object.entries(value).forEach(([subKey, subValue]) => {
+            formData.append(`${subKey}`, subValue);
+          });
+        } else {
+          formData.append(key, value);
+        }})
+        for (const [key, value] of formData.entries()) {
+          console.log(key, value);
+        }
       
       const response = await fetch("http://localhost:8686/products", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${access_token}`,
         },
         body: formData,
@@ -109,6 +121,24 @@ const AdminProductModify = () => {
       console.error("Error adding product:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:8686/products/${id}`, {
+          method: 'GET',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setProductInfo(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProductDetails()
+  }, [access_token, id]);
 
   const onFormError: SubmitErrorHandler<AddUser> = (errors, event) => {
     console.log("Form submission error:", errors);
@@ -129,7 +159,7 @@ const AdminProductModify = () => {
       type: target.files[0].type,
     });
     
-    setProductInfo((product) => ({ ...product, thumbnail: file }));
+    setProductInfo((product) => ({ ...product, thumbnailImage: file }));
   };
 
   const resetInfo = () => {
@@ -187,6 +217,8 @@ const AdminProductModify = () => {
                     type="text"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("name")}
+                    onChange={handleInput('name')}
+                    value={productInfo.name}
                   />
                   {errors.name && (
                     <h1 className="text-red-500 font-bold text-base">
@@ -199,6 +231,8 @@ const AdminProductModify = () => {
                   <textarea
                     {...register("description")}
                     className="w-full p-2 border-2 border-solid border-black"
+                    onChange={handleInput('description')}
+                    value={productInfo.description}
                   />
                   {errors.description && (
                     <h1 className="text-red-500 font-bold text-base">
@@ -213,7 +247,7 @@ const AdminProductModify = () => {
                     className="w-full p-2 border-2 border-solid border-black"
                   >
                     {categories.map((category, index) => (
-                      <option key={index} value={category.name}>
+                      <option key={index} value={category.id}>
                         {category.name}
                       </option>
                     ))}
@@ -230,6 +264,8 @@ const AdminProductModify = () => {
                     type="number"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("price")}
+                    onChange={handleInput('price')}
+                    value={productInfo.price}
                   />
                   {errors.price && (
                     <h1 className="text-red-500 font-bold text-base">
@@ -258,8 +294,9 @@ const AdminProductModify = () => {
                         <input
                           type="file"
                           className="w-full h-full hidden"
-                          {...register("thumbnail")}
+                          {...register("thumbnailImage")}
                           onChange={handleImageChange}
+                          value={productInfo.thumbnailImage?.name}
                           accept="image/png, image/jpg"
                         ></input>
                       </div>
@@ -272,9 +309,9 @@ const AdminProductModify = () => {
                           ></img>
                         </div>
                       )}
-                      {errors.thumbnail && (
+                      {errors.thumbnailImage && (
                         <h1 className="text-red-500 font-bold text-base">
-                          {errors.thumbnail.message}
+                          {errors.thumbnailImage.message}
                         </h1>
                       )}
                     </div>
@@ -287,6 +324,8 @@ const AdminProductModify = () => {
                       type="text"
                       className="w-full p-2 border-2 border-solid border-black"
                       {...register("material")}
+                      onChange={handleInput('material')}
+                      value={productInfo.material}
                     ></input>
                     {errors.material && (
                       <h1 className="text-red-500 font-bold text-base">
@@ -299,6 +338,8 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("publishYear")}
+                      onChange={handleInput('publishYear')}
+                      value={+productInfo.publishYear}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.publishYear && (
@@ -314,6 +355,8 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("height")}
+                      onChange={handleInput('height')}
+                      value={+productInfo.height}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.height && (
@@ -327,6 +370,8 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("width")}
+                      onChange={handleInput('width')}
+                      value={+productInfo.width}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.width && (
