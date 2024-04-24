@@ -14,14 +14,26 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import { Product, Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+export interface ResponseBody {
+  name: string,
+  description: string,
+  price: number,
+  thumbnail: string | null,
+  category: ICategories,
+  material: string,
+  width: Number,
+  status: string,
+  height: Number,
+  publishYear: Number,
+}
+
 const AdminProductDetail = () => {
 
-  const [productInfo, setProductInfo] = useState<Product>({
-    id: "",
+  const [productInfo, setProductInfo] = useState<ResponseBody>({
     name: "",
     description: "",
     price: 0,
-    thumbnailImage: null,
+    thumbnail: null,
     category: { id: "", name: "", description: "" },
     material: "",
     width: 0,
@@ -42,17 +54,38 @@ const AdminProductDetail = () => {
           method: 'GET',
           headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
         });
-        const data = await response.json();
+        const data : ResponseBody = await response.json();
         if (response.ok) {
           setProductInfo(data);
-          localStorage.setItem("data", data);
+          console.log(data.status);
+
+          fetchImage(data.thumbnail);
         }
       } catch (error) {
         console.log(error);
       }
     };
-    fetchProductDetails()
-  }, [access_token, id]);
+    
+    const fetchImage = async (thumbnail) => {
+      try {
+        console.log(thumbnail);
+        const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`);
+        console.log(response);
+        const image : Blob = await response.blob();
+        const outputImage = URL.createObjectURL(image);
+        if (response.ok) {
+          setProductInfo(data => ({...data, thumbnail: outputImage}));
+          console.log(image);
+          
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchProductDetails();
+  }, [id]);
+
 
   const handleNavigation = () => {
     nav.handleSetMode("products");
@@ -133,12 +166,12 @@ const AdminProductDetail = () => {
                  <div className="flex flex-col text-xl font-bold gap-[10px]">
                     Ảnh sản phẩm:
                     <div className="flex flex-row justify-between items-center gap-[100px]">
-                      <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
-                        {productInfo.thumbnailImage ? <img
-                          src={productInfo.thumbnailImage.name}
+                      <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5] relative">
+                        {productInfo.thumbnail ? <div className="w-[200px] h-[150px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"><img
+                          src={`${productInfo.thumbnail}`}
                           alt="product thumbnail"
                           className="w-full h-full object-contain"
-                        /> : <p>No image</p>}
+                        /></div> : <p>No image</p>}
                       </div>
                     </div>
                  </div>

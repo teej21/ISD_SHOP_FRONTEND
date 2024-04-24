@@ -50,7 +50,10 @@ const AdminEmployeeContent = () => {
           <div
             onClick={(event) => {
               event.stopPropagation();
-              handleDeleteClick(params);
+              const userConfirmed = window.confirm("Bạn có muốn xóa bảng này?");
+              if (userConfirmed) {
+                  handleDeleteClick(params);
+              }
             }}
           >
             <DeleteIcon className="text-red-500" />
@@ -110,8 +113,8 @@ const AdminEmployeeContent = () => {
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
-    navigate(`/admin/users/${customerId}`);
-    navHeader.handleSetMode("customer-detail");
+    navigate(`/admin/users/employee/${customerId}`);
+    navHeader.handleSetMode("employee-detail");
   };
 
   const handleEditClick = (params: any) => {

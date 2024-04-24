@@ -18,6 +18,7 @@ import AdminModifyEmployee from '../components/Admin/AdminModifyEmployee.tsx'
 import AdminProductAdd from '../components/Admin/Product/AdminProductAdd.tsx'
 import AdminProductModify from '../components/Admin/Product/AdminProductModify.tsx'
 import AdminProductDetail from '../components/Admin/Product/AdminProductDetail.tsx'
+import AdminEmployeeDetail from '../components/Admin/AdminEmployeeDetail.tsx'
 const Page = () => {
   const [role, setRole] = useState<string | null>('');
   useEffect(() => {
@@ -35,7 +36,8 @@ const Page = () => {
         </Route>
         <Route path='/id' element={<Product_detail></Product_detail>}></Route>
         {role !== 'CUSTOMER' && <Route path='/admin' element={<Admin></Admin>}></Route>}
-        {role !== 'CUSTOMER' && <Route path="/admin/users/:id" element={<AdminPageDetail></AdminPageDetail>} />}
+        {role !== 'CUSTOMER' && <Route path="/admin/users/customer/:id" element={<AdminPageDetail></AdminPageDetail>} />}
+        {role !== 'CUSTOMER' && <Route path="/admin/users/employee/:id" element={<AdminEmployeeDetail></AdminEmployeeDetail>} />}
         {role !== 'CUSTOMER' && <Route path='/admin/users/add_customers' element={<AdminAddUser></AdminAddUser>}/>}
         {role !== 'CUSTOMER' && <Route path='/admin/users/add_employees' element={<AdminAddEmployee></AdminAddEmployee>}/>}
         {role !== 'CUSTOMER' && <Route path='/admin/users/:id/modify_customer' element={<AdminModify></AdminModify>}/>}

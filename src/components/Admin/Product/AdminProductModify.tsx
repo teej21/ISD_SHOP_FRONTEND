@@ -21,21 +21,20 @@ const AdminProductModify = () => {
     formState: { errors },
     reset,
   } = useForm<Product>({ resolver: zodResolver(schema) });
-  const [errorMessage, setErrorMessage] = useState<String[]>([]);
-  const [message, setMessage] = useState<"">("");
   const [productInfo, setProductInfo] = useState<Product>({
-    id: "",
     name: "",
     description: "",
     price: 0,
     thumbnailImage: null,
-    category: { id: "", name: "", description: "" },
+    categoryId: 0,
     material: "",
     width: 0,
-    status: "",
+    status: "AVAILABLE",
     height: 0,
     publishYear: 0,
   });
+
+
   const [categories, setCategories] = useState<ICategories[]>([
     {
       id: "",
@@ -43,12 +42,13 @@ const AdminProductModify = () => {
       description: "",
     },
   ]);
-  
+
   const [preview, setPreview] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
   const { id } = useParams();
+
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
@@ -71,74 +71,90 @@ const AdminProductModify = () => {
         console.log(error);
       }
     };
-
     fetchCustomerList();
-  }, []);
+  }, [])
+
+    useEffect(() => {
+      const fetchProductDetails = async () => {
+        try {
+          const response = await fetch(`http://localhost:8686/products/${id}`, {
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+          });
+          const data = await response.json();
+          if (response.ok) {
+            setProductInfo(data);
+            console.log(data.status);
+  
+            fetchImage(data.thumbnail);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      
+      const fetchImage = async (thumbnail) => {
+        try {
+          console.log(thumbnail);
+          const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`);
+          console.log(response);
+          const image : Blob = await response.blob();
+          const outputImage = URL.createObjectURL(image);
+          if (response.ok) {
+            setProductInfo(data => ({...data, thumbnail: outputImage}));
+            console.log(image);
+            
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+  
+      fetchProductDetails();
+    }, [id]);
 
   const handleInput = (fieldName) => {
     return (event) => {
       const value = event?.target.value;
-      return setProductInfo(prev => {
+      return setProductInfo((prev) => {
         return {
           ...prev,
-          [fieldName]: value
-        }
-      })
-    }
-  }
+          [fieldName]: value,
+        };
+      });
+    };
+  };
 
-  console.log(productInfo.name)
+  console.log(productInfo.name);
 
   const submitProduct = async () => {
-    
     try {
       const formData = new FormData();
-      Object.entries(productInfo).forEach(([key, value]) => {
-        if (key === "category") {
-          Object.entries(value).forEach(([subKey, subValue]) => {
-            formData.append(`${subKey}`, subValue);
-          });
-        } else {
-          formData.append(key, value);
-        }})
-        for (const [key, value] of formData.entries()) {
-          console.log(key, value);
-        }
-      
-      const response = await fetch("http://localhost:8686/products", {
-        method: "POST",
+
+      console.log("submit infor::", productInfo);
+
+      const keys = Object.keys(productInfo);
+      keys.forEach((key) => {
+        console.log(productInfo[key]);
+        formData.append(key, productInfo[key]);
+      });
+
+      const response = await fetch("http://localhost:8686/products/" + id, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
         body: formData,
       });
-      if(response.ok){
-        alert("Chỉnh sửa thành công!")
+      if (response.ok) {
+        alert("Chỉnh sửa thành công!");
         handleNavigation();
-       resetInfo();
+        resetInfo();
       }
     } catch (error) {
       console.error("Error adding product:", error);
     }
   };
-
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:8686/products/${id}`, {
-          method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setProductInfo(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProductDetails()
-  }, [access_token, id]);
 
   const onFormError: SubmitErrorHandler<AddUser> = (errors, event) => {
     console.log("Form submission error:", errors);
@@ -155,11 +171,10 @@ const AdminProductModify = () => {
     };
     const fileURL = URL.createObjectURL(target.files[0]);
     setPreview(fileURL);
-    const file = new File([target.files[0]], target.files[0].name, {
-      type: target.files[0].type,
-    });
-    
-    setProductInfo((product) => ({ ...product, thumbnailImage: file }));
+    setProductInfo((product) => ({
+      ...product,
+      thumbnailImage: target.files[0],
+    }));
   };
 
   const resetInfo = () => {
@@ -217,7 +232,7 @@ const AdminProductModify = () => {
                     type="text"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("name")}
-                    onChange={handleInput('name')}
+                    onChange={handleInput("name")}
                     value={productInfo.name}
                   />
                   {errors.name && (
@@ -231,7 +246,7 @@ const AdminProductModify = () => {
                   <textarea
                     {...register("description")}
                     className="w-full p-2 border-2 border-solid border-black"
-                    onChange={handleInput('description')}
+                    onChange={handleInput("description")}
                     value={productInfo.description}
                   />
                   {errors.description && (
@@ -243,8 +258,8 @@ const AdminProductModify = () => {
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Danh mục
                   <select
-                    {...register("category.name")}
                     className="w-full p-2 border-2 border-solid border-black"
+                    onClick={handleInput("categoryId")}
                   >
                     {categories.map((category, index) => (
                       <option key={index} value={category.id}>
@@ -252,11 +267,6 @@ const AdminProductModify = () => {
                       </option>
                     ))}
                   </select>
-                  {errors.category?.name && (
-                    <h1 className="text-red-500 font-bold text-base">
-                      {errors.category?.name.message}
-                    </h1>
-                  )}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Giá Tiền
@@ -264,7 +274,7 @@ const AdminProductModify = () => {
                     type="number"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("price")}
-                    onChange={handleInput('price')}
+                    onChange={handleInput("price")}
                     value={productInfo.price}
                   />
                   {errors.price && (
@@ -296,7 +306,6 @@ const AdminProductModify = () => {
                           className="w-full h-full hidden"
                           {...register("thumbnailImage")}
                           onChange={handleImageChange}
-                          value={productInfo.thumbnailImage?.name}
                           accept="image/png, image/jpg"
                         ></input>
                       </div>
@@ -324,7 +333,7 @@ const AdminProductModify = () => {
                       type="text"
                       className="w-full p-2 border-2 border-solid border-black"
                       {...register("material")}
-                      onChange={handleInput('material')}
+                      onChange={handleInput("material")}
                       value={productInfo.material}
                     ></input>
                     {errors.material && (
@@ -338,7 +347,7 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("publishYear")}
-                      onChange={handleInput('publishYear')}
+                      onChange={handleInput("publishYear")}
                       value={+productInfo.publishYear}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
@@ -355,7 +364,7 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("height")}
-                      onChange={handleInput('height')}
+                      onChange={handleInput("height")}
                       value={+productInfo.height}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
@@ -370,7 +379,7 @@ const AdminProductModify = () => {
                     <input
                       type="number"
                       {...register("width")}
-                      onChange={handleInput('width')}
+                      onChange={handleInput("width")}
                       value={+productInfo.width}
                       className="w-full p-2 border-2 border-solid border-black"
                     />
@@ -384,10 +393,13 @@ const AdminProductModify = () => {
                 <div className="w-full">
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Tình trạng
-                    <select className="w-full p-2 border-2 border-solid border-black">
-                      <option value="STOCKOUT">Đã bán</option>
-                      <option value="AVAILABLE">Đang bán</option>
-                      <option value="ORDERED">Có người đặt</option>
+                    <select
+                      className="w-full p-2 border-2 border-solid border-black"
+                      onChange={(e) => handleInput(e.target.value)}
+                    >
+                      <option value={Status.STOCKOUT}>Đã bán</option>
+                      <option value={Status.AVAILABLE}>Đang bán</option>
+                      <option value={Status.ORDERED}>Có người đặt</option>
                     </select>
                   </label>
                 </div>
@@ -395,7 +407,8 @@ const AdminProductModify = () => {
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
               <Button
-                type="submit"
+                onClick={submitProduct}
+                type="button"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
               >
                 Thêm

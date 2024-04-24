@@ -45,7 +45,10 @@ const AdminContent = () => {
           <div
             onClick={(event) => {
               event.stopPropagation();
-              handleDeleteClick(params);
+              const userConfirmed = window.confirm("Bạn có muốn xóa bảng này?");
+              if (userConfirmed) {
+                  handleDeleteClick(params);
+              }
             }}
           >
             <DeleteIcon className="text-red-500" />
