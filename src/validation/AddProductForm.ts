@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Product } from "../interface/IProduct.tsx";
 
-type OmitCID = Omit<Product, "category">;
+type OmitCID = Omit<Product, "categoryId">;
 type OmitID = Omit<OmitCID, "id">;
 type OmitStatus = Omit<OmitID, "status">
 type OmitThumbnail = Omit<OmitStatus, "thumbnailImage">

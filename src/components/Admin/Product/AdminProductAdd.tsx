@@ -30,10 +30,9 @@ const AdminProductAdd = () => {
     description: "",
     price: 0,
     thumbnailImage: null,
-    categoryId: 0,
+    categoryId: 1,
     material: "",
     width: 0,
-    status: "AVAILABLE",
     height: 0,
     publishYear: 0,
   });
@@ -62,6 +61,8 @@ const AdminProductAdd = () => {
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
+          console.log(data[0].id);
+          
         } else {
           const errorData = await response.json();
         }
@@ -77,11 +78,12 @@ const AdminProductAdd = () => {
       const formData = new FormData();
       console.log("submit infor::", productInfo);
       const keys = Object.keys(productInfo);
+      
       keys.forEach((key) => {
         formData.append(key, productInfo[key]);
       });
-      console.log(formData.get("category"));
-
+      console.log(formData.get("status"));
+      
       const response = await fetch("http://localhost:8686/products", {
         method: "POST",
         headers: {
@@ -357,14 +359,11 @@ const AdminProductAdd = () => {
                 <div className="w-full">
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Tình trạng
-                    <select
+                    <div
                       className="w-full p-2 border-2 border-solid border-black"
-                      onChange={handleInput("status")}
                     >
-                      <option value={Status.STOCKOUT}>Đã bán</option>
-                      <option value={Status.AVAILABLE}>Đang bán</option>
-                      <option value={Status.ORDERED}>Có người đặt</option>
-                    </select>
+                    <h1>AVAILABLE</h1>
+                    </div>
                   </label>
                 </div>
               </div>

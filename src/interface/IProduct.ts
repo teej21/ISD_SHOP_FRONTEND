@@ -8,7 +8,6 @@ export interface Product {
     categoryId: number,
     material: string,
     width: Number,
-    status: string,
     height: Number,
     publishYear: Number,
   }

@@ -240,7 +240,7 @@ const AdminModifyEmployee = () => {
                 type="submit"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
               >
-                Thêm
+                Chỉnh sửa
               </Button>
               <Button
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"

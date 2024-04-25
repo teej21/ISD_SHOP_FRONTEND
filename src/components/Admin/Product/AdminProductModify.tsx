@@ -11,22 +11,35 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import { ICategories } from "../../../interface/ICategory.ts";
-import { Product, Status } from "../../../interface/IProduct.ts";
+import { Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+export interface ResponseBody {
+  name: string,
+  description: string,
+  price: number,
+  thumbnailImage: File | null,
+  categoryId: number,
+  material: string,
+  width: Number,
+  status: string,
+  height: Number,
+  publishYear: Number,
+}
+
 const AdminProductModify = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<Product>({ resolver: zodResolver(schema) });
-  const [productInfo, setProductInfo] = useState<Product>({
+  } = useForm<ResponseBody>({ resolver: zodResolver(schema) });
+  const [productInfo, setProductInfo] = useState<ResponseBody>({
     name: "",
     description: "",
     price: 0,
     thumbnailImage: null,
-    categoryId: 0,
+    categoryId: 1,
     material: "",
     width: 0,
     status: "AVAILABLE",
@@ -62,7 +75,6 @@ const AdminProductModify = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-
           setCategories(data);
         } else {
           const errorData = await response.json();
@@ -83,9 +95,11 @@ const AdminProductModify = () => {
           });
           const data = await response.json();
           if (response.ok) {
-            setProductInfo(data);
-            console.log(data.status);
-  
+            const modifiedData = {
+              ...data,
+              categoryId: data.category.id 
+            };
+            setProductInfo(modifiedData);
             fetchImage(data.thumbnail);
           }
         } catch (error) {
@@ -95,15 +109,11 @@ const AdminProductModify = () => {
       
       const fetchImage = async (thumbnail) => {
         try {
-          console.log(thumbnail);
           const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`);
-          console.log(response);
           const image : Blob = await response.blob();
           const outputImage = URL.createObjectURL(image);
           if (response.ok) {
-            setProductInfo(data => ({...data, thumbnail: outputImage}));
-            console.log(image);
-            
+            setPreview(outputImage)
           }
         } catch (error) {
           console.log(error);
@@ -125,9 +135,9 @@ const AdminProductModify = () => {
     };
   };
 
-  console.log(productInfo.name);
 
   const submitProduct = async () => {
+    console.log(productInfo);
     try {
       const formData = new FormData();
 
@@ -136,9 +146,11 @@ const AdminProductModify = () => {
       const keys = Object.keys(productInfo);
       keys.forEach((key) => {
         console.log(productInfo[key]);
-        formData.append(key, productInfo[key]);
+          formData.append(key, productInfo[key]);
       });
-
+      formData.delete("thumbnail");
+      formData.append("thumbnailImage", String(productInfo.thumbnailImage))
+      console.log(formData.get("thumbnailImage"));
       const response = await fetch("http://localhost:8686/products/" + id, {
         method: "PUT",
         headers: {
@@ -170,11 +182,14 @@ const AdminProductModify = () => {
       files: File;
     };
     const fileURL = URL.createObjectURL(target.files[0]);
+    console.log(target.files[0]);
+    
     setPreview(fileURL);
     setProductInfo((product) => ({
       ...product,
       thumbnailImage: target.files[0],
     }));
+    
   };
 
   const resetInfo = () => {
