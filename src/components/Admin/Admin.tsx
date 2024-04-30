@@ -9,6 +9,7 @@ import AdminBills from "./AdminBills.tsx";
 import AdminModify from "./AdminModify.tsx";
 import AdminCategoriesList from "./Categories/AdminCategoriesList.tsx";
 import AdminProductList from "./Product/AdminProductList.tsx";
+import AdminEmployeeDetail from "./AdminEmployeeDetail.tsx";
 const Admin = () => {
   const handleNav = useContext(ClickAdmin);
   return (
@@ -20,6 +21,7 @@ const Admin = () => {
       {handleNav.mode === "bills" && <AdminBills />}
       {handleNav.mode === "lists" && <AdminCategoriesList/>}
       {handleNav.mode === "products" && <AdminProductList></AdminProductList>}
+      {handleNav.mode === "employee-detail" && <AdminEmployeeDetail></AdminEmployeeDetail>}
     </div>
   );
 };

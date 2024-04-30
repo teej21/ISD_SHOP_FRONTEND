@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<ICategories[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -19,17 +20,18 @@ const AdminContent = () => {
   });
   const [searchResult, setSearchResult] = useState('');
   const navHeader = useContext(ClickAdmin);
+  const role = localStorage.getItem("role");
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "name", headerName: "Tên Danh Mục", width: 400 },
     { field: "description", headerName: "Mô Tả", width: 600 },
-
     {
       field: "",
       headerName: "",
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -38,27 +40,42 @@ const AdminContent = () => {
           >
             <EditIcon className="text-blue-500" />
           </div>
+        )}
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
-              handleDeleteClick(params);
+              const userConfirmed = window.confirm("Bạn có muốn xóa bảng này?");
+              if (userConfirmed) {
+                  handleDeleteClick(params);
+              }
             }}
           >
             <DeleteIcon className="text-red-500" />
           </div>
-        </div>
+        )}
+      </div>
       ),
     },
   ];
 
   const navigate = useNavigate();
-
+   const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
-        const response = await fetch("http://localhost:8686/categories");
+        const response = await fetch(
+          "http://localhost:8686/categories",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${access_token}`
+            },
+          }
+        );
         if (response.ok) {
-          const data = await response.json();
+          const data : ICategories[] = await response.json();
           setCustomerInfo(data);
         } else {
           const errorData = await response.json();
@@ -98,6 +115,7 @@ const AdminContent = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`
         },
         signal: signal
       }
@@ -137,6 +155,7 @@ const AdminContent = () => {
               variant="contained"
               className="bg-[#899BE0]"
               onClick={() => navigate("/admin/categories/add_category")}
+              disabled={role !== 'ADMIN'}
             >
               <div className="flex items-center gap-[10px]">
                 <GroupAddIcon />

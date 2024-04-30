@@ -12,32 +12,33 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../composables/getAccessToken.ts";
+import AdminHorizontal from "./AdminHorizontal.tsx";
 const AdminAddEmployee = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AddUser>({ resolver: zodResolver(schema) });
-    const [errorMessage, setErrorMessage] = useState<string[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string>("");
     const [message, setMessage] = useState<string>("");
     const navigate = useNavigate();
+    const access_token = useAccessToken();
     const nav = useContext(ClickAdmin);
     const submitCustomer = async (data: AddUser) => {
        data.password="admin1"
         console.log(data);
       try {
-        const response = await fetch("http://localhost:8686/admin/users", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch("http://localhost:8686/admin/users",{
+          method: 'POST',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`},
           body: JSON.stringify(data),
         });
   
         if (response.ok) {
           const responseBody = await response.json();
-          setTimeout(() => {
-            setMessage("");
-          }, 3000)
-          setMessage(responseBody.result);
+          alert(responseBody.result);
+          handleNavigation();
           reset(); 
         } else {
           setTimeout(() => {
-            setErrorMessage([]);
+            setErrorMessage("");
           }, 3000)
           setErrorMessage((await response.json()).error);
         }
@@ -49,34 +50,23 @@ const AdminAddEmployee = () => {
     const onFormError: SubmitErrorHandler<AddUser> = (errors, event) => {
         console.log("Form submission error:", errors);
       };
-
-      const handleNavigation = () => {
-        nav.handleSetMode("employee")
-        navigate('/admin');
-      }
+    const handleNavigation = () => {
+      nav.handleSetMode("employee");
+      navigate(-1);
+    }
   const resetInfo = () => {reset()};
   return (
     <div>
-      <AdminNavigation />
-      <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      <AdminHorizontal />
+      <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       {message && <SystemSuccessMessage message={message}/>}
       {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
-              <h1 className="font-bold text-2xl">Chỉnh sửa thông tin nhân viên </h1>
+              <h1 className="font-bold text-2xl">Thêm thông tin nhân viên </h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button variant="contained" className="bg-[#899BE0]" onClick={() => navigate('/admin')}>
                   <div className="flex items-center gap-[10px]">
@@ -115,7 +105,7 @@ const AdminAddEmployee = () => {
                     Địa chỉ:
                     <input type="text" {...register("address")} className="w-full p-2 border-2 border-solid border-black"/>
                     {errors.address && (
-                      <h1 className="text-red font-bold text-xl">
+                      <h1 className="text-red-500 font-bold text-xl">
                         {errors.address.message}
                       </h1>
                     )}
@@ -134,7 +124,7 @@ const AdminAddEmployee = () => {
                         <option value="EMPLOYEE">EMPLOYEE</option>
                       </select>
                       {errors.role && (
-                        <h1 className="text-red font-bold text-xl">
+                        <h1 className="text-red-500 font-bold text-xl">
                           {errors.role.message}
                         </h1>
                       )}
@@ -151,7 +141,7 @@ const AdminAddEmployee = () => {
                       </select>
                       
                       {errors.gender && (
-                        <h1 className="text-red font-bold text-xl">
+                        <h1 className="text-red-500 font-bold text-xl">
                           {errors.gender.message}
                         </h1>
                       )}
@@ -161,7 +151,7 @@ const AdminAddEmployee = () => {
                     Email:
                     <input type="email" {...register("email")} className="w-full p-2 border-2 border-solid border-black" />
                     {errors.email && (
-                      <h1 className="text-red font-bold text-xl">
+                      <h1 className="text-red-500 font-bold text-xl">
                         {errors.email.message}
                       </h1>
                     )}
@@ -178,17 +168,17 @@ const AdminAddEmployee = () => {
                 </div>
               </div>
               <div className="flex flex-row justify-between items-center mt-[40px]">
+              <Button
+                  className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+                  onClick={resetInfo}
+                >
+                  Hủy
+                </Button>
                 <Button
                   type="submit"
                   className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
                 >
-                  Thêm
-                </Button>
-                <Button
-                  className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-                  onClick={resetInfo}
-                >
-                  Đặt lại
+                  Lưu
                 </Button>
               </div>
             </form>

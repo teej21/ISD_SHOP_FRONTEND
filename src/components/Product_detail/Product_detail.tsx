@@ -7,7 +7,7 @@ import Product_form from "./Product_form.tsx";
 import NavCover from "../Homepage/Navbar/NavCover.tsx";
 import NavMain from "../Homepage/Navbar/NavMain.tsx";
 import ToolBar from "../Homepage/Navbar/Toolbar.tsx";
-const product_detail = () => {
+const Product_detail = () => {
   return (
     <div>
       <NavCover />
@@ -16,7 +16,6 @@ const product_detail = () => {
       <div className="max-w-[1100px] mx-auto my-8">
       <Product_main_interface />
       <Product_additional_detail />
-      <Product_form />
       <div className="mb-20">
         <SpecialPicture />
       </div>
@@ -26,4 +25,4 @@ const product_detail = () => {
   );
 };
 
-export default product_detail;
+export default Product_detail;

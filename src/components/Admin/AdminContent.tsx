@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAccessToken from "../../composables/getAccessToken.ts";
+import useRole from "../../composables/getRole.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<AddUser[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -19,6 +21,7 @@ const AdminContent = () => {
   });
   const [searchResult, setSearchResult] = useState("");
   const navHeader = useContext(ClickAdmin);
+  const role = useRole();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "full_name", headerName: "Họ và tên", width: 250 },
@@ -33,6 +36,7 @@ const AdminContent = () => {
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -41,26 +45,42 @@ const AdminContent = () => {
           >
             <EditIcon className="text-blue-500" />
           </div>
+        )}
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
-              handleDeleteClick(params);
+              const userConfirmed = window.confirm("Bạn có muốn xóa bảng này?");
+              if (userConfirmed) {
+                  handleDeleteClick(params);
+              }
             }}
           >
             <DeleteIcon className="text-red-500" />
           </div>
-        </div>
+        )}
+      </div>
       ),
     },
   ];
 
   const navigate = useNavigate();
+  const accessToken = useAccessToken();
 
   useEffect(() => {
     const fetchCustomerList = async () => {
+      console.log(accessToken);
+      
       try {
         const response = await fetch(
-          "http://localhost:8686/admin/users/role=CUSTOMER"
+          "http://localhost:8686/admin/users/role=CUSTOMER",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${accessToken}`
+            },
+          }
         );
         if (response.ok) {
           const data = await response.json();
@@ -71,17 +91,20 @@ const AdminContent = () => {
               .split("T")[0],
           }));
           setCustomerInfo(updatedData);
+
+          
         } else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
         }
       } catch (error) {
-        console.log(error);
+        console.log('Failed');
+        
       }
     };
 
     fetchCustomerList();
-  }, []);
+  }, [accessToken]);
 
   const handleSearch = (e: any) => {
     setSearchResult(e.target.value);
@@ -89,8 +112,7 @@ const AdminContent = () => {
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
-    console.log(customerId);
-    navigate(`/admin/users/${customerId}`);
+    navigate(`/admin/users/customer/${customerId}`);
     navHeader.handleSetMode("customer-detail");
   };
 
@@ -108,6 +130,7 @@ const AdminContent = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
@@ -143,6 +166,7 @@ const AdminContent = () => {
             <Button
               variant="contained"
               className="bg-[#899BE0]"
+              disabled={role !== "ADMIN"}
               onClick={() => navigate("/admin/users/add_customers")}
             >
               <div className="flex items-center gap-[10px]">
@@ -156,7 +180,8 @@ const AdminContent = () => {
           <div>
             <DataGrid
               rows={customerInfo.filter((customer) =>
-                customer.full_name.toLowerCase()
+                customer.full_name
+                  .toLowerCase()
                   .includes(searchResult.toLowerCase())
               )}
               columns={columns}

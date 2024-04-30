@@ -12,6 +12,8 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import { AddUser } from "../../interface/IUSerInfo.ts";
 import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../composables/getAccessToken.ts";
+import AdminHorizontal from "./AdminHorizontal.tsx";
 const AdminModify = () => {
   const {
     register,
@@ -37,15 +39,17 @@ const AdminModify = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { id } = useParams();
-
+  const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8686/admin/users/${id}`);
+        const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
+          method: 'GET',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+        });
         const data = await response.json();
         if (response.ok) {
           setCustomerDetail(data);
-          console.log(data.date_of_birth);
           
         }
       } catch (error) {
@@ -53,7 +57,7 @@ const AdminModify = () => {
       }
     };
     fetchCustomerDetails()
-  }, [id]);
+  }, [access_token, id]);
 
   const resetInfo = () => {
     setCustomerDetail({
@@ -78,23 +82,28 @@ const AdminModify = () => {
        [name]: value,
     }));
    };
+
   const submitCustomer = async (data: any) => {
     data.password = "camonquykhach";
     console.log(data);
     try {
       const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "Authorization" : `Bearer ${access_token}`
+         },
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
         const responseBody = await response.json();
         setMessage(responseBody.result);
+        alert("Chỉnh sửa thành công!")
+        handleNavigation();
         resetInfo();
       } else {
         setTimeout(() => {
-          setErrorMessage([]);
+          setErrorMessage("");
         }, 3000)        
         setErrorMessage((await response.json()).error);
       }
@@ -113,8 +122,8 @@ const AdminModify = () => {
 
   return (
     <div>
-      <AdminNavigation />
-      <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      <AdminHorizontal />
+      <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
@@ -124,16 +133,6 @@ const AdminModify = () => {
               </h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"
@@ -235,14 +234,14 @@ const AdminModify = () => {
             </div>
           </div>
           <div className="flex flex-row justify-between items-center mt-[40px]">
+          <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold" onClick={resetInfo}>
+              Hủy
+            </Button>
             <Button
               type="submit"
               className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
             >
-              Thêm
-            </Button>
-            <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold" onClick={resetInfo}>
-              Đặt lại
+              Lưu
             </Button>
           </div>
         </form>

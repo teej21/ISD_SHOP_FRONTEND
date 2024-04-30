@@ -32,7 +32,8 @@ const Login = () => {
       console.log(response);
       if (response.ok) {
         const responseBody: ResponseBody = await response.json();
-        localStorage.setItem("full_name", responseBody.fullName);
+        console.log(responseBody);
+        localStorage.setItem("full_name", responseBody.full_name);
         localStorage.setItem("access_token", responseBody.tokens.access_token);
         localStorage.setItem("refresh_token", responseBody.tokens.refresh_token);
         localStorage.setItem("role", responseBody.role);
@@ -44,6 +45,9 @@ const Login = () => {
             navigate('/')
           }
       } else {
+        setTimeout(() => {
+          click.handleError('');
+        }, 3000)
         click.handleError((await response.json()).error);
       }
  

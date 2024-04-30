@@ -18,14 +18,14 @@ const NavCover = () => {
       console.log("access_token", token);
       if (role && token && refreshToken && full_name) {
         setIsActive({
-          fullName: full_name,
+          full_name: full_name,
           tokens: {
             access_token: "",
             refresh_token: "",
           },
           role: role,
         });
-        console.log("fullName", role);
+        console.log("fullName", full_name);
       }
     };
     fetchUserInfo();
@@ -49,14 +49,14 @@ const NavCover = () => {
             <li className="text-white">Bản đồ đến shop</li>
             <li className="text-white">Tuyển dụng</li>
             <li className="text-white">
-              {isActive?.fullName ? (
+              {isActive?.full_name ? (
                 <div className="flex flex-row gap-[10px]">
-                  Xin chào<span>{isActive.fullName}</span>
+                  Xin chào<span>{isActive.full_name}</span>
                   <span onClick={handleLogout}>Đăng xuất</span>
                 </div>
               ) : (
                 <div className="flex flex-row gap-[10px]">
-                  <h1>{isActive?.fullName}</h1>
+                  <h1>{isActive?.full_name}</h1>
                   <Link to="/login">Đăng nhập</Link>
                   <Link to="/sign_up">Đăng ký</Link>
                 </div>

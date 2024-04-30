@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useAccessToken from "../../composables/getAccessToken.ts";
+import useRole from "../../composables/getRole.ts";
 const AdminEmployeeContent = () => {
   const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -16,8 +18,9 @@ const AdminEmployeeContent = () => {
     pageSize: 10,
     page: 0,
   });
-  const [searchResult, setSearchResult] = useState('');
+  const [searchResult, setSearchResult] = useState("");
   const navHeader = useContext(ClickAdmin);
+  const role = useRole();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { field: "full_name", headerName: "Họ và tên", width: 150 },
@@ -33,6 +36,7 @@ const AdminEmployeeContent = () => {
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
@@ -41,27 +45,39 @@ const AdminEmployeeContent = () => {
           >
             <EditIcon className="text-blue-500" />
           </div>
+        )}
+        {role === 'ADMIN' && (
           <div
             onClick={(event) => {
               event.stopPropagation();
-              handleDeleteClick(params);
+              const userConfirmed = window.confirm("Bạn có muốn xóa bảng này?");
+              if (userConfirmed) {
+                  handleDeleteClick(params);
+              }
             }}
           >
             <DeleteIcon className="text-red-500" />
           </div>
-        </div>
+        )}
+      </div>
       ),
     },
   ];
 
   const navigate = useNavigate();
+  const access_token = useAccessToken();
 
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
         const roles = ["ADMIN", "MANAGER", "EMPLOYEE"];
-        const fetchPromises = roles.map((role) =>
-          fetch(`http://localhost:8686/admin/users/role=${role}`)
+        const fetchPromises = roles.map((role) => fetch(`http://localhost:8686/admin/users/role=${role}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access_token}`,
+          },
+        })
         );
 
         const responses = await Promise.all(fetchPromises);
@@ -69,7 +85,6 @@ const AdminEmployeeContent = () => {
           responses.map((response) => response.json())
         );
         const combinedData = data.reduce((acc, curr) => acc.concat(curr), []);
-        setCustomerInfo(combinedData);
         const updatedData = combinedData.map((customer) => ({
           ...customer,
           date_of_birth: new Date(customer.date_of_birth)
@@ -77,14 +92,18 @@ const AdminEmployeeContent = () => {
             .split("T")[0],
         }));
         setCustomerInfo(updatedData);
+        
       } catch (error) {
-        console.log(error);
-        setEmptyMessage("Error fetching data");
+        console.error("Failed to fetch customer list:", error);
+        setEmptyMessage("Failed to fetch customer list. Please try again later.");
+        console.log(customerInfo);
+        
       }
     };
 
     fetchCustomerList();
-  }, []);
+ }, [access_token]); 
+
 
   const handleSearch = (e: any) => {
     setSearchResult(e.target.value);
@@ -92,8 +111,8 @@ const AdminEmployeeContent = () => {
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
-    navigate(`/admin/users/${customerId}`);
-    navHeader.handleSetMode("customer-detail");
+    navigate(`/admin/users/employee/${customerId}`);
+    navHeader.handleSetMode("employee-detail");
   };
 
   const handleEditClick = (params: any) => {
@@ -110,6 +129,7 @@ const AdminEmployeeContent = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`
         },
       }
     );
@@ -140,7 +160,7 @@ const AdminEmployeeContent = () => {
               </div>
             </div>
             <div>
-              <Button variant="contained" className="bg-[#899BE0]">
+              <Button variant="contained" className="bg-[#899BE0]" disabled={role !== 'ADMIN'}>
                 <div
                   className="flex items-center gap-[10px]"
                   onClick={() => navigate("/admin/users/add_employees")}
@@ -156,10 +176,11 @@ const AdminEmployeeContent = () => {
       <div>
         {customerInfo ? (
           <DataGrid
-          rows={customerInfo.filter((customer) =>
-            customer.full_name.toLowerCase()
-              .includes(searchResult.toLowerCase())
-          )}
+            rows={customerInfo.filter((customer) =>
+              customer.full_name
+                .toLowerCase()
+                .includes(searchResult.toLowerCase())
+            )}
             columns={columns}
             onRowClick={handleRowClick}
             paginationModel={paginationModel}

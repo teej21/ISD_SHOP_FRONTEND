@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminModify from "./AdminModify.tsx";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
-const AdminPageDetail = () => {
+const AdminEmployeeDetail = () => {
   const [customerDetail, setCustomerDetail] = useState<Customer | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
@@ -52,7 +52,7 @@ const AdminPageDetail = () => {
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
             <div>
-              <Button variant="contained" className="bg-[#899BE0]" onClick={() => {nav.handleSetMode("customer") 
+              <Button variant="contained" className="bg-[#899BE0]" onClick={() => {nav.handleSetMode("employee") 
               navigate('/admin')}}>
                 <div className="flex items-center gap-[10px]">
                   <GroupAddIcon></GroupAddIcon>
@@ -106,4 +106,4 @@ const DetailRow: React.FC<DetailRowProps> = ({ label, value }) => {
   );
 };
 
-export default AdminPageDetail;
+export default AdminEmployeeDetail;

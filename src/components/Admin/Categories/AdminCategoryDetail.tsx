@@ -8,16 +8,21 @@ import { useNavigate } from 'react-router-dom';
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
+import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminCategoryDetail = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleNav = useContext(ClickAdmin);
+  const access_token = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8686/categories/${id}`);
+        const response = await fetch(`http://localhost:8686/categories/${id}`, {
+          method: 'GET',
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+        });
         const data = await response.json();
         if (response.ok) {
           setCategoryDetail(data);
@@ -47,18 +52,9 @@ const AdminCategoryDetail = () => {
             </h1>
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm"
-                className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-              />
-              <div className="absolute right-3 top-3">
-                <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-              </div>
-            </div>
             <div>
-              <Button variant="contained" className="bg-[#899BE0]" onClick={() => navigate('/admin')}>
+              <Button variant="contained" className="bg-[#899BE0]" onClick={() => {handleNav.handleSetMode("lists") 
+              navigate('/admin')}}>
                 <div className="flex items-center gap-[10px]">
                 <KeyboardReturn></KeyboardReturn>
                   <span>Trở về</span>
@@ -74,7 +70,7 @@ const AdminCategoryDetail = () => {
           <DetailRow label="Tên danh mục" value={categoryDetail.name} />
           <DetailRow label="ID" value={categoryDetail.id} />
         </div>
-        <div className="w-full">
+        <div className="w-full h-[300px]">
           <DetailRow label="Mô tả" value={categoryDetail.description} />
         </div>
       </div>
