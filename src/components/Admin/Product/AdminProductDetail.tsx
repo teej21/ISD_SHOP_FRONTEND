@@ -14,6 +14,7 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import { Product, Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import AdminHorizontal from "../AdminHorizontal.tsx";
 export interface ResponseBody {
   name: string,
   description: string,
@@ -96,8 +97,8 @@ const AdminProductDetail = () => {
 
   return (
     <div>
-      <AdminNavigation />
-      <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      <AdminHorizontal />
+      <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
@@ -106,16 +107,6 @@ const AdminProductDetail = () => {
               </h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"

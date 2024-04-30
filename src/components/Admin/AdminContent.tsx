@@ -112,7 +112,6 @@ const AdminContent = () => {
 
   const handleRowClick = (params: any) => {
     const customerId = params.row.id;
-    console.log(customerId);
     navigate(`/admin/users/customer/${customerId}`);
     navHeader.handleSetMode("customer-detail");
   };

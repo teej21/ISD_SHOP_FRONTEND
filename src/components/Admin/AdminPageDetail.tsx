@@ -9,6 +9,7 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import { useNavigate } from 'react-router-dom';
 import AdminModify from "./AdminModify.tsx";
 import useAccessToken from "../../composables/getAccessToken.ts";
+import AdminHorizontal from "./AdminHorizontal.tsx";
 const AdminPageDetail = () => {
   const [customerDetail, setCustomerDetail] = useState<Customer | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -40,8 +41,8 @@ const AdminPageDetail = () => {
     return <p>Loading...</p>;
   }
   return (
-    <div> <AdminNavigation/>
-    <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+    <div> <AdminHorizontal/>
+    <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       <div>
         <div className="flex flex-row justify-between items-center px-8 py-4">
           <div>
@@ -50,16 +51,6 @@ const AdminPageDetail = () => {
             </h1>
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm"
-                className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-              />
-              <div className="absolute right-3 top-3">
-                <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-              </div>
-            </div>
             <div>
               <Button variant="contained" className="bg-[#899BE0]" onClick={() => {nav.handleSetMode("customer") 
               navigate('/admin')}}>

@@ -52,16 +52,6 @@ const AdminCategoryDetail = () => {
             </h1>
           </div>
           <div className="flex flex-row justify-between items-center gap-[20px]">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm"
-                className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-              />
-              <div className="absolute right-3 top-3">
-                <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-              </div>
-            </div>
             <div>
               <Button variant="contained" className="bg-[#899BE0]" onClick={() => {handleNav.handleSetMode("lists") 
               navigate('/admin')}}>

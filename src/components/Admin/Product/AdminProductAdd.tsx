@@ -14,6 +14,8 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import { Product, Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
+import AdminHorizontal from "../AdminHorizontal.tsx";
 
 const AdminProductAdd = () => {
   const {
@@ -146,8 +148,9 @@ const AdminProductAdd = () => {
 
   return (
     <div>
-      <AdminNavigation />
-      <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      <AdminHorizontal />
+      <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      {message && <SystemSuccessMessage message={message}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
@@ -156,16 +159,6 @@ const AdminProductAdd = () => {
               </h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"
@@ -370,16 +363,16 @@ const AdminProductAdd = () => {
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
               <Button
-                type="submit"
-                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-              >
-                Thêm
-              </Button>
-              <Button
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
                 onClick={resetInfo}
               >
-                Đặt lại
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+              >
+               Lưu
               </Button>
             </div>
           </form>

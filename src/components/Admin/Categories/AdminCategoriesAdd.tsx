@@ -38,9 +38,7 @@ const AdminCategoryAdd = () => {
       });
 
       if (response.ok) {
-        const responseBody = await response.json();
-        console.log(responseBody);
-        setMessage(responseBody.result);
+        setMessage("Thêm sản phẩm thành công!");
         setTimeout(() => {
           setMessage('');
         }, 3000);
@@ -68,23 +66,13 @@ const AdminCategoryAdd = () => {
     <div>
       <AdminNavigation />
       <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-        {message ? <h1 className="text-green-500">{message}</h1> : <></>}
+      {message && <SystemSuccessMessage message={message}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
               <h1 className="font-bold text-2xl">Thông tin chi tiết</h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"
@@ -138,17 +126,17 @@ const AdminCategoryAdd = () => {
               </div>
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
+            <Button
+                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+                onClick={resetInfo}
+              >
+                Hủy
+              </Button>
               <Button
                 type="submit"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
               >
-                Thêm
-              </Button>
-              <Button
-                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-                onClick={resetInfo}
-              >
-                Đặt lại
+                Lưu
               </Button>
             </div>
           </form>

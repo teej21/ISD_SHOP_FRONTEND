@@ -34,6 +34,7 @@ const Page = () => {
         <Route path='/forgot-password' element={<ForgetPassword></ForgetPassword>}></Route>
         <Route path='/' element={<Homepage></Homepage>}>
         </Route>
+        <Route path="/category/:id" element={<Product_detail></Product_detail>}></Route>
         <Route path='/id' element={<Product_detail></Product_detail>}></Route>
         {role !== 'CUSTOMER' && <Route path='/admin' element={<Admin></Admin>}></Route>}
         {role !== 'CUSTOMER' && <Route path="/admin/users/customer/:id" element={<AdminPageDetail></AdminPageDetail>} />}

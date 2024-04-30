@@ -9,8 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
-import SystemErrorMessage from "../../Login/login/SystemErrorMessage.tsx";
-import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
@@ -47,10 +45,11 @@ const AdminCategoriesModify = () => {
 
 
   const resetInfo = () => {
-    setCategoryDetail({id: "", name: "", description: ""});
+    setCategoryDetail({id: '', name: '', description: ''});
   }
   useEffect(() => {
     const fetchCustomerDetails = async () => {
+      console.log(categoryDetail);
       try {
         const response = await fetch(`http://localhost:8686/categories/${id}`, {
           method: "GET",
@@ -118,16 +117,6 @@ const AdminCategoriesModify = () => {
               <h1 className="font-bold text-2xl">Chỉnh sửa danh mục</h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"
@@ -185,14 +174,14 @@ const AdminCategoriesModify = () => {
               </div>
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
+              <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold" onClick={resetInfo}>
+                Hủy
+              </Button>
               <Button
                 type="submit"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
               >
-                Thêm
-              </Button>
-              <Button className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold">
-                Đặt lại
+                Lưu
               </Button>
             </div>
           </form>

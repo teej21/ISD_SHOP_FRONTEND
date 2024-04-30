@@ -27,6 +27,7 @@ const AdminProductList = () => {
     ...product,
     categoryName: product.category.name,
   }));
+  
   const role = localStorage.getItem("role");
   const access_token = useAccessToken();
   const columns: GridColDef[] = [
@@ -156,8 +157,8 @@ const AdminProductList = () => {
   };
   const handleRowClick = (params: any) => {
     const productId = params.row.id;
-    console.log(productId);
     navigate(`/admin/products/${productId}`);
+
   };
 
   const handleEditClick = (params: any) => {

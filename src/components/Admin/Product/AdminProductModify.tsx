@@ -1,8 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from "../AdminNavigation.tsx";
 import schema from "../../../validation/AddProductForm.ts";
 import { AddUser } from "../../../interface/IUSerInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,11 +11,12 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import { Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import AdminHorizontal from "../AdminHorizontal.tsx";
 export interface ResponseBody {
   name: string,
   description: string,
   price: number,
-  thumbnailImage: File | null,
+  thumbnailImage: File | null | string | Blob,
   categoryId: number,
   material: string,
   width: Number,
@@ -47,6 +45,7 @@ const AdminProductModify = () => {
     publishYear: 0,
   });
 
+console.log(productInfo);
 
   const [categories, setCategories] = useState<ICategories[]>([
     {
@@ -94,26 +93,22 @@ const AdminProductModify = () => {
             headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
           });
           const data = await response.json();
+          console.log(data.thumbnail);
+          
           if (response.ok) {
             const modifiedData = {
-              ...data,
-              categoryId: data.category.id 
+              name: data.name,  
+              description: data.description,
+              price: data.price || 0,
+              material: data.material,
+              width: data.width || 0,
+              height: data.height || 0,
+              publishYear: data.publishYear,
+              categoryId: data.category?.id, 
+              thumbnailImage: data.thubnail, 
+              status: data.status || "AVAILABLE",
             };
             setProductInfo(modifiedData);
-            fetchImage(data.thumbnail);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      
-      const fetchImage = async (thumbnail) => {
-        try {
-          const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`);
-          const image : Blob = await response.blob();
-          const outputImage = URL.createObjectURL(image);
-          if (response.ok) {
-            setPreview(outputImage)
           }
         } catch (error) {
           console.log(error);
@@ -148,8 +143,6 @@ const AdminProductModify = () => {
         console.log(productInfo[key]);
           formData.append(key, productInfo[key]);
       });
-      formData.delete("thumbnail");
-      formData.append("thumbnailImage", String(productInfo.thumbnailImage))
       console.log(formData.get("thumbnailImage"));
       const response = await fetch("http://localhost:8686/products/" + id, {
         method: "PUT",
@@ -159,6 +152,7 @@ const AdminProductModify = () => {
         body: formData,
       });
       if (response.ok) {
+        console.log(response.text());
         alert("Chỉnh sửa thành công!");
         handleNavigation();
         resetInfo();
@@ -181,15 +175,21 @@ const AdminProductModify = () => {
     const target = e.target as HTMLInputElement & {
       files: File;
     };
-    const fileURL = URL.createObjectURL(target.files[0]);
-    console.log(target.files[0]);
     
-    setPreview(fileURL);
-    setProductInfo((product) => ({
-      ...product,
-      thumbnailImage: target.files[0],
-    }));
-    
+    if (target.files && target.files[0]) {
+      const fileURL = URL.createObjectURL(target.files[0]);
+      setPreview(fileURL);
+      setProductInfo((product) => ({
+        ...product,
+        thumbnailImage: target.files[0],
+      }));
+    } else {
+      setPreview(""); 
+      setProductInfo((product) => ({
+        ...product,
+        thumbnailImage: null,
+      }));
+    }
   };
 
   const resetInfo = () => {
@@ -198,26 +198,16 @@ const AdminProductModify = () => {
 
   return (
     <div>
-      <AdminNavigation />
-      <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      <AdminHorizontal />
+      <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
               <h1 className="font-bold text-2xl">
-                Quản lý hàng hóa - Thêm hàng hóa
+                Chỉnh sửa hàng hóa
               </h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"
@@ -410,7 +400,7 @@ const AdminProductModify = () => {
                     Tình trạng
                     <select
                       className="w-full p-2 border-2 border-solid border-black"
-                      onChange={(e) => handleInput(e.target.value)}
+                      onChange={handleInput("status")}
                     >
                       <option value={Status.STOCKOUT}>Đã bán</option>
                       <option value={Status.AVAILABLE}>Đang bán</option>
@@ -422,17 +412,16 @@ const AdminProductModify = () => {
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
               <Button
-                onClick={submitProduct}
-                type="button"
-                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-              >
-                Thêm
-              </Button>
-              <Button
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
                 onClick={resetInfo}
               >
-                Đặt lại
+                Hủy
+              </Button>
+              <Button
+                type="submit"
+                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+              >
+                Lưu
               </Button>
             </div>
           </form>

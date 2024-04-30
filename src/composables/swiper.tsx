@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import CoverImg from '../assets/cover_img.png';
@@ -6,11 +7,61 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
-
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+interface ResponseBody{
+  id: number,
+  thumbnail: string,
+  name: string,
+  width: number,
+  height: number,
+}
 const SwiperComponent = () => {
-  const swiperList = () => {
-    return <img src={CoverImg} alt='cover_img' className='w-full h-full object-cover' />;
-  };
+const [productImage, setProductImage] = useState<ResponseBody[]>([{id: 0, thumbnail: "", name: "", width: 0, height: 0}]);
+const navigate = useNavigate();
+const handleNav = (id: number) => {
+  navigate(`category/${id}`);
+};
+  useEffect(() => {
+    const fetchProductList = async () => {
+      try {
+        const response = await fetch("http://localhost:8686/products");
+        if (response.ok) {
+          const data: ResponseBody[] = await response.json();
+          const landscapeImages : ResponseBody[] = data.filter((image) => image.width > image.height)
+          console.log(landscapeImages);    
+          setProductImage(landscapeImages);
+          landscapeImages.forEach(product => fetchImage(product.thumbnail));
+        } else {
+          const errorData = await response.json();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    const fetchImage = async (thumbnail: string) => {
+      try {
+        const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`);
+        const imageBlob: Blob = await response.blob();
+        const outputImage = URL.createObjectURL(imageBlob);
+        if (response.ok) {
+          setProductImage(products => {
+            return products.map(product => {
+              if (product.thumbnail === thumbnail) {
+                return { ...product, thumbnail: outputImage };
+              }
+              return product;
+            });
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchProductList();
+  }, []);  
 
   return (
     <div className="w-6/10 h-full mx-auto my-12 max-w-[1500px]">
@@ -24,10 +75,24 @@ const SwiperComponent = () => {
         autoplay={{ delay: 1000 }}
         loop={true}
       >
-        <SwiperSlide>{swiperList()}</SwiperSlide>
-        <SwiperSlide>{swiperList()}</SwiperSlide>
-        <SwiperSlide>{swiperList()}</SwiperSlide>
-        <SwiperSlide>{swiperList()}</SwiperSlide>
+        {productImage.map((productImg) => (
+        <SwiperSlide>
+         <div className='relative' onClick={() => handleNav(productImg.id)}>
+          <div className='w-full h-[500px]'>
+          <img
+            key={productImg.id}
+            src={productImg.thumbnail}
+            alt="cover_img"
+            className="w-full h-full object-cover"
+          />
+          </div>
+          <div className='text-xl text-white absolute left-[70%] top-[70%] font-semibold bg-[#DF6A6A] shadow-shadow-primary p-4 rounded-[20px] flex flex-col gap-[20px]'>
+          <h1>Tên tranh: {productImg.name}</h1>
+          <Button className="bg-[#DF6A6A] rounded-[10px] bg-black text-white">Xem ngay</Button>
+          </div>
+          </div>
+       </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );

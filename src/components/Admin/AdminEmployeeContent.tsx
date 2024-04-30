@@ -68,8 +68,6 @@ const AdminEmployeeContent = () => {
   const access_token = useAccessToken();
 
   useEffect(() => {
-    console.log(access_token);
-    
     const fetchCustomerList = async () => {
       try {
         const roles = ["ADMIN", "MANAGER", "EMPLOYEE"];

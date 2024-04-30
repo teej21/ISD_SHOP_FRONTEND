@@ -13,6 +13,7 @@ import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
+import AdminHorizontal from "./AdminHorizontal.tsx";
 const AdminAddUser = () => {
   const {
     register,
@@ -37,10 +38,8 @@ const AdminAddUser = () => {
 
       if (response.ok) {
         const responseBody = await response.json();
-        setMessage(responseBody.result);
-        setTimeout(() => {
-          setMessage("");
-        }, 3000)
+        alert(responseBody.result);
+        handleNavigation();
         reset();
       } else {
         setTimeout(() => {
@@ -65,26 +64,16 @@ const AdminAddUser = () => {
   const resetInfo = () => {reset()};
   return (
     <div>
-      <AdminNavigation />
-      <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+      <AdminHorizontal/>
+      <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       {message && <SystemSuccessMessage message={message}/>}
       {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
-              <h1 className="font-bold text-2xl">Chỉnh sửa thông tin khách hàng</h1>
+              <h1 className="font-bold text-2xl">Thêm thông tin khách hàng</h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm"
-                  className="rounded-[50px] border-[E2E2E2] border-2 border-solid p-3 bg-[#E9ECEF]"
-                />
-                <div className="absolute right-3 top-3">
-                  <SearchIcon className="text-[#A2A3A6]"></SearchIcon>
-                </div>
-              </div>
               <div>
                 <Button
                   variant="contained"
@@ -216,17 +205,17 @@ const AdminAddUser = () => {
               </div>
             </div>
             <div className="flex flex-row justify-between items-center mt-[40px]">
+            <Button
+                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+                onClick={resetInfo}
+              >
+                Hủy
+              </Button>
               <Button
                 type="submit"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
               >
-                Thêm
-              </Button>
-              <Button
-                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-                onClick={resetInfo}
-              >
-                Đặt lại
+                Lưu
               </Button>
             </div>
           </form>
@@ -235,10 +224,5 @@ const AdminAddUser = () => {
     </div>
   );
 };
-
-interface DetailRowProps {
-  label: string;
-  value: string;
-}
 
 export default AdminAddUser;
