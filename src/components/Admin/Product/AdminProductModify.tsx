@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Profiler, useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import schema from "../../../validation/AddProductForm.ts";
 import { AddUser } from "../../../interface/IUSerInfo";
@@ -13,25 +13,20 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import AdminHorizontal from "../AdminHorizontal.tsx";
 export interface ResponseBody {
-  name: string,
-  description: string,
-  price: number,
-  thumbnailImage: File | null | string | Blob,
-  categoryId: number,
-  material: string,
-  width: Number,
-  status: string,
-  height: Number,
-  publishYear: Number,
+  name: string;
+  description: string;
+  price: number;
+  thumbnailImage: File | null | string | Blob;
+  categoryId: number;
+  material: string;
+  width: Number;
+  status: string;
+  height: Number;
+  publishYear: Number;
 }
 
 const AdminProductModify = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ResponseBody>({ resolver: zodResolver(schema) });
+
   const [productInfo, setProductInfo] = useState<ResponseBody>({
     name: "",
     description: "",
@@ -45,8 +40,6 @@ const AdminProductModify = () => {
     publishYear: 0,
   });
 
-console.log(productInfo);
-
   const [categories, setCategories] = useState<ICategories[]>([
     {
       id: "",
@@ -55,7 +48,7 @@ console.log(productInfo);
     },
   ]);
 
-  const [preview, setPreview] = useState<string>("");
+  const [preview, setPreview] = useState("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
@@ -83,40 +76,50 @@ console.log(productInfo);
       }
     };
     fetchCustomerList();
-  }, [])
+  }, []);
 
-    useEffect(() => {
-      const fetchProductDetails = async () => {
-        try {
-          const response = await fetch(`http://localhost:8686/products/${id}`, {
-            method: 'GET',
-            headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
-          });
-          const data = await response.json();
-          console.log(data.thumbnail);
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:8686/products/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        const data = await response.json();
+        console.log(data.thumbnail);
+        if (response.ok) {         
+          const modifiedData = {
+            name: data.name,
+            description: data.description,
+            price: data.price || 0,
+            material: data.material,
+            width: data.width || 0,
+            height: data.height || 0,
+            publishYear: data.publishYear,
+            categoryId: data.category?.id,
+            thumbnailImage: data.thumbnail,
+            status: data.status || "AVAILABLE",
+          };
+          setProductInfo(modifiedData);
+          console.log(URL.createObjectURL(data.thumbnail));
           
-          if (response.ok) {
-            const modifiedData = {
-              name: data.name,  
-              description: data.description,
-              price: data.price || 0,
-              material: data.material,
-              width: data.width || 0,
-              height: data.height || 0,
-              publishYear: data.publishYear,
-              categoryId: data.category?.id, 
-              thumbnailImage: data.thubnail, 
-              status: data.status || "AVAILABLE",
-            };
-            setProductInfo(modifiedData);
-          }
-        } catch (error) {
-          console.log(error);
         }
-      };
-  
-      fetchProductDetails();
-    }, [id]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProductDetails();
+  }, [id]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ResponseBody>({ resolver: zodResolver(schema), defaultValues: productInfo, mode: 'onChange', values: productInfo});
 
   const handleInput = (fieldName) => {
     return (event) => {
@@ -130,9 +133,7 @@ console.log(productInfo);
     };
   };
 
-
   const submitProduct = async () => {
-    console.log(productInfo);
     try {
       const formData = new FormData();
 
@@ -141,9 +142,8 @@ console.log(productInfo);
       const keys = Object.keys(productInfo);
       keys.forEach((key) => {
         console.log(productInfo[key]);
-          formData.append(key, productInfo[key]);
+        formData.append(key, productInfo[key]);
       });
-      console.log(formData.get("thumbnailImage"));
       const response = await fetch("http://localhost:8686/products/" + id, {
         method: "PUT",
         headers: {
@@ -152,7 +152,6 @@ console.log(productInfo);
         body: formData,
       });
       if (response.ok) {
-        console.log(response.text());
         alert("Chỉnh sửa thành công!");
         handleNavigation();
         resetInfo();
@@ -175,16 +174,18 @@ console.log(productInfo);
     const target = e.target as HTMLInputElement & {
       files: File;
     };
-    
+
     if (target.files && target.files[0]) {
       const fileURL = URL.createObjectURL(target.files[0]);
       setPreview(fileURL);
+      console.log(target.files[0]);
+      
       setProductInfo((product) => ({
         ...product,
         thumbnailImage: target.files[0],
       }));
     } else {
-      setPreview(""); 
+      setPreview("");
       setProductInfo((product) => ({
         ...product,
         thumbnailImage: null,
@@ -203,9 +204,7 @@ console.log(productInfo);
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
-              <h1 className="font-bold text-2xl">
-                Chỉnh sửa hàng hóa
-              </h1>
+              <h1 className="font-bold text-2xl">Chỉnh sửa hàng hóa</h1>
             </div>
             <div className="flex flex-row justify-between items-center gap-[20px]">
               <div>
@@ -237,14 +236,15 @@ console.log(productInfo);
                     type="text"
                     className="w-full p-2 border-2 border-solid border-black"
                     {...register("name")}
-                    onChange={handleInput("name")}
                     value={productInfo.name}
+                    onChange={handleInput("name")}
                   />
                   {errors.name && (
                     <h1 className="text-red-500 font-bold text-base">
                       {errors.name.message}
                     </h1>
                   )}
+                  <h1>{}</h1>
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Mô tả:

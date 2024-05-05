@@ -13,14 +13,6 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 const AdminCategoriesModify = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ICategories>({
-    resolver: zodResolver(schema),
-  });
   const [categoryDetail, setCategoryDetail] = useState<ICategories>({
     id: "",
     name: "",
@@ -70,6 +62,16 @@ const AdminCategoriesModify = () => {
     };
     fetchCustomerDetails();
   }, [access_token]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ICategories>({
+    resolver: zodResolver(schema),
+    defaultValues: categoryDetail, mode: 'onChange', values: categoryDetail
+  });
 
   const submitCategories = async (data: ICategories) => {
     console.log(data);
