@@ -51,10 +51,14 @@ const AdminModifyEmployee = () => {
     fetchCustomerDetails();
   }, [accessToken]);
 
-  const handleInput = (e: any) => {
-    setCustomerDetail(e.target.value);
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setCustomerDetail(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
-
+  
   const resetInfo = () => {
     setCustomerDetail({
       id: "",
@@ -104,8 +108,9 @@ const AdminModifyEmployee = () => {
     navigate(-1);
   };
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
+    defaultValues: customerDetail, mode: 'onChange', values: customerDetail,
   });
 
   return (
@@ -151,6 +156,7 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.full_name}
                     onChange={handleInput}
                   />
+                  {errors.full_name && <h1 className="text-base text-red-500">{errors.full_name.message}</h1>}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Số điện thoại:
@@ -161,6 +167,11 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.phone_number}
                     onChange={handleInput}
                   />
+                   {errors.phone_number && (
+                      <h1 className="text-red-500 font-bold text-xl">
+                        {errors.phone_number.message}
+                      </h1>
+                    )}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Địa chỉ:
@@ -171,6 +182,11 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.address}
                     onChange={handleInput}
                   />
+                   {errors.address && (
+                      <h1 className="text-red-500 font-bold text-xl">
+                        {errors.address.message}
+                      </h1>
+                    )}
                 </label>
               </div>
               <div className="flex flex-col justify-between h-[80%] w-full">
@@ -188,6 +204,11 @@ const AdminModifyEmployee = () => {
                       <option value="MANAGER">MANAGER</option>
                       <option value="EMPLOYEE">EMPLOYEE</option>
                     </select>
+                    {errors.role && (
+                      <h1 className="text-red-500 font-bold text-xl">
+                        {errors.role.message}
+                      </h1>
+                    )}
                   </label>
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Giới tính:
@@ -202,6 +223,11 @@ const AdminModifyEmployee = () => {
                       <option value="FEMALE">Nữ</option>
                       <option value="other">Khác</option>
                     </select>
+                    {errors.gender && (
+                      <h1 className="text-red-500 font-bold text-xl">
+                        {errors.gender.message}
+                      </h1>
+                    )}
                   </label>
                 </div>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
@@ -213,6 +239,11 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.email}
                     onChange={handleInput}
                   />
+                   {errors.email && (
+                      <h1 className="text-red-500 font-bold text-xl">
+                        {errors.email.message}
+                      </h1>
+                    )}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Ngày sinh:
@@ -223,6 +254,11 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.date_of_birth}
                     onChange={handleInput}
                   />
+                   {errors.date_of_birth && (
+                      <h1 className="text-red-500 font-bold text-xl">
+                        {errors.date_of_birth.message}
+                      </h1>
+                    )}
                 </label>
               </div>
             </div>

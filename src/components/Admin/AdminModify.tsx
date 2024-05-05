@@ -15,14 +15,6 @@ import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
 const AdminModify = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-  } = useForm({
-    resolver: zodResolver(schema),
-  });
-
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [message, setMessage] = useState<string>("");
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
@@ -111,6 +103,15 @@ const AdminModify = () => {
       console.error("Error adding user:", error);
     }
   };
+  
+  const {
+    register,
+    handleSubmit,
+    reset,
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: customerDetail, mode: 'onChange', values: customerDetail
+  });
 
   const handleNavigation = () => {
     nav.handleSetMode("customer");
