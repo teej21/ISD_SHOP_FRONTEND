@@ -70,7 +70,7 @@ const GridBox = () => {
           role="button"
           tabIndex={0}
         >
-          <div className="w-full h-8/10 flex flex-col gap-[10px]">
+          <div className="w-full h-8/10 flex flex-col">
             <img
               src={product.thumbnail}
               className="w-full h-8/10 object-cover rounded-[10px]"

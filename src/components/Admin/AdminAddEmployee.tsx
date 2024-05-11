@@ -23,7 +23,6 @@ const AdminAddEmployee = () => {
     const nav = useContext(ClickAdmin);
     const submitCustomer = async (data: AddUser) => {
        data.password="admin1"
-        console.log(data);
       try {
         const response = await fetch("http://localhost:8686/admin/users",{
           method: 'POST',
