@@ -5,7 +5,7 @@ import DMCA from "../../../assets/dmca-badge-w100-2x1-04 1.png";
 import ConfirmDMCA from '../../../assets/dmca 1.png'
 const Footer = () => {
   return (
-    <div className="bg-[#ECD2B3] md:flex md:flex-row md:justify-between md:items-center md:gap-[20px] md:px-12 md:mt-12 md:py-4 grid grid-cols-gridFlexible2 p-8 gap-[20px] ">
+    <div className="bg-[#ECD2B3] md:flex md:flex-row md:justify-between md:items-center md:gap-[20px] md:px-12 md:mt-12 md:py-4 grid grid-cols-gridFlexible2 p-8 gap-[20px]">
       <div className="md:w-3/10 w-8/10 h-full flex flex-col gap-[10px]">
         <h1 className="font-bold ">A WEB MADE BY</h1>
         <div className="flex lg:flex-row flex-col lg:items-center gap-[10px]">

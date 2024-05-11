@@ -12,6 +12,8 @@ import { Product } from "../../../interface/IProduct.ts";
 import { ICategories } from "../../../interface/ICategory.ts";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
+import { getProductList } from "../../../composables/getProductList.ts";
+import { getCategories } from "../../../composables/getCategories.ts";
 
 const AdminProductList = () => {
   const [productInfo, setProductInfo] = useState<Product[]>([]);
@@ -22,7 +24,6 @@ const AdminProductList = () => {
     page: 0,
   });
   const [searchResult, setSearchResult] = useState<string>("");
-  const [categories, setCategories] = useState<ICategories[]>([]);
   const flattenedProducts = productInfo.map((product) => ({
     ...product,
     categoryName: product.category.name,
@@ -81,49 +82,10 @@ const AdminProductList = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      try {
-        const response = await fetch("http://localhost:8686/products", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setProductInfo(data);
-          console.log(data);
-        } else {
-          const errorData = await response.json();
-          setEmptyMessage(errorData.error);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      const productData : Product[] = await getProductList(access_token);
+      setProductInfo(productData);
     };
-
     fetchProduct();
-  }, []);
-
-  useEffect(() => {
-    const fetchCustomerList = async () => {
-      try {
-        const response = await fetch("http://localhost:8686/categories", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
-        if (response.ok) {
-          const data: ICategories[] = await response.json();
-          setCategories(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchCustomerList();
   }, []);
 
   useEffect(() => {
