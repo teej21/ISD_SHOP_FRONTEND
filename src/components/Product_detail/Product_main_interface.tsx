@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect } from "react";
 import Picture_2 from "../../assets/pic_2.png";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
@@ -9,101 +9,49 @@ import { Button } from "@mui/material";
 import Pinterest from "@mui/icons-material/Pinterest";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useParams } from "react-router-dom";
-interface ResponseBody {
-  categoryName: string;
-  description: string;
-  height: number;
-  width: number;
-  id: number;
-  material: string;
-  name: string;
-  price: number;
-  status: string;
-  thumbnail: string;
-  publishYear: string;
-}
-const Product_main_interface = () => {
-  const [productInfo, setProductInfo] = useState<ResponseBody>({
-    categoryName: "",
-    description: "",
-    height: 0,
-    width: 0,
-    id: 0,
-    material: "",
-    name: "",
-    price: 0,
-    status: "",
-    thumbnail: "",
-    publishYear: "",
-  });
+import { CartContext } from "../../context/AddToCartContext.tsx";
 
+const Product_main_interface = () => {
+  const productInfo = useContext(CartContext);
+
+
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem("cartItems");
+    if (storedCartItems) {
+      productInfo.setAddToCartProductList(JSON.parse(storedCartItems));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(productInfo.AddToCartProductList));
+  }, [productInfo.AddToCartProductList]);
+  
   const { id } = useParams();
   const [isLike, setIsLike] = useState(false);
   const handleLike = () => {
     setIsLike(isLike => !isLike);
   }
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:8686/products/${id}`);
-        const data = await response.json();
-        if (response.ok) {
-          setProductInfo({
-            categoryName: data.category.name,
-            description: data.description,
-            height: data.height,
-            width: data.width,
-            id: data.id,
-            material: data.material,
-            name: data.name,
-            price: data.price,
-            status: data.status,
-            thumbnail: data.thumbnail,
-            publishYear: data.publishYear,
-          });
-          console.log(productInfo.name);
-
-          fetchImage(data.thumbnail);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const fetchImage = async (thumbnail) => {
-      try {
-        console.log(thumbnail);
-        const response = await fetch(
-          `http://localhost:8686/products/images/${thumbnail}`
-        );
-        console.log(response);
-        const image: Blob = await response.blob();
-        const outputImage = URL.createObjectURL(image);
-        if (response.ok) {
-          setProductInfo((data) => ({ ...data, thumbnail: outputImage }));
-          console.log(image);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchProductDetails();
+    const fetchProduct = () => {
+      productInfo.fetchProductDetails(id);
+    }
+    
+    fetchProduct();
   }, [id]);
 
   return (
     <div>
       <div className="flex flex-row gap-[50px]">
         <div className="flex flex-col gap-[40px]">
-          <div className="flex flex-row mt-[30px] gap-[20px]">
-            <span className="font-bold text-[#8D8D8D]">TRANG CHỦ </span>
+          <div className="flex flex-row mt-[30px] gap-[5px]">
+            <span className="font-bold text-[#8D8D8D]">TRANG CHỦ /</span>
             <span className="font-bold text-[#8D8D8D]">
-              {productInfo.categoryName}
+              {productInfo.productInfo.categoryName}
             </span>
           </div>
           <div className="w-[600px] h-[500px] relative">
             <img
-              src={productInfo.thumbnail}
+              src={productInfo.productInfo.thumbnail}
               alt="img_detail"
               className="h-full w-full object-cover"
             ></img>
@@ -122,23 +70,24 @@ const Product_main_interface = () => {
         </div>
         <div className="flex flex-col gap-[20px] my-24">
           <div>
-            <span className="text-3xl font-bold">{productInfo.name}</span>
+            <span className="text-3xl font-bold">{productInfo.productInfo.name}</span>
             <div className="h-2 w-[20%] bg-[#D9D9D9] mt-[5px]"></div>
           </div>
           <div>
             <span className="text-lg text-[#BF3744] font-bold">
-              {new Intl.NumberFormat("vi-en").format(productInfo.price)}đ
+              {new Intl.NumberFormat("vi-en").format(productInfo.productInfo.price)}đ
             </span>
           </div>
           <div className="flex flex-col gap-[10px] text-[#8F8667] font-bold text-xl">
-            <span>Chất liệu: {productInfo.material}</span>
-            <span>Kích thước: {productInfo.width} x {productInfo.height} (cm)</span>
-            <span>Năm sáng tác: {productInfo.publishYear}</span>
+            <span>Chất liệu: {productInfo.productInfo.material}</span>
+            <span>Kích thước: {productInfo.productInfo.width} x {productInfo.productInfo.height} (cm)</span>
+            <span>Năm sáng tác: {productInfo.productInfo.publishYear}</span>
           </div>
           <div>
             <Button
               variant="contained"
               className="bg-[#DF6A6A] rounded-[10px] p-4 text-xl font-bold"
+              onClick={productInfo.handleAddToCart}
             >
               THÊM VÀO GIỎ
             </Button>
@@ -152,16 +101,17 @@ const Product_main_interface = () => {
             </Button>
           </div>
           <div className="flex flex-col gap-[10px] text-[#8F8667] text-lg font-bold">
-            <span>Mã: {productInfo.id}</span>
+            <span>Mã: {productInfo.productInfo.id}</span>
             <hr></hr>
-            <span>Danh mục: {productInfo.categoryName}</span>
+            <span>Danh mục: {productInfo.productInfo.categoryName}</span>
             <hr></hr>
             <div className="flex flex-row gap-[10px] items-center">
-            <span>Trạng thái: {productInfo.status}</span>
+            <span>Trạng thái: {productInfo.productInfo.status}</span>
             </div>
           </div>
         </div>
       </div>
+      <h1>{productInfo.announcement}</h1>
     </div>
   );
 };

@@ -28,8 +28,8 @@ export interface ResponseProductBody {
 
 const NavMain = () => {
   const clickBar = useContext(ClickBarContext);
-  const [categories, setCategories] = useState<ResponseBody[]>([]);
-  const [products, setProducts] = useState<ResponseProductBody[]>([]);
+  const [categories, setCategories] = useState<ResponseBody[]>([{id: "", name: ""}]);
+  const [products, setProducts] = useState<ResponseProductBody[]>([{id: "", name: "", price: 0, thumbnail: "", thumbnailImage: "", status: ""}]);
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const navigate = useNavigate();
@@ -58,9 +58,6 @@ const handleCategoryHover = async (categoryId: string) => {
     console.error(error);
   }
 };
-
-  
-  
 
   const fetchThumbnails = async (index: number) => {
     const outputImage = await fetchImage(products[index].thumbnail);

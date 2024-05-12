@@ -3,7 +3,6 @@ import Product_main_interface from "./Product_main_interface.tsx";
 import Product_additional_detail from "./Product_additional_detail.tsx";
 import Footer from "../Homepage/Footer/Footer.tsx";
 import SpecialPicture from "../Homepage/Items/SpecialPicture.tsx";
-import Product_form from "./Product_form.tsx";
 import NavCover from "../Homepage/Navbar/NavCover.tsx";
 import NavMain from "../Homepage/Navbar/NavMain.tsx";
 import ToolBar from "../Homepage/Navbar/Toolbar.tsx";

@@ -8,6 +8,7 @@ import { ClickTheme } from "./context/ClickTheme.tsx";
 import { ClickForHomepage } from "./context/ClickForHomepage.tsx";
 import { createRoot } from "react-dom/client";
 import { AdminController } from "./context/AdminController.tsx";
+import { AddToCartContext } from "./context/AddToCartContext.tsx";
 const root = createRoot(document.getElementById("root"));
 
 root.render(
@@ -15,7 +16,9 @@ root.render(
     <ClickTheme>
       <ClickForHomepage>
         <AdminController>
+          <AddToCartContext>
           <App />
+          </AddToCartContext>
         </AdminController>
       </ClickForHomepage>
     </ClickTheme>

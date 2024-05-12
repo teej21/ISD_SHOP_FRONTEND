@@ -20,6 +20,7 @@ import AdminProductModify from "../components/Admin/Product/AdminProductModify.t
 import AdminProductDetail from "../components/Admin/Product/AdminProductDetail.tsx";
 import AdminEmployeeDetail from "../components/Admin/AdminEmployeeDetail.tsx";
 import CategoryTotal from "../components/ProductList/Category/CategoryTotal.tsx";
+import AddToCart from "../components/AddToCart/AddToCart.tsx";
 
 const Page = () => {
   const [role, setRole] = useState<string | null>("");
@@ -38,6 +39,7 @@ const Page = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/category/:id" element={<Product_detail />} />
         <Route path="/:id" element={<CategoryTotal />} />
+        <Route path="/add-to-cart" element={<AddToCart></AddToCart>} />
         {role !== "CUSTOMER" && (
           <>
             <Route path="/admin" element={<Admin />} />
