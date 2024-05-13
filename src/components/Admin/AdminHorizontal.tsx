@@ -45,6 +45,7 @@ const AdminHorizontal = () => {
         </span>
         <span>{employeeData.eRole}</span>
       </div>
+      <div><span className="text-xl">Log out</span></div>
     </div>
   );
 };

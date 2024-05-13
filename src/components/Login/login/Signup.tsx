@@ -35,11 +35,10 @@ const Signup = () => {
       });
 
       const result = await response.json();
-      console.log("Server response:", result);
-
       if (response.ok) {
         click.handleClickSignUp();
       } else {
+        setTimeout(() => { click.handleDuplicate("")}, 3000)
         click.handleDuplicate(result.error);
       }
     } catch (error) {
@@ -58,9 +57,9 @@ const Signup = () => {
             Đăng ký
           </h1>
           {click.errorDuplicate && (
-            <div className="flex flex-row gap-[5px] mx-auto">
+            <div className="flex flex-row gap-[5px] mx-auto border border-2 border-solid border-red-400 shadow-shadow_primary mb-2">
               <CloseIcon className="text-red-500"></CloseIcon>
-              <p className="text-red-500 font-bold text-xl  pb-4">
+              <p className="text-red-500 font-bold text-xl pb-4">
                 {click.errorDuplicate}
               </p>
             </div>

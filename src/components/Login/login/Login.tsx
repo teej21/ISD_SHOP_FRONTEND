@@ -76,7 +76,7 @@ const Login = () => {
             onSubmit={handleSubmit(submitForm)}
           >
             <label htmlFor="account" className="text-lg">
-              Số điện thoại hoặc địa chỉ email *
+              Số điện thoại hoặc địa chỉ email*
             </label>
             <TextField
               className="bg-login_input"

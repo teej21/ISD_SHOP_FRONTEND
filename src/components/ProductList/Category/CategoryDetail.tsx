@@ -7,7 +7,7 @@ import { fetchImage } from '../../../composables/getImage.ts';
 
 const CategoryDetail = () => {
   const [categories, setCategories] = useState<ICategories>({
-    id: "",
+    id: 0,
     name: "",
     description: "",
   });
@@ -18,7 +18,7 @@ const CategoryDetail = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const handleNaviagation = (id: string) => {
+  const handleNaviagation = (id: number) => {
     navigate(`/category/${id}`)
   }
   useEffect(() => {

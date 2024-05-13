@@ -52,7 +52,7 @@ const handleCategoryHover = async (categoryId: string) => {
   setActiveCategory(categoryId);
   try {
     const productData: ProductGet[] = await getProductByID(categoryId);
-    setProducts(productData.slice(0,3));
+    setProducts(productData);
     setThumbnailFetched(Array(productData.length).fill(false));
   } catch (error) {
     console.error(error);
@@ -124,7 +124,7 @@ const handleCategoryHover = async (categoryId: string) => {
                     </span>
                   </Link>
                   {activeCategory === category.id && (
-                    <div className="flex flex-col gap-[20px] absolute top-full bg-white border border-2 border-solid border-black z-10 w-[250px] shadow-shadow-primary ">
+                    <div className="flex flex-col absolute top-full bg-white border border-2 border-solid border-black z-10 w-[250px] shadow-shadow_primary max-h-[350px] overflow-y-auto ">
                       {products
                         .map((product) => (
                           <div
@@ -143,7 +143,6 @@ const handleCategoryHover = async (categoryId: string) => {
                             </div>
                           </div>
                         ))}
-                        <h1 className="text-black font-bold text-center">And more...</h1>
                     </div>
                   )}
                 </div>

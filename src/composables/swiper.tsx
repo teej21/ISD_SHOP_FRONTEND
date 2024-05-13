@@ -86,7 +86,7 @@ const handleNav = (id: number) => {
             className="w-full h-full object-cover"
           />
           </div>
-          <div className='text-xl text-white absolute left-[70%] top-[70%] font-semibold bg-[#DF6A6A] shadow-shadow-primary p-4 rounded-[20px] flex flex-col gap-[20px]'>
+          <div className='text-xl text-white absolute left-[70%] top-[70%] font-semibold bg-[#DF6A6A] shadow-shadow_primary p-4 rounded-[20px] flex flex-col gap-[20px]'>
           <h1>Tên tranh: {productImg.name}</h1>
           <Button className="bg-[#DF6A6A] rounded-[10px] bg-black text-white">Xem ngay</Button>
           </div>

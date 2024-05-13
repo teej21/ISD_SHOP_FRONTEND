@@ -10,6 +10,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Admin from "../../assets/admin_icon.png";
 import { ClickAdmin } from "../../context/AdminController.tsx";
+import { useNavigate } from "react-router-dom";
 interface ResponseBody {
   full_name: string;
   eRole: string;
@@ -21,6 +22,7 @@ const AdminNavigation = () => {
     full_name: "",
     eRole: "",
   });
+  const navigate = useNavigate();
   useEffect(() => {
     const getEmployeeInfor = () => {
       const fullName = localStorage.getItem("full_name");
@@ -40,9 +42,11 @@ const AdminNavigation = () => {
   };
   const handleClickCustomer = () => {
     navigatePage.handleSetMode("customer");
-    console.log(navigatePage.handleSetMode("customer"));
   };
-
+  const handleNav = () => {
+    navigate("/login")
+    localStorage.removeItem("access_token");
+  }
   return (
     <div className="flex flex-row justify-between items-start">
       <div className=" flex flex-col gap-20 shadow-shadow_primary w-[20%] p-8 h-screen">
@@ -194,6 +198,7 @@ const AdminNavigation = () => {
           </span>
           <span>{employeeData.eRole}</span>
         </div>
+        <div><span className="text-2xl hover:font-bold" onClick={handleNav}>Log out</span></div>
       </div>
     </div>
   );
