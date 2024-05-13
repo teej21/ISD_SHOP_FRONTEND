@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
-
 interface AddToCartElement {
-  id: string | undefined;
+  id: number | undefined;
   thumbnail: string;
   price: number;
   name: string,
@@ -12,7 +11,7 @@ interface ResponseBody {
   description: string;
   height: number;
   width: number;
-  id: string | undefined;
+  id: number | undefined;
   material: string;
   name: string;
   price: number;
@@ -26,7 +25,7 @@ const CartContext = createContext<{
   AddToCartProductList: AddToCartElement[];
   announcement: string;
   handleAddToCart: () => void;
-  fetchProductDetails: (id: string | undefined) => void,
+  fetchProductDetails: (id: number | undefined) => void,
   setAddToCartProductList: React.Dispatch<React.SetStateAction<AddToCartElement[]>>;
 }>({
   productInfo: {
@@ -34,7 +33,7 @@ const CartContext = createContext<{
     description: "",
     height: 0,
     width: 0,
-    id: "",
+    id: 0,
     material: "",
     name: "",
     price: 0,
@@ -45,7 +44,7 @@ const CartContext = createContext<{
   AddToCartProductList: [],
   announcement: "",
   handleAddToCart: () => {},
-  fetchProductDetails: (id: string | undefined) => {},
+  fetchProductDetails: (id: number | undefined) => {},
   setAddToCartProductList: () => {},
 });
 
@@ -55,7 +54,7 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
     description: "",
     height: 0,
     width: 0,
-    id: "",
+    id: 0,
     material: "",
     name: "",
     price: 0,
@@ -65,19 +64,16 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
   });
   const [AddToCartProductList, setAddToCartProductList] = useState<AddToCartElement[]>([]);
   const [announcement, setAnnouncement] = useState<string>("");
-
   const handleAddToCart = () => {
     if (AddToCartProductList.findIndex(item => item.id === productInfo.id) === -1) {
       setAddToCartProductList(prev => [...prev, { id: productInfo.id, thumbnail: productInfo.thumbnail, price: productInfo.price, name: productInfo.name }]);
       setAnnouncement("Thêm sản phẩm thành công!");
-      console.log(AddToCartProductList);
     } else {
       setAnnouncement("Sản phẩm đã tồn tại trong giỏ!");
-      console.log(AddToCartProductList);
     }
   };
 
-  const fetchProductDetails = async (id: string | undefined) => {
+  const fetchProductDetails = async (id: number | undefined) => {
     try {
       const response = await fetch(`http://localhost:8686/products/${id}`);
       console.log(response);
@@ -115,7 +111,6 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
       const outputImage = URL.createObjectURL(image);
       if (response.ok) {
         setProductInfo(data => ({ ...data, thumbnail: outputImage }));
-        console.log(image);
       }
     } catch (error) {
       console.log(error);

@@ -1,7 +1,9 @@
 const developer = {
     SERVICE_ID: "service_ygytaqu",
     TEMPLATE_ID: "template_pz57a7g",
-    EMAIL_PUBLIC_KEY: "sAP62aND2a3u2tu4p"
+    EMAIL_PUBLIC_KEY: "sAP62aND2a3u2tu4p",
+    ADMIN_PASSWORD: "admin123",
+    EMPLOYEE_PASSWORD: "camonquykhach"
 }
 
 const production = {

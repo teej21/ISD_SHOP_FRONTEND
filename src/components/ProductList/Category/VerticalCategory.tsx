@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 const VerticalCategory = () => {
   const [categories, setCategories] = useState<ICategories[]>([
     {
-      id: "",
+      id: 0,
       name: "",
       description: "",
     },
   ]);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<number | null>(null);
 
-  const handleClick = (id: string) => {
+  const handleClick = (id: number) => {
     setActiveCategory(id);
   };
 

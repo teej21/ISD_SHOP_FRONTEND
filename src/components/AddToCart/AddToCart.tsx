@@ -3,7 +3,7 @@ import NavCover from '../Homepage/Navbar/NavCover.tsx'
 import ToolBar from '../Homepage/Navbar/Toolbar.tsx'
 import NavMain from '../Homepage/Navbar/NavMain.tsx'
 import AddToCartDetail from './AddToCartDetail.tsx'
-
+import Footer from '../Homepage/Footer/Footer.tsx'
 const AddToCart = () => {
   return (
     <div>
@@ -11,6 +11,7 @@ const AddToCart = () => {
       <ToolBar></ToolBar>
       <NavMain></NavMain>
       <AddToCartDetail></AddToCartDetail>
+      <Footer></Footer>
     </div>
   )
 }

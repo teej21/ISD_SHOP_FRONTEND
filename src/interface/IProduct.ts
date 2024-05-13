@@ -14,7 +14,7 @@ export interface Product {
   }
 
   export interface ProductGet {
-    id: string,
+    id: number,
     name: string,
     description: string,
     price: number,
@@ -32,9 +32,9 @@ export interface Product {
   }
 
   export interface ProductShortInfo {
-    id: string,
+    id: number,
     name: string,
-    thumbnail: string | undefined,
+    thumbnail: string | null,
     thumbnailImage: string | null
   }
 

@@ -10,10 +10,22 @@ import Pinterest from "@mui/icons-material/Pinterest";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useParams } from "react-router-dom";
 import { CartContext } from "../../context/AddToCartContext.tsx";
+import useAccessToken from "../../composables/getAccessToken.ts";
+import SignInDialog from "../AddToCart/SignInDialog.tsx";
 
 const Product_main_interface = () => {
   const productInfo = useContext(CartContext);
+  const access_token = useAccessToken();
 
+  const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
+
+  const handleAddToCart = () => {
+    if (access_token) {
+      productInfo.handleAddToCart();
+    } else {
+      setShowSignInDialog(true);
+    }
+  };
 
   useEffect(() => {
     const storedCartItems = localStorage.getItem("cartItems");
@@ -33,7 +45,10 @@ const Product_main_interface = () => {
   }
   useEffect(() => {
     const fetchProduct = () => {
-      productInfo.fetchProductDetails(id);
+      if(id){
+      const idNumber = parseInt(id)
+      productInfo.fetchProductDetails(idNumber);
+      }
     }
     
     fetchProduct();
@@ -41,6 +56,10 @@ const Product_main_interface = () => {
 
   return (
     <div>
+       {showSignInDialog && <SignInDialog
+        open={showSignInDialog}
+        handleClose={() => setShowSignInDialog(false)}
+      />}
       <div className="flex flex-row gap-[50px]">
         <div className="flex flex-col gap-[40px]">
           <div className="flex flex-row mt-[30px] gap-[5px]">
@@ -87,7 +106,7 @@ const Product_main_interface = () => {
             <Button
               variant="contained"
               className="bg-[#DF6A6A] rounded-[10px] p-4 text-xl font-bold"
-              onClick={productInfo.handleAddToCart}
+              onClick={handleAddToCart}
             >
               THÊM VÀO GIỎ
             </Button>
@@ -112,7 +131,9 @@ const Product_main_interface = () => {
         </div>
       </div>
       <h1>{productInfo.announcement}</h1>
+      
     </div>
+    
   );
 };
 

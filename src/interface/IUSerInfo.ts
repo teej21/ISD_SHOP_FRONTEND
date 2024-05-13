@@ -41,7 +41,7 @@ export type Customer = {
  export interface AddUser{
   id: string,
   email: string,
-  password: string, 
+  password: string | undefined, 
   gender: string,
   address?: string; 
   phone_number: string,

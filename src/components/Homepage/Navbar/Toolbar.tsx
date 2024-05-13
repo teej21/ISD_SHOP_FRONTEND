@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { getProductList } from "../../../composables/getProductList.ts";
 import { ProductGet } from "../../../interface/IProduct.ts";
 import { fetchImage } from "../../../composables/getImage.ts";
+import useAccessToken from "../../../composables/getAccessToken.ts";
+import SignInDialog from "../../AddToCart/SignInDialog.tsx";
 
 export interface ResponseProductBody {
   id: string;
@@ -22,6 +24,7 @@ export interface ResponseProductBody {
 const ToolBar = () => {
   const clickBar = useContext(ClickBarContext);
   const navigate = useNavigate();
+  const access_token = useAccessToken();
   const handleNavigate = () => {
     navigate("/");
   };
@@ -45,6 +48,16 @@ const ToolBar = () => {
 
   const [searchResult, setSearchResult] = useState<string>('');
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
+  const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
+
+  const handleAddToCart = () => {
+    if (access_token) {
+      handleNavigateForAddToCart();
+    } else {
+      setShowSignInDialog(true);
+    }
+  };
+
 useEffect(() => {
  const handleProduct = async () => {
     try {
@@ -90,6 +103,10 @@ useEffect(() => {
   
   return (
     <div className="bg-white md:flex md:flex-row md:justify-evenly md:items-center md:gap-[20px] md:my-[30px] max-w-[1700px] mx-auto md:shadow-none md:border-none md:w-full lg:px-8 shadow-shadow_primary border-2 border-solid w-8/10 p-4 z-10">
+       {showSignInDialog && <SignInDialog
+        open={showSignInDialog}
+        handleClose={() => setShowSignInDialog(false)}
+      />}
       <div className="md:block flex flex-row justify-between items-center ">
         <div className="md:hidden block">
           <MenuIcon onClick={clickBar.handleBarClick}></MenuIcon>
@@ -119,13 +136,13 @@ useEffect(() => {
       <SearchIcon className="text-[#7D7D7D]" />
     </div>
   </div>
-  {searchResult.length > 0 && <div className="flex flex-col items=center gap-[20px] absolute top-full bg-white border border-2 border-solid border-[#D9D9D9] z-10 w-1/2 shadow-shadow-primary overflow-y-auto max-h-[350px]">
+  {searchResult.length > 0 && <div className="flex flex-col items=center gap-[20px] absolute top-full bg-white border border-2 border-solid border-[#D9D9D9] z-10 w-1/2 shadow-shadow_primary overflow-y-auto max-h-[350px]">
     {filteredProducts.length > 0 ? filteredProducts.map((product) => (
       <div key={product.id} className="flex flex-row justify-between p-4 items-center bg-white border border-2 border-solid border-[#D9D9D9] w-full hover:bg-[#DF6A6A]" onClick={() => handleNavigateForProduct(product.id)}>
         <div className="w-[50px] h-[50px]"><img src={product.thumbnailImage} alt={product.name} className="w-full h-full object-cover" /></div>
         <div className="flex flex-col justify-between items-center gap-[10px] text-base"><span className="font-bold">{product.name}</span><span className="text-red-500 font-bold">Price: {product.price}đ</span></div>
       </div>
-    )) : <div className="font-bold p-4">No products found!</div>}
+    )) : <div className="font-bold p-4">Không tìm thấy sản phẩm phù hợp!</div>}
   </div>}
 </div>
 
@@ -136,7 +153,7 @@ useEffect(() => {
           </span>
           <FavoriteIcon className="xl:w-[25px] xl:h-[25px] w-[20px] height-[20px] hover:text-[#DF6A6A]" />
         </div>
-        <div className="flex gap-[2px] items-center hover:text-[#DF6A6A]" onClick={handleNavigateForAddToCart}>
+        <div className="flex gap-[2px] items-center hover:text-[#DF6A6A]" onClick={handleAddToCart}>
           <span className="font-bold xl:text-lg text-sm text-[#7D7D7D] mr-1 hover:text-[#DF6A6A]">
             GIỎ HÀNG
           </span>
