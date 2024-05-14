@@ -50,7 +50,7 @@ const AddToCartDetail = () => {
                     key={product.id}
                     className="flex flex-row justify-between items-center"
                   >
-                    <div className="flex flex-row items-center gap-[10px]">
+                    <div className="flex flex-row items-center gap-[10px] basis-[50%]">
                       <img
                         src={product.thumbnail}
                         alt={product.id}
@@ -58,13 +58,13 @@ const AddToCartDetail = () => {
                       ></img>
                       <span className="text-xl font-bold">{product.name}</span>
                     </div>
-                    <div>
+                    <div className="flex basis-[50%] grow-0">
                       <span className="text-xl text-red-500 font-bold">
                         {" "}
                         {new Intl.NumberFormat("vi-en").format(product.price)}đ
                       </span>
                     </div>
-                    <div>
+                    <div className="flex basis-[45%]">
                       <span className="text-xl font-bold">1</span>
                     </div>
                     <div>
