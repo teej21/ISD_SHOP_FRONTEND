@@ -14,6 +14,7 @@ import SystemErrorMessage from "../../Login/login/SystemErrorMessage.tsx";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
 const AdminCategoryAdd = () => {
   const {
     register,
@@ -21,15 +22,11 @@ const AdminCategoryAdd = () => {
     formState: { errors },
     reset,
   } = useForm<ICategories>({ resolver: zodResolver(schema) });
-  const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
-  
+
   const submitCategories = async (data: ICategories) => {
-    console.log(data);
     try {
       const response = await fetch("http://localhost:8686/categories", {
         method: "POST",
@@ -38,10 +35,8 @@ const AdminCategoryAdd = () => {
       });
 
       if (response.ok) {
-        setMessage("Thêm sản phẩm thành công!");
-        setTimeout(() => {
-          setMessage('');
-        }, 3000);
+        SuccessMessage("Thêm sản phẩm thành công");
+        handleNavigation();
         reset();
       }
     } catch (error) {
@@ -66,7 +61,6 @@ const AdminCategoryAdd = () => {
     <div>
       <AdminNavigation />
       <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-      {message && <SystemSuccessMessage message={message}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>

@@ -35,7 +35,7 @@ const AdminProductDetail = () => {
     description: "",
     price: 0,
     thumbnail: null,
-    category: { id: "", name: "", description: "" },
+    category: { id: 0, name: "", description: "" },
     material: "",
     width: 0,
     status: "",

@@ -11,6 +11,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import useRole from "../../composables/getRole.ts";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<AddUser[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -68,9 +69,7 @@ const AdminContent = () => {
   const accessToken = useAccessToken();
 
   useEffect(() => {
-    const fetchCustomerList = async () => {
-      console.log(accessToken);
-      
+    const fetchCustomerList = async () => {    
       try {
         const response = await fetch(
           "http://localhost:8686/admin/users/role=CUSTOMER",
@@ -136,7 +135,7 @@ const AdminContent = () => {
     );
     const deletedData = await response.json();
     if (response.ok) {
-      setSuccessMessage(deletedData.result);
+      SuccessMessage(deletedData.result)
       setCustomerInfo((data) =>
         data.filter((customer) => customer.id !== customerId)
       );

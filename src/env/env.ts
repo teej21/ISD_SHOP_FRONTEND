@@ -3,7 +3,8 @@ const developer = {
     TEMPLATE_ID: "template_pz57a7g",
     EMAIL_PUBLIC_KEY: "sAP62aND2a3u2tu4p",
     ADMIN_PASSWORD: "admin123",
-    EMPLOYEE_PASSWORD: "camonquykhach"
+    EMPLOYEE_PASSWORD: "camonquykhach",
+    CUSTOMER_PASSWORD: "abc12345"
 }
 
 const production = {

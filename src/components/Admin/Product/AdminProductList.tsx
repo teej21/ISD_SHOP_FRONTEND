@@ -14,6 +14,7 @@ import useAccessToken from "../../../composables/getAccessToken.ts";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { getProductList } from "../../../composables/getProductList.ts";
 import { getCategories } from "../../../composables/getCategories.ts";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
 
 const AdminProductList = () => {
   const [productInfo, setProductInfo] = useState<Product[]>([]);
@@ -140,8 +141,8 @@ const AdminProductList = () => {
       });
       if (response.ok) {
         const data: Product[] = await response.json();
+        SuccessMessage("Xóa sản phẩm thành công!")
         setProductInfo(data);
-        setSuccessMessage("Xóa sản phẩm thành công!");
 
         setTimeout(() => {
           setSuccessMessage("");

@@ -12,17 +12,23 @@ import { useParams } from "react-router-dom";
 import { CartContext } from "../../context/AddToCartContext.tsx";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import SignInDialog from "../AddToCart/SignInDialog.tsx";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
+import LoadingState from "../LoadingFrame/Loading.tsx";
+import failMessage from "../LoadingFrame/FailMessage.ts";
 
 const Product_main_interface = () => {
   const productInfo = useContext(CartContext);
   const access_token = useAccessToken();
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
 
   const handleAddToCart = () => {
+    setIsLoading(true);
     if (access_token) {
       productInfo.handleAddToCart();
+      setIsLoading(false);
     } else {
+      setIsLoading(false);
       setShowSignInDialog(true);
     }
   };
@@ -42,6 +48,7 @@ const Product_main_interface = () => {
   const [isLike, setIsLike] = useState(false);
   const handleLike = () => {
     setIsLike(isLike => !isLike);
+    isLike ? SuccessMessage("Đã thêm vào mục yêu thích!") : failMessage("Bỏ khỏi danh mục yêu thích!")
   }
   useEffect(() => {
     const fetchProduct = () => {
@@ -60,6 +67,7 @@ const Product_main_interface = () => {
         open={showSignInDialog}
         handleClose={() => setShowSignInDialog(false)}
       />}
+      {isLoading && <LoadingState></LoadingState>}
       <div className="flex flex-row gap-[50px]">
         <div className="flex flex-col gap-[40px]">
           <div className="flex flex-row mt-[30px] gap-[5px]">
@@ -130,8 +138,6 @@ const Product_main_interface = () => {
           </div>
         </div>
       </div>
-      <h1>{productInfo.announcement}</h1>
-      
     </div>
     
   );

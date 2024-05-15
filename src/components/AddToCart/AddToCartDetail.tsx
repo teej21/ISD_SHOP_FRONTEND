@@ -3,6 +3,8 @@ import { CartContext } from "../../context/AddToCartContext.tsx";
 import { useEffect } from "react";
 import { Button, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
+import Product_additional_detail from "../Product_detail/Product_additional_detail.tsx";
 const AddToCartDetail = () => {
   const productList = useContext(CartContext);
   const [totalPrice, setTotalPrice] = useState<number>(0);
@@ -14,7 +16,6 @@ const AddToCartDetail = () => {
         totalPrice += product.price;
       });
       setTotalPrice(totalPrice);
-      console.log(totalPrice);
     };
     calculateTotal();
   }, []);
@@ -37,10 +38,10 @@ const AddToCartDetail = () => {
         <div className="flex flex-row justify-between max-w-[1800px] mx-auto mt-[50px] gap-[50px]">
           <div className="flex flex-col basis-[50%] gap-[10px]">
             <div className="flex flex-row justify-between items-center text-xl font-bold">
-              <h1>SẢN PHẨM</h1>
-              <h1>GIÁ</h1>
-              <h1>SỐ LƯỢNG</h1>
-              <h1>TỔNG CỘNG</h1>
+              <div><h1>SẢN PHẨM</h1></div>
+              <div><h1>GIÁ</h1></div>
+              <div><h1>SỐ LƯỢNG</h1></div>
+              <div className="flex basis-[20%]"><h1>TỔNG CỘNG</h1></div>
             </div>
             <div className="flex flex-col justify-between">
               {productList.AddToCartProductList.map((product) => (
@@ -67,12 +68,13 @@ const AddToCartDetail = () => {
                     <div className="flex basis-[45%]">
                       <span className="text-xl font-bold">1</span>
                     </div>
-                    <div>
+                    <div className="flex basis-[30%]">
                       <span className="text-xl text-red-500 font-bold">
                         {" "}
                         {new Intl.NumberFormat("vi-en").format(product.price)}đ
                       </span>
                     </div>
+                    <div><DeleteIcon className="hover:text-[#DF6A6A]" onClick={() => productList.deleteAddToCartProduct(product.id)}></DeleteIcon></div>
                   </div>
                 </div>
               ))}

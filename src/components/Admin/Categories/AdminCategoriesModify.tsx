@@ -12,9 +12,10 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
 const AdminCategoriesModify = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories>({
-    id: "",
+    id: 0,
     name: "",
     description: "",
   });
@@ -37,7 +38,7 @@ const AdminCategoriesModify = () => {
 
 
   const resetInfo = () => {
-    setCategoryDetail({id: '', name: '', description: ''});
+    setCategoryDetail({id: 0, name: '', description: ''});
   }
   useEffect(() => {
     const fetchCustomerDetails = async () => {
@@ -86,7 +87,7 @@ const AdminCategoriesModify = () => {
       });
 
       if (response.ok) {
-        alert("Chỉnh sửa thành công!")
+        SuccessMessage("Chỉnh sửa thành công!");
         handleNavigation();
        resetInfo();
       }

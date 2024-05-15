@@ -11,14 +11,15 @@ import { getCategories } from "../../../composables/getCategories.ts";
 import { ProductGet } from "../../../interface/IProduct.ts";
 import { getProductByID } from "../../../composables/getProductByID.ts";
 import { fetchImage } from "../../../composables/getImage.ts";
+import LoadingState from "../../LoadingFrame/Loading.tsx";
 
 interface ResponseBody {
-  id: string;
+  id: number;
   name: string;
 }
 
 export interface ResponseProductBody {
-  id: string;
+  id: number;
   name: string;
   price: number;
   thumbnail: string | null;
@@ -28,14 +29,14 @@ export interface ResponseProductBody {
 
 const NavMain = () => {
   const clickBar = useContext(ClickBarContext);
-  const [categories, setCategories] = useState<ResponseBody[]>([{id: "", name: ""}]);
-  const [products, setProducts] = useState<ResponseProductBody[]>([{id: "", name: "", price: 0, thumbnail: "", thumbnailImage: "", status: ""}]);
+  const [categories, setCategories] = useState<ResponseBody[]>([{id: 0, name: ""}]);
+  const [products, setProducts] = useState<ResponseProductBody[]>([{id: 0, name: "", price: 0, thumbnail: "", thumbnailImage: "", status: ""}]);
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>("");
+  const [activeCategory, setActiveCategory] = useState<number>(0);
   const navigate = useNavigate();
-  const handleNaviagation = (id: string) => {
-    navigate(`/category/${id}`)
-  }
+  const handleNaviagation = (id: number) => {
+    navigate(`/category/${id}`);
+  };
   useEffect(() => {
     const fetchList = async () => {
       try {
@@ -48,11 +49,12 @@ const NavMain = () => {
     fetchList();
   }, []);
 
-const handleCategoryHover = async (categoryId: string) => {
+const handleCategoryHover = async (categoryId: number) => {
   setActiveCategory(categoryId);
   try {
     const productData: ProductGet[] = await getProductByID(categoryId);
     setProducts(productData);
+    
     setThumbnailFetched(Array(productData.length).fill(false));
   } catch (error) {
     console.error(error);
@@ -60,6 +62,7 @@ const handleCategoryHover = async (categoryId: string) => {
 };
 
   const fetchThumbnails = async (index: number) => {
+    try{
     const outputImage = await fetchImage(products[index].thumbnail);
     setProducts((prevProducts) => {
       const updatedProducts = [...prevProducts];
@@ -74,6 +77,9 @@ const handleCategoryHover = async (categoryId: string) => {
       updatedThumbnailFetched[index] = true;
       return updatedThumbnailFetched;
     });
+  } catch(error){
+    console.log(error);
+  }
   };
 
   useEffect(() => {
@@ -115,7 +121,7 @@ const handleCategoryHover = async (categoryId: string) => {
                 key={category.id}
                 className="flex flex-row gap-[5px] items-center md:gap-[5px] relative hover:bg-[#DF6A6A] p-6"
                 onMouseEnter={() => handleCategoryHover(category.id)}
-                onMouseLeave={() => setActiveCategory("")}
+                onMouseLeave={() => setActiveCategory(0)}
               >
                 <div className="md:text-white md:flex md:justify-between md:items-center text-[#666666D9] font-bold">
                   <Link to={`/${category.id}`}>

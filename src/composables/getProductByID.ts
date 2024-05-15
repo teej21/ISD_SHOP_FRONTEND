@@ -1,9 +1,9 @@
 interface ResponseBody {
-  id: string;
+  id: number;
   name: string;
   thumbnail: string;
 }
-export const getProductByID = async (id: string) => {
+export const getProductByID = async (id: number) => {
   try {
     const response = await fetch(
       `http://localhost:8686/products/category=${id}`

@@ -1,6 +1,6 @@
 import { Paper, Container, TextField, Button, Icon } from "@mui/material";
-import React, { useContext } from "react";
-import { IUserInfo, ResponseBody } from "../../../interface/IUSerInfo";
+import React, { useContext, useState } from "react";
+import { IUserInfo, ResponseBody } from "../../../interface/IUserInfo.ts";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
@@ -10,10 +10,15 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import schema from "../../../validation/SignInVal.ts";
 import { useNavigate } from "react-router-dom";
-import SystemErrorMessage from "./SystemErrorMessage.tsx";
+import Swal from "sweetalert2";
+import LoadingState from "../../LoadingFrame/Loading.tsx";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
+import failMessage from "../../LoadingFrame/FailMessage.ts";
+
 const Login = () => {
   const click = useContext(ThemeContext);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -21,6 +26,7 @@ const Login = () => {
   } = useForm<IUserInfo>({ resolver: zodResolver(schema) });
 
   const submitForm = async (data: IUserInfo) => {
+    setIsLoading(true);
     try {
       const response = await fetch("http://localhost:8686/login", {
         method: "POST",
@@ -32,35 +38,34 @@ const Login = () => {
       console.log(response);
       if (response.ok) {
         const responseBody: ResponseBody = await response.json();
-        console.log(responseBody);
+
         localStorage.setItem("full_name", responseBody.full_name);
         localStorage.setItem("access_token", responseBody.tokens.access_token);
         localStorage.setItem("refresh_token", responseBody.tokens.refresh_token);
         localStorage.setItem("role", responseBody.role);
-        if(responseBody.tokens && responseBody.role !== 'CUSTOMER')
-          {
-            navigate('/admin');
-          }
-          else{
-            navigate('/')
-          }
+        SuccessMessage("Đăng nhập thành công");
+        if (responseBody.tokens && responseBody.role !== "CUSTOMER") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
       } else {
-        setTimeout(() => {
-          click.handleError('');
-        }, 3000)
-        click.handleError((await response.json()).error);
+        failMessage((await response.json()).error);
       }
- 
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <div>
       <Container>
+        {isLoading && <LoadingState></LoadingState>}
         <Paper
           elevation={3}
-          className="md:px-[30px] md:py-[20px] md:w-[600px] w-8/10 py-[10px] px-[15px]  absolute top-1/2 left-1/2 transform -translate-x-[50%] -translate-y-[50%]"
+          className="md:px-[30px] md:py-[20px] md:w-[600px] w-8/10 py-[10px] px-[15px] absolute top-1/2 left-1/2 transform -translate-x-[50%] -translate-y-[50%]"
         >
           <div className="flex flex-row items-center justify-end">
             <ArrowBackIcon className="font-bold"></ArrowBackIcon>
@@ -69,8 +74,6 @@ const Login = () => {
             </Link>
           </div>
           <h1 className="sm:text-3xl font-bold pb-8 text-2xl ">Đăng nhập</h1>
-          {!errors.username && !errors.password && click.error && <SystemErrorMessage message={click.error}/>
-          }
           <form
             className="flex flex-col justify-center align-center gap-[20px] text-lg"
             onSubmit={handleSubmit(submitForm)}

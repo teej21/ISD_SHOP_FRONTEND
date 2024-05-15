@@ -11,9 +11,11 @@ import { ProductGet } from "../../../interface/IProduct.ts";
 import { fetchImage } from "../../../composables/getImage.ts";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import SignInDialog from "../../AddToCart/SignInDialog.tsx";
+import LoadingState from "../../LoadingFrame/Loading.tsx";
+import { CartContext } from "../../../context/AddToCartContext.tsx";
 
 export interface ResponseProductBody {
-  id: string;
+  id: number;
   name: string;
   price: number;
   thumbnail: string | null;
@@ -23,12 +25,14 @@ export interface ResponseProductBody {
 
 const ToolBar = () => {
   const clickBar = useContext(ClickBarContext);
+  const addToCartList = useContext(CartContext);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const access_token = useAccessToken();
   const handleNavigate = () => {
     navigate("/");
   };
-  const handleNavigateForProduct = (id: string) => {
+  const handleNavigateForProduct = (id: number) => {
     navigate(`/category/${id}`)
   }
 
@@ -37,7 +41,7 @@ const ToolBar = () => {
   }
   const [products, setProducts] = useState<ResponseProductBody[]>([
     {
-      id: "",
+      id: 0,
       name: "",
       price: 0,
       thumbnail: "",
@@ -60,12 +64,16 @@ const ToolBar = () => {
 
 useEffect(() => {
  const handleProduct = async () => {
+  setIsLoading(true);
     try {
       const productData: ProductGet[] = await getProductList(null);
       setProducts(productData);
       setThumbnailFetched(Array(productData.length).fill(false));
     } catch (error) {
       console.error(error);
+    }
+    finally{
+      setIsLoading(false);
     }
   };
   handleProduct();
@@ -137,6 +145,7 @@ useEffect(() => {
     </div>
   </div>
   {searchResult.length > 0 && <div className="flex flex-col items=center gap-[20px] absolute top-full bg-white border border-2 border-solid border-[#D9D9D9] z-10 w-1/2 shadow-shadow_primary overflow-y-auto max-h-[350px]">
+  {isLoading && <LoadingState></LoadingState>}
     {filteredProducts.length > 0 ? filteredProducts.map((product) => (
       <div key={product.id} className="flex flex-row justify-between p-4 items-center bg-white border border-2 border-solid border-[#D9D9D9] w-full hover:bg-[#DF6A6A]" onClick={() => handleNavigateForProduct(product.id)}>
         <div className="w-[50px] h-[50px]"><img src={product.thumbnailImage} alt={product.name} className="w-full h-full object-cover" /></div>
@@ -157,7 +166,10 @@ useEffect(() => {
           <span className="font-bold xl:text-lg text-sm text-[#7D7D7D] mr-1 hover:text-[#DF6A6A]">
             GIỎ HÀNG
           </span>
+          <div className="relative">
           <ShoppingCartIcon className="text-[#7D7D7D] xl:w-[25px] xl:h-[25px] w-[20px] height-[20px] hover:text-[#DF6A6A] " />
+          <div className="absolute -top-1 -right-1 bg-[#DF6A6A] w-[17px] h-[17px] rounded-full"><span className="absolute top-1/2 left-1/2 -transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-sm">{addToCartList.AddToCartProductList.length}</span></div>
+          </div>
         </div>
       </div>
     </div>
