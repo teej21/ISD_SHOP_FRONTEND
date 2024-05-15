@@ -192,10 +192,9 @@ const AdminModify = () => {
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Chức vụ:
                   <select className="w-full p-2 border-2 border-solid border-black" {...register('role')}>
-                    <option selected disabled value="">
-                      Chức vụ
+                    <option selected disabled value="CUSTOMER">
+                      CUSTOMER
                     </option>
-                    <option value="CUSTOMER">CUSTOMER</option>
                   </select>
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">

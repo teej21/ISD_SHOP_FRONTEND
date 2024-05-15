@@ -10,6 +10,7 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<ICategories[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -122,10 +123,7 @@ const AdminContent = () => {
     );
     const deletedData = await response.json();
     if (response.ok) {
-        setSuccessMessage(deletedData.result); 
-        setTimeout(() => {
-          setSuccessMessage(''); 
-        }, 3000);
+        SuccessMessage(deletedData.result);
         setCustomerInfo((data) =>
           data.filter((category) => category.id !== categoryId)
         );

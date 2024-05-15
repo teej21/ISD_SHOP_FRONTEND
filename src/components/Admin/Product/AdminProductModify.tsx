@@ -12,7 +12,9 @@ import { Status } from "../../../interface/IProduct.ts";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import AdminHorizontal from "../AdminHorizontal.tsx";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
 export interface ResponseBody {
+  id: number;
   name: string;
   description: string;
   price: number;
@@ -28,6 +30,7 @@ export interface ResponseBody {
 const AdminProductModify = () => {
 
   const [productInfo, setProductInfo] = useState<ResponseBody>({
+    id: 0,
     name: "",
     description: "",
     price: 0,
@@ -42,7 +45,7 @@ const AdminProductModify = () => {
 
   const [categories, setCategories] = useState<ICategories[]>([
     {
-      id: "",
+      id: 0,
       name: "",
       description: "",
     },
@@ -92,6 +95,7 @@ const AdminProductModify = () => {
         console.log(data.thumbnail);
         if (response.ok) {         
           const modifiedData = {
+            id: data.id,
             name: data.name,
             description: data.description,
             price: data.price || 0,
@@ -152,7 +156,7 @@ const AdminProductModify = () => {
         body: formData,
       });
       if (response.ok) {
-        alert("Chỉnh sửa thành công!");
+        SuccessMessage("Chỉnh sửa sản phẩm thành công!")
         handleNavigation();
         resetInfo();
       }

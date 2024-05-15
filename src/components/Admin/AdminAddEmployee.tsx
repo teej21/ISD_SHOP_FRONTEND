@@ -14,6 +14,9 @@ import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
+import failMessage from "../LoadingFrame/FailMessage.ts";
+import getConfigObject from "../../env/env.ts";
 const AdminAddEmployee = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AddUser>({ resolver: zodResolver(schema) });
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -23,6 +26,7 @@ const AdminAddEmployee = () => {
     const nav = useContext(ClickAdmin);
     const submitCustomer = async (data: AddUser) => {
       try {
+        data.password= getConfigObject('DEV').ADMIN_PASSWORD;
         const response = await fetch("http://localhost:8686/admin/users",{
           method: 'POST',
           headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`},
@@ -31,15 +35,11 @@ const AdminAddEmployee = () => {
   
         if (response.ok) {
           const responseBody = await response.json();
-          data.password= process.env.ADMIN_PASSWORD;
-          alert(responseBody.result);
+          SuccessMessage(responseBody.result);
           handleNavigation();
           reset(); 
         } else {
-          setTimeout(() => {
-            setErrorMessage("");
-          }, 3000)
-          setErrorMessage((await response.json()).error);
+          failMessage((await response.json()).error);
         }
       } catch (error) {
         console.error("Error adding user:", error);

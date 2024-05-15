@@ -16,6 +16,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import AdminHorizontal from "../AdminHorizontal.tsx";
+import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
 
 const AdminProductAdd = () => {
   const {
@@ -28,6 +29,7 @@ const AdminProductAdd = () => {
   const [errorMessage, setErrorMessage] = useState<String[]>([]);
   const [message, setMessage] = useState<"">("");
   const [productInfo, setProductInfo] = useState<Product>({
+    id: 0,
     name: "",
     description: "",
     price: 0,
@@ -37,10 +39,11 @@ const AdminProductAdd = () => {
     width: 0,
     height: 0,
     publishYear: 0,
+    status: ""
   });
   const [categories, setCategories] = useState<ICategories[]>([
     {
-      id: "",
+      id: 0,
       name: "",
       description: "",
     },
@@ -63,7 +66,6 @@ const AdminProductAdd = () => {
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
-          console.log(data[0].id);
           
         } else {
           const errorData = await response.json();
@@ -95,7 +97,7 @@ const AdminProductAdd = () => {
       });
 
       if (response.ok) {
-        alert("Thêm sản phẩm thành công!");
+        SuccessMessage("Thêm sản phẩm thành công!")
         handleNavigation();
         reset();
       } else {

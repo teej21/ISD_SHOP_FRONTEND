@@ -11,9 +11,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import useRole from "../../composables/getRole.ts";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
+import confirmMessage from "../LoadingFrame/ConfirmMessage.ts";
 const AdminEmployeeContent = () => {
   const [customerInfo, setCustomerInfo] = useState<Customer[]>([]);
-  const [emptyMessage, setEmptyMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
@@ -95,7 +96,6 @@ const AdminEmployeeContent = () => {
         
       } catch (error) {
         console.error("Failed to fetch customer list:", error);
-        setEmptyMessage("Failed to fetch customer list. Please try again later.");
         console.log(customerInfo);
         
       }
@@ -134,6 +134,7 @@ const AdminEmployeeContent = () => {
       }
     );
     if (response.ok) {
+      SuccessMessage((await response.json()).result)
       setCustomerInfo((data) =>
         data.filter((customer) => customer.id !== customerId)
       );
@@ -189,7 +190,7 @@ const AdminEmployeeContent = () => {
           />
         ) : (
           <div className="text-center py-4">
-            <h1 className="text-2xl text-red-500">{emptyMessage}</h1>
+            <h1 className="text-2xl text-red-500">Không có nhân viên!</h1>
           </div>
         )}
       </div>

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminModify from "./AdminModify.tsx";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
+import LoadingState from "../LoadingFrame/Loading.tsx";
 const AdminEmployeeDetail = () => {
   const [customerDetail, setCustomerDetail] = useState<Customer | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
@@ -38,7 +39,7 @@ const AdminEmployeeDetail = () => {
   }, [access_token]);
 
   if (!customerDetail) {
-    return <p>Loading...</p>;
+    return <LoadingState></LoadingState>;
   }
   return (
     <div> <AdminHorizontal/>

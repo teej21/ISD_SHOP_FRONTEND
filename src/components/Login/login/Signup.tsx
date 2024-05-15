@@ -10,6 +10,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CloseIcon from "@mui/icons-material/Close";
 import schema from "../../../validation/SignUpVal.ts";
+import failMessage from "../../LoadingFrame/FailMessage.ts";
 const Signup = () => {
   const click = useContext(ThemeContext);
 
@@ -22,8 +23,6 @@ const Signup = () => {
   const onSubmit = async (data: IUserSignUp) => {
     try {
       const { confirm_password, ...formData } = data;
-      console.log(data);
-      console.log("Form submitted with data:", formData);
       formData.role = "CUSTOMER";
 
       const response: any = await fetch("http://localhost:8686/register", {
@@ -38,8 +37,7 @@ const Signup = () => {
       if (response.ok) {
         click.handleClickSignUp();
       } else {
-        setTimeout(() => { click.handleDuplicate("")}, 3000)
-        click.handleDuplicate(result.error);
+        failMessage(result.error)
       }
     } catch (error) {
       console.error("Error submitting form:", error);

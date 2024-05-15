@@ -21,7 +21,6 @@ import AdminProductDetail from "../components/Admin/Product/AdminProductDetail.t
 import AdminEmployeeDetail from "../components/Admin/AdminEmployeeDetail.tsx";
 import CategoryTotal from "../components/ProductList/Category/CategoryTotal.tsx";
 import AddToCart from "../components/AddToCart/AddToCart.tsx";
-import useAccessToken from "../composables/getAccessToken.ts";
 
 const Page = () => {
   const [role, setRole] = useState<string | null >("");
@@ -31,6 +30,7 @@ const Page = () => {
     const access_token = localStorage.getItem("access_token");
     setAccessToken(access_token)
     setRole(userRole);
+    console.log(role);
   }, []);
 
   return (
@@ -43,6 +43,7 @@ const Page = () => {
         <Route path="/category/:id" element={<Product_detail />} />
         <Route path="/:id" element={<CategoryTotal />} />
         <Route path="/add-to-cart" element={<AddToCart></AddToCart>} />
+        <Route path="*" element={<Error_page />} />
         {role && ["ADMIN", "MANAGER", "EMPLOYEE"].includes(role) && (
           <>
             <Route path="/admin" element={<Admin />} />
@@ -97,7 +98,6 @@ const Page = () => {
             />
           </>
         )}
-        <Route path="*" element={<Error_page />} />
       </Routes>
     </div>
   );

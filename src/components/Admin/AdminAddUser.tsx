@@ -1,8 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from "./AdminNavigation.tsx";
 import schema from "../../validation/AddUserForm.ts";
 import { AddUser } from "../../interface/IUSerInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +11,9 @@ import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
+import failMessage from "../LoadingFrame/FailMessage.ts";
+import getConfigObject from "../../env/env.ts";
 const AdminAddUser = () => {
   const {
     register,
@@ -27,7 +27,7 @@ const AdminAddUser = () => {
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
   const submitCustomer = async (data: AddUser) => {
-    data.password = "camonquykhach";
+    data.password = getConfigObject('DEV').CUSTOMER_PASSWORD;
     console.log(data);
     try {
       const response = await fetch("http://localhost:8686/admin/users",{
@@ -38,14 +38,11 @@ const AdminAddUser = () => {
 
       if (response.ok) {
         const responseBody = await response.json();
-        alert(responseBody.result);
+        SuccessMessage(responseBody.result);
         handleNavigation();
         reset();
       } else {
-        setTimeout(() => {
-          setErrorMessage("");
-        }, 3000)
-        setErrorMessage((await response.json()).error);
+        failMessage((await response.json()).error);
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -66,8 +63,6 @@ const AdminAddUser = () => {
     <div>
       <AdminHorizontal/>
       <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-      {message && <SystemSuccessMessage message={message}/>}
-      {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
@@ -145,10 +140,9 @@ const AdminAddUser = () => {
                       {...register("role", { required: true })}
                       className="w-full p-2 border-2 border-solid border-black"
                     >
-                      <option selected disabled value="">
-                        Chức vụ
+                      <option selected disabled value="CUSTOMER">
+                        CUSTOMER
                       </option>
-                      <option value="CUSTOMER">CUSTOMER</option>
                     </select>
                     {errors.role && (
                       <h1 className="text-red-500 font-bold text-xl">

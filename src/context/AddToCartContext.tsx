@@ -1,6 +1,10 @@
 import React, { createContext, useState, useEffect } from "react";
+import SuccessMessage from "../components/LoadingFrame/SuccessMessage.ts";
+import failMessage from "../components/LoadingFrame/FailMessage.ts";
+import confirmMessage from "../components/LoadingFrame/ConfirmMessage.ts";
+import Swal from "sweetalert2";
 interface AddToCartElement {
-  id: number | undefined;
+  id: number | null;
   thumbnail: string;
   price: number;
   name: string,
@@ -11,7 +15,7 @@ interface ResponseBody {
   description: string;
   height: number;
   width: number;
-  id: number | undefined;
+  id: number | null;
   material: string;
   name: string;
   price: number;
@@ -23,10 +27,12 @@ interface ResponseBody {
 const CartContext = createContext<{
   productInfo: ResponseBody;
   AddToCartProductList: AddToCartElement[];
-  announcement: string;
+  isDeleted: boolean,
+  setIsDeleted: React.Dispatch<React.SetStateAction<boolean>>,
   handleAddToCart: () => void;
-  fetchProductDetails: (id: number | undefined) => void,
+  fetchProductDetails: (id: number | null) => void,
   setAddToCartProductList: React.Dispatch<React.SetStateAction<AddToCartElement[]>>;
+  deleteAddToCartProduct: (id: number | null) => void,
 }>({
   productInfo: {
     categoryName: "",
@@ -42,10 +48,12 @@ const CartContext = createContext<{
     publishYear: "",
   },
   AddToCartProductList: [],
-  announcement: "",
+  isDeleted: false,
+  setIsDeleted: () => {},
   handleAddToCart: () => {},
-  fetchProductDetails: (id: number | undefined) => {},
+  fetchProductDetails: (id: number | null) => {},
   setAddToCartProductList: () => {},
+  deleteAddToCartProduct: (id: number | null) => {},
 });
 
 const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
@@ -63,17 +71,34 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
     publishYear: "",
   });
   const [AddToCartProductList, setAddToCartProductList] = useState<AddToCartElement[]>([]);
-  const [announcement, setAnnouncement] = useState<string>("");
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const handleAddToCart = () => {
     if (AddToCartProductList.findIndex(item => item.id === productInfo.id) === -1) {
       setAddToCartProductList(prev => [...prev, { id: productInfo.id, thumbnail: productInfo.thumbnail, price: productInfo.price, name: productInfo.name }]);
-      setAnnouncement("Thêm sản phẩm thành công!");
+      SuccessMessage("Thêm sản phẩm thành công!");
     } else {
-      setAnnouncement("Sản phẩm đã tồn tại trong giỏ!");
+      failMessage("Sản phẩm đã tồn tại trong giỏ!");
     }
   };
 
-  const fetchProductDetails = async (id: number | undefined) => {
+  const deleteAddToCartProduct = (id: number | null) => {
+    if(id){
+    Swal.fire({
+      title: "Do you want delete the product?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then((result) => {
+      if (result.isConfirmed) {
+          SuccessMessage("Xóa sản phẩm thành công!");
+          setAddToCartProductList(prev => prev.filter(item => item.id !== id));
+          setIsDeleted(true);
+      }
+    });
+    }
+  };
+
+  const fetchProductDetails = async (id: number | null) => {
     try {
       const response = await fetch(`http://localhost:8686/products/${id}`);
       console.log(response);
@@ -118,7 +143,7 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <CartContext.Provider value={{ productInfo, AddToCartProductList, announcement, handleAddToCart, fetchProductDetails, setAddToCartProductList }}>
+    <CartContext.Provider value={{ productInfo, AddToCartProductList, handleAddToCart, fetchProductDetails, setAddToCartProductList, deleteAddToCartProduct, isDeleted, setIsDeleted }}>
       {children}
     </CartContext.Provider>
   );
