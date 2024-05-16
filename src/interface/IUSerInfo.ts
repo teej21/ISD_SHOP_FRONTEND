@@ -50,4 +50,44 @@ export type Customer = {
   date_of_birth?: string; 
  }
 
+ interface User {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  gender: string;
+  password: string;
+  active: boolean;
+  dateOfBirth: string | null;
+  address: string | null;
+  role: string;
+  enabled: boolean;
+  accountNonExpired: boolean;
+  credentialsNonExpired: boolean;
+  accountNonLocked: boolean;
+  username: string;
+  authorities: Authority[];
+  
+}
+
+interface Authority {
+  authority: string;
+}
+
+interface OrderDetail {
+  id: number;
+}
+
+export interface Order {
+  id: number;
+  name: string;
+  address: string;
+  phoneNumber: string;
+  note: string;
+  user: User;
+  caringEmployee: null | any;
+  status: string;
+  orderDetailList: OrderDetail[];
+}
+
  

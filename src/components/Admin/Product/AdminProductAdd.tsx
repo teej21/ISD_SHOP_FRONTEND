@@ -39,7 +39,7 @@ const AdminProductAdd = () => {
     width: 0,
     height: 0,
     publishYear: 0,
-    status: ""
+    status: "AVAILABLE",
   });
   const [categories, setCategories] = useState<ICategories[]>([
     {
@@ -66,7 +66,6 @@ const AdminProductAdd = () => {
         if (response.ok) {
           const data = await response.json();
           setCategories(data);
-          
         } else {
           const errorData = await response.json();
         }
@@ -80,14 +79,11 @@ const AdminProductAdd = () => {
   const submitProduct = async () => {
     try {
       const formData = new FormData();
-      console.log("submit infor::", productInfo);
       const keys = Object.keys(productInfo);
-      
       keys.forEach((key) => {
         formData.append(key, productInfo[key]);
       });
-      console.log(formData.get("status"));
-      
+
       const response = await fetch("http://localhost:8686/products", {
         method: "POST",
         headers: {
@@ -97,13 +93,12 @@ const AdminProductAdd = () => {
       });
 
       if (response.ok) {
-        SuccessMessage("Thêm sản phẩm thành công!")
+        SuccessMessage("Thêm sản phẩm thành công!");
         handleNavigation();
         reset();
       } else {
         const errorData = await response.json();
         setErrorMessage([errorData.error]);
-        console.log(response);
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -152,7 +147,7 @@ const AdminProductAdd = () => {
     <div>
       <AdminHorizontal />
       <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-      {message && <SystemSuccessMessage message={message}/>}
+        {message && <SystemSuccessMessage message={message} />}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
@@ -244,8 +239,8 @@ const AdminProductAdd = () => {
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Ảnh sản phẩm
                     <div className="flex flex-row justify-between items-center gap-[100px]">
-                    {!preview && 
-                      <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
+                      {!preview && (
+                        <div className="w-[200px] h-[150px] border border-dashed border-2 border-[#AABEE7] bg-[#F5F5F5]">
                           <div>
                             <div className="w-[60px] h-[60px] mx-auto my-2">
                               <AddPhotoAlternateIcon className="w-full h-full"></AddPhotoAlternateIcon>
@@ -259,23 +254,24 @@ const AdminProductAdd = () => {
                               </span>
                             </div>
                           </div>
-                        <input
-                          type="file"
-                          className="w-full h-full hidden"
-                          {...register("thumbnailImage")}
-                          onChange={handleImageChange}
-                          accept="image/png, image/jpg"
-                        ></input>
-                      </div>}
+                          <input
+                            type="file"
+                            className="w-full h-full hidden"
+                            {...register("thumbnailImage")}
+                            onChange={handleImageChange}
+                            accept="image/png, image/jpg"
+                          ></input>
+                        </div>
+                      )}
                       {preview && (
                         <div className="w-[200px] h-[150px]">
                           <input
-                          type="file"
-                          className="w-full h-full hidden"
-                          {...register("thumbnailImage")}
-                          onChange={handleImageChange}
-                          accept="image/png, image/jpg"
-                        ></input>
+                            type="file"
+                            className="w-full h-full hidden"
+                            {...register("thumbnailImage")}
+                            onChange={handleImageChange}
+                            accept="image/png, image/jpg"
+                          ></input>
                           <img
                             src={preview}
                             alt="preview"
@@ -354,10 +350,12 @@ const AdminProductAdd = () => {
                 <div className="w-full">
                   <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Tình trạng
-                    <div
-                      className="w-full p-2 border-2 border-solid border-black"
-                    >
-                    <h1>AVAILABLE</h1>
+                    <div className="w-full p-2 border-2 border-solid border-black">
+                      <select>
+                        <option selected disabled value="AVAILABLE">
+                          AVAILABLE
+                        </option>
+                      </select>
                     </div>
                   </label>
                 </div>
@@ -374,7 +372,7 @@ const AdminProductAdd = () => {
                 type="submit"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
               >
-               Lưu
+                Lưu
               </Button>
             </div>
           </form>

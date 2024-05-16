@@ -24,13 +24,13 @@ const AdminEmployeeContent = () => {
   const role = useRole();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "full_name", headerName: "Họ và tên", width: 150 },
+    { field: "full_name", headerName: "Họ và tên", width: 250 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "phone_number", headerName: "Số điện thoại", width: 200 },
     { field: "address", headerName: "Địa chỉ", width: 200 },
-    { field: "date_of_birth", headerName: "Ngày sinh", width: 150 },
+    { field: "date_of_birth", headerName: "Ngày sinh", width: 200 },
     { field: "role", headerName: "Chức vụ", width: 200 },
-    { field: "gender", headerName: "Giới tính", width: 100 },
+    { field: "gender", headerName: "Giới tính", width: 150 },
     {
       field: "",
       headerName: "",
@@ -67,7 +67,6 @@ const AdminEmployeeContent = () => {
 
   const navigate = useNavigate();
   const access_token = useAccessToken();
-
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
@@ -80,7 +79,7 @@ const AdminEmployeeContent = () => {
           },
         })
         );
-
+        
         const responses = await Promise.all(fetchPromises);
         const data = await Promise.all(
           responses.map((response) => response.json())

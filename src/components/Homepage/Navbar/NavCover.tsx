@@ -3,23 +3,27 @@ import { useState, useEffect } from "react";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import MailIcon from "@mui/icons-material/Mail";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ResponseBody } from "../../../interface/IUSerInfo";
 import { useRef } from "react";
 import { ClickBarContext } from "../../../context/ClickForHomepage.tsx";
 const NavCover = () => {
   const [isActive, setIsActive] = useState<ResponseBody | null>();
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  const navigate = useNavigate();
   const click = useContext(ClickBarContext);
   const introductionRef = click.introductionRef;
 
-  const handleClick = (item : string) => {
+  const handleClick = (item: string) => {
     setActiveItem(item);
   };
 
+  const handleNavigation = () => {
+    navigate("/");
+  };
   useEffect(() => {
-    if (activeItem === 'introduction' || activeItem === 'products') {
-      introductionRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (activeItem === "introduction" || activeItem === "products") {
+      introductionRef.current.scrollIntoView({ behavior: "smooth" });
     }
     setActiveItem(null);
   }, [activeItem]);
@@ -28,7 +32,7 @@ const NavCover = () => {
     const fetchUserInfo = async () => {
       const role = localStorage.getItem("role");
       const token = localStorage.getItem("access_token");
-      const refreshToken = localStorage.getItem("refresh_token")
+      const refreshToken = localStorage.getItem("refresh_token");
       const full_name = localStorage.getItem("full_name");
       console.log("access_token", token);
       if (role && token && refreshToken && full_name) {
@@ -51,16 +55,26 @@ const NavCover = () => {
     localStorage.removeItem("full_name");
     localStorage.removeItem("role");
     setIsActive(null);
+    handleNavigation();
   };
   return (
     <div>
       <div className="bg-[#D36B97] flex justify-end items-center gap-[10px] py-2 md:px-16 px-2 w-full">
         <div className="md:block hidden">
           <ul className="flex flex-row justify-center gap-[15px] items-center">
-            <Link to="/"><li className="text-white">Trang chủ</li></Link>
-            <li className="text-white" onClick={() => handleClick('introduction')}>Giới thiệu</li>
+            <Link to="/">
+              <li className="text-white">Trang chủ</li>
+            </Link>
+            <li
+              className="text-white"
+              onClick={() => handleClick("introduction")}
+            >
+              Giới thiệu
+            </li>
             <li className="text-white">Liên hệ</li>
-            <li className="text-white" onClick={() => handleClick('products')}>Tranh nổi bật</li>
+            <li className="text-white" onClick={() => handleClick("products")}>
+              Tranh nổi bật
+            </li>
             <li className="text-white">
               {isActive?.full_name ? (
                 <div className="flex flex-row gap-[10px]">

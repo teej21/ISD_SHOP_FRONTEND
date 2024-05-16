@@ -24,13 +24,13 @@ const AdminContent = () => {
   const navHeader = useContext(ClickAdmin);
   const role = useRole();
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100 },
-    { field: "full_name", headerName: "Họ và tên", width: 250 },
-    { field: "email", headerName: "Email", width: 250 },
+    { field: "id", headerName: "ID", width: 150 },
+    { field: "full_name", headerName: "Họ và tên", width: 300 },
+    { field: "email", headerName: "Email", width: 300 },
     { field: "phone_number", headerName: "Số điện thoại", width: 200 },
     { field: "address", headerName: "Địa chỉ", width: 300 },
     { field: "date_of_birth", headerName: "Ngày sinh", width: 200 },
-    { field: "gender", headerName: "Giới tính", width: 100 },
+    { field: "gender", headerName: "Giới tính", width: 150 },
     {
       field: "",
       headerName: "",

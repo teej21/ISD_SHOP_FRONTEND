@@ -46,10 +46,12 @@ const AdminProductDetail = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const access_token = useAccessToken();
+  console.log(access_token);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
+      console.log(access_token);
       try {
         const response = await fetch(`http://localhost:8686/products/${id}`, {
           method: 'GET',

@@ -105,17 +105,6 @@ const handleCategoryHover = async (categoryId: number) => {
           }`}
         >
           <ul className="box-border 2xl:flex 2xl:flex-row 2xl:justify-evenly 2xl:gap-[20px] md:grid md:grid-cols-smallGrid md:justify-center md:items-center flex flex-col gap-x-[40px] gap-y-[30px] md:w-full ">
-            <li className="flex flex-row md:p-6 md:gap-[5px]">
-              <div className="md:text-white md:flex md:justify-between md:items-center md:font-bold md:block hidden">
-                <MenuIcon
-                  className="md:hidden block"
-                  onClick={clickBar.handleBarClick}
-                ></MenuIcon>
-                <span className="xl:text-xl lg:text-sm text-base">
-                  DANH MỤC SẢN PHẨM
-                </span>
-              </div>
-            </li>
             {categories.map((category) => (
               <li
                 key={category.id}
@@ -123,7 +112,7 @@ const handleCategoryHover = async (categoryId: number) => {
                 onMouseEnter={() => handleCategoryHover(category.id)}
                 onMouseLeave={() => setActiveCategory(0)}
               >
-                <div className="md:text-white md:flex md:justify-between md:items-center text-[#666666D9] font-bold">
+                <div className="md:text-white md:flex md:justify-between md:items-center font-bold">
                   <Link to={`/${category.id}`}>
                     <span className="xl:text-xl lg:text-sm text-base">
                       {category.name}
@@ -135,7 +124,7 @@ const handleCategoryHover = async (categoryId: number) => {
                         .map((product) => (
                           <div
                             key={product.id}
-                            className="flex flex-row items-center gap-2 p-4 hover:bg-[#DF6A6A]"
+                            className="flex flex-row items-center gap-2 p-4 hover:bg-[#efb4b4]"
                             onClick={() => handleNaviagation(product.id)}
                           >
                             <img

@@ -23,9 +23,9 @@ const AdminContent = () => {
   const navHeader = useContext(ClickAdmin);
   const role = localStorage.getItem("role");
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 100 },
+    { field: "id", headerName: "ID", width: 200 },
     { field: "name", headerName: "Tên Danh Mục", width: 400 },
-    { field: "description", headerName: "Mô Tả", width: 600 },
+    { field: "description", headerName: "Mô Tả", width: 950 },
     {
       field: "",
       headerName: "",

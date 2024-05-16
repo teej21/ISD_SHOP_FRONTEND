@@ -21,6 +21,7 @@ import AdminProductDetail from "../components/Admin/Product/AdminProductDetail.t
 import AdminEmployeeDetail from "../components/Admin/AdminEmployeeDetail.tsx";
 import CategoryTotal from "../components/ProductList/Category/CategoryTotal.tsx";
 import AddToCart from "../components/AddToCart/AddToCart.tsx";
+import Payment from "../components/Payment/Payment.tsx";
 
 const Page = () => {
   const [role, setRole] = useState<string | null >("");
@@ -36,14 +37,15 @@ const Page = () => {
   return (
     <div>
       <Routes>
-        {!accessToken && <Route path="/login" element={<Login />} />}
-        {!accessToken && <Route path="/sign_up" element={<Signup />} />}
+        <Route path="/login" element={<Login />} />
+        <Route path="/sign_up" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/" element={<Homepage />} />
         <Route path="/category/:id" element={<Product_detail />} />
         <Route path="/:id" element={<CategoryTotal />} />
         <Route path="/add-to-cart" element={<AddToCart></AddToCart>} />
-        <Route path="*" element={<Error_page />} />
+        {accessToken && <Route path="/payment" element={<Payment></Payment>}></Route>}
+
         {role && ["ADMIN", "MANAGER", "EMPLOYEE"].includes(role) && (
           <>
             <Route path="/admin" element={<Admin />} />
@@ -98,6 +100,7 @@ const Page = () => {
             />
           </>
         )}
+      <Route path="*" element={<Error_page />} />
       </Routes>
     </div>
   );

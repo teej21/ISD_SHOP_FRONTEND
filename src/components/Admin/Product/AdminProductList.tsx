@@ -8,20 +8,21 @@ import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Product } from "../../../interface/IProduct.ts";
+import { Product, ProductGet } from "../../../interface/IProduct.ts";
 import { ICategories } from "../../../interface/ICategory.ts";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import SystemSuccessMessage from "../../Login/login/SystemSuccessMessage.tsx";
 import { getProductList } from "../../../composables/getProductList.ts";
 import { getCategories } from "../../../composables/getCategories.ts";
 import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
+import { fetchImage } from "../../../composables/getImage.ts";
 
 const AdminProductList = () => {
-  const [productInfo, setProductInfo] = useState<Product[]>([]);
+  const [productInfo, setProductInfo] = useState<ProductGet[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
-    pageSize: 10,
+    pageSize: 6,
     page: 0,
   });
   const [searchResult, setSearchResult] = useState<string>("");
@@ -29,12 +30,19 @@ const AdminProductList = () => {
     ...product,
     categoryName: product.category.name,
   }));
-  
+  const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
   const role = localStorage.getItem("role");
   const access_token = useAccessToken();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
-    { field: "thumbnail", headerName: "Ảnh minh họa", width: 200 },
+    { 
+      field: "thumbnailImage", 
+      headerName: "Ảnh minh họa", 
+      width: 200,
+      renderCell: (params) => {
+        return <div className="w-[150px] h-[150px]"><img src={params.value} alt="Thumbnail" className="w-full h-full object-fit"/></div>;
+      }
+    },
     { field: "name", headerName: "Tên sản phẩm", width: 200 },
     { field: "description", headerName: "Miêu tả", width: 200 },
     { field: "material", headerName: "Chất liệu", width: 200 },
@@ -80,10 +88,12 @@ const AdminProductList = () => {
   ];
 
   const navigate = useNavigate();
-
+  const getHeight = () => {
+    return 100;
+  }
   useEffect(() => {
     const fetchProduct = async () => {
-      const productData : Product[] = await getProductList(access_token);
+      const productData : ProductGet[] = await getProductList(access_token);
       setProductInfo(productData);
     };
     fetchProduct();
@@ -100,10 +110,12 @@ const AdminProductList = () => {
           },
         });
         if (response.ok) {
-          const data: Product[] = await response.json();
-          setProductInfo(data);
-          console.log(data);
-        } else {
+          const data: ProductGet[] = await response.json();
+        setProductInfo(data);
+        setThumbnailFetched(Array(productInfo.length).fill(false));
+        }
+        
+         else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
         }
@@ -114,6 +126,31 @@ const AdminProductList = () => {
 
     fetchProductList();
   }, []);
+
+  const fetchThumbnails = async (index: number) => {
+    const outputImage = await fetchImage(productInfo[index].thumbnail);
+    setProductInfo((prevProducts) => {
+      const updatedProducts = [...prevProducts];
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        thumbnailImage: outputImage,
+      };
+      return updatedProducts;
+    });
+    setThumbnailFetched((prevThumbnailFetched) => {
+      const updatedThumbnailFetched = [...prevThumbnailFetched];
+      updatedThumbnailFetched[index] = true;
+      return updatedThumbnailFetched;
+    });
+  };
+
+  useEffect(() => {
+    productInfo.forEach((_, index) => {
+      if (!thumbnailFetched[index]) {
+        fetchThumbnails(index);
+      }
+    });
+  }, [productInfo, thumbnailFetched]);
 
   const handleSearch = (e: any) => {
     setSearchResult(e.target.value);
@@ -140,13 +177,9 @@ const AdminProductList = () => {
         },
       });
       if (response.ok) {
-        const data: Product[] = await response.json();
+        const data: ProductGet[] = await response.json();
         SuccessMessage("Xóa sản phẩm thành công!")
         setProductInfo(data);
-
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
         setProductInfo(productInfo.filter((product) => product.id !== param));
       }
     } catch (error) {
@@ -194,10 +227,11 @@ const AdminProductList = () => {
                 product.name.toLowerCase().includes(searchResult.toLowerCase())
               )}
               columns={columns}
+              getRowHeight={getHeight}
               onRowClick={handleRowClick}
               paginationModel={paginationModel}
               onPaginationModelChange={(model) => setPaginationModel(model)}
-              pageSizeOptions={[10]}
+              pageSizeOptions={[6]}
             />
           </div>
         ) : (

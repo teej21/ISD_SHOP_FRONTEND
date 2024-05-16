@@ -13,7 +13,6 @@ import useAccessToken from "../../../composables/getAccessToken.ts";
 import SignInDialog from "../../AddToCart/SignInDialog.tsx";
 import LoadingState from "../../LoadingFrame/Loading.tsx";
 import { CartContext } from "../../../context/AddToCartContext.tsx";
-
 export interface ResponseProductBody {
   id: number;
   name: string;
@@ -69,6 +68,7 @@ useEffect(() => {
       const productData: ProductGet[] = await getProductList(null);
       setProducts(productData);
       setThumbnailFetched(Array(productData.length).fill(false));
+      addToCartList.handleTotalPrice();
     } catch (error) {
       console.error(error);
     }
@@ -110,7 +110,7 @@ useEffect(() => {
   const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(searchResult.toLowerCase()));
   
   return (
-    <div className="bg-white md:flex md:flex-row md:justify-evenly md:items-center md:gap-[20px] md:my-[30px] max-w-[1700px] mx-auto md:shadow-none md:border-none md:w-full lg:px-8 shadow-shadow_primary border-2 border-solid w-8/10 p-4 z-10">
+    <div className="bg-white md:flex md:flex-row md:justify-evenly md:items-center md:my-[30px] max-w-[1700px] mx-auto md:shadow-none md:border-none md:w-full lg:px-8 shadow-shadow_primary border-2 border-solid w-8/10 p-4 z-10">
        {showSignInDialog && <SignInDialog
         open={showSignInDialog}
         handleClose={() => setShowSignInDialog(false)}
@@ -147,24 +147,18 @@ useEffect(() => {
   {searchResult.length > 0 && <div className="flex flex-col items=center gap-[20px] absolute top-full bg-white border border-2 border-solid border-[#D9D9D9] z-10 w-1/2 shadow-shadow_primary overflow-y-auto max-h-[350px]">
   {isLoading && <LoadingState></LoadingState>}
     {filteredProducts.length > 0 ? filteredProducts.map((product) => (
-      <div key={product.id} className="flex flex-row justify-between p-4 items-center bg-white border border-2 border-solid border-[#D9D9D9] w-full hover:bg-[#DF6A6A]" onClick={() => handleNavigateForProduct(product.id)}>
+      <div key={product.id} className="flex flex-row justify-between p-4 items-center bg-white border border-2 border-solid border-[#D9D9D9] w-full hover:bg-[#efb4b4]" onClick={() => handleNavigateForProduct(product.id)}>
         <div className="w-[50px] h-[50px]"><img src={product.thumbnailImage} alt={product.name} className="w-full h-full object-cover" /></div>
-        <div className="flex flex-col justify-between items-center gap-[10px] text-base"><span className="font-bold">{product.name}</span><span className="text-red-500 font-bold">Price: {product.price}đ</span></div>
+        <div className="flex flex-col justify-between items-center gap-[10px] text-base"><p className="font-bold text-xl">{product.name}</p></div>
       </div>
     )) : <div className="font-bold p-4">Không tìm thấy sản phẩm phù hợp!</div>}
   </div>}
 </div>
 
       <div className="md:flex lg:flex-row flex-col md:gap-[10px] md:items-center md:block hidden">
-        <div className="flex items-center hover:text-[#DF6A6A]">
-          <span className="font-bold xl:text-lg text-sm text-[#7D7D7D] mr-1 hover:text-[#DF6A6A]">
-            YÊU THÍCH
-          </span>
-          <FavoriteIcon className="xl:w-[25px] xl:h-[25px] w-[20px] height-[20px] hover:text-[#DF6A6A]" />
-        </div>
         <div className="flex gap-[2px] items-center hover:text-[#DF6A6A]" onClick={handleAddToCart}>
           <span className="font-bold xl:text-lg text-sm text-[#7D7D7D] mr-1 hover:text-[#DF6A6A]">
-            GIỎ HÀNG
+            GIỎ HÀNG / <span className="text-[#AE0011]">{new Intl.NumberFormat("vi-en").format(addToCartList.totalPrice)}<span className="underline">đ</span></span>
           </span>
           <div className="relative">
           <ShoppingCartIcon className="text-[#7D7D7D] xl:w-[25px] xl:h-[25px] w-[20px] height-[20px] hover:text-[#DF6A6A] " />

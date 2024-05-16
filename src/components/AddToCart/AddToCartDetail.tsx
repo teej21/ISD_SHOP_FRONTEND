@@ -4,25 +4,22 @@ import { useEffect } from "react";
 import { Button, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
-import Product_additional_detail from "../Product_detail/Product_additional_detail.tsx";
 const AddToCartDetail = () => {
-  const productList = useContext(CartContext);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+ const productList = useContext(CartContext);
   const navigate = useNavigate();
   useEffect(() => {
-    const calculateTotal = () => {
-      let totalPrice = 0;
-      productList.AddToCartProductList.forEach((product) => {
-        totalPrice += product.price;
-      });
-      setTotalPrice(totalPrice);
-    };
+   const calculateTotal = () => {
+    productList.handleTotalPrice();
+   }
     calculateTotal();
   }, []);
 
   const handleNav = () => {
     navigate("/");
   };
+  const handlePayment = () => {
+    navigate("/payment")
+  }
   return (
     <div>
       <div className="p-16">
@@ -45,24 +42,23 @@ const AddToCartDetail = () => {
             </div>
             <div className="flex flex-col justify-between">
               {productList.AddToCartProductList.map((product) => (
-                <div className="flex flex-col">
+                <div className="flex flex-col"  key={product.product_id}>
                   <hr className="h-[2px] w-full bg-[#E9E9E9] my-[15px]"></hr>
                   <div
-                    key={product.id}
                     className="flex flex-row justify-between items-center"
                   >
                     <div className="flex flex-row items-center gap-[10px] basis-[50%]">
                       <img
-                        src={product.thumbnail}
-                        alt={product.id}
+                        src={product.product_thumbnail}
+                        alt={product.product_id}
                         className="max-w-32 max-h-32 object-contain"
                       ></img>
-                      <span className="text-xl font-bold">{product.name}</span>
+                      <span className="text-xl font-bold">{product.product_name}</span>
                     </div>
                     <div className="flex basis-[50%] grow-0">
                       <span className="text-xl text-red-500 font-bold">
                         {" "}
-                        {new Intl.NumberFormat("vi-en").format(product.price)}đ
+                        {new Intl.NumberFormat("vi-en").format(product.product_price)}đ
                       </span>
                     </div>
                     <div className="flex basis-[45%]">
@@ -71,10 +67,10 @@ const AddToCartDetail = () => {
                     <div className="flex basis-[30%]">
                       <span className="text-xl text-red-500 font-bold">
                         {" "}
-                        {new Intl.NumberFormat("vi-en").format(product.price)}đ
+                        {new Intl.NumberFormat("vi-en").format(product.product_price)}đ
                       </span>
                     </div>
-                    <div><DeleteIcon className="hover:text-[#DF6A6A]" onClick={() => productList.deleteAddToCartProduct(product.id)}></DeleteIcon></div>
+                    <div><DeleteIcon className="hover:text-[#DF6A6A]" onClick={() => productList.deleteAddToCartProduct(product.product_id)}></DeleteIcon></div>
                   </div>
                 </div>
               ))}
@@ -89,11 +85,11 @@ const AddToCartDetail = () => {
             <div className="flex flex-row justify-between items-center">
               <h1 className="text-xl font-bold">Tổng tiền</h1>
               <p className="text-xl text-red-500 font-bold">
-                {new Intl.NumberFormat("vi-en").format(totalPrice)}đ
+                {new Intl.NumberFormat("vi-en").format(productList.totalPrice)}đ
               </p>
             </div>
             <hr className="h-[2px] w-full bg-[#E9E9E9]"></hr>
-            <Button className="bg-[#DF6A6A] py-4">
+            <Button className="bg-[#DF6A6A] py-4" onClick={handlePayment}>
               <p className="text-xl font-bold text-white">
                 Tiến hành thanh toán!
               </p>
