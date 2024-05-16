@@ -1,14 +1,9 @@
 import React, { useContext } from "react";
 import { useState, useEffect } from "react";
-import Picture_2 from "../../assets/pic_2.png";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import XIcon from "@mui/icons-material/X";
-import PinterestIcon from "@mui/icons-material/Pinterest";
 import { Button } from "@mui/material";
-import Pinterest from "@mui/icons-material/Pinterest";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { CartContext } from "../../context/AddToCartContext.tsx";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import SignInDialog from "../AddToCart/SignInDialog.tsx";
@@ -33,16 +28,6 @@ const Product_main_interface = () => {
     }
   };
 
-  useEffect(() => {
-    const storedCartItems = localStorage.getItem("cartItems");
-    if (storedCartItems) {
-      productInfo.setAddToCartProductList(JSON.parse(storedCartItems));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(productInfo.AddToCartProductList));
-  }, [productInfo.AddToCartProductList]);
   
   const { id } = useParams();
   const [isLike, setIsLike] = useState(false);
@@ -123,8 +108,9 @@ const Product_main_interface = () => {
             <Button
               variant="contained"
               className="bg-[#FB6E2E] rounded-[10px] px-9 py-4 text-xl font-bold"
+              onClick={handleAddToCart}
             >
-              MUA NGAY
+             <Link to="/add-to-cart">MUA NGAY</Link>
             </Button>
           </div>
           <div className="flex flex-col gap-[10px] text-[#8F8667] text-lg font-bold">

@@ -19,7 +19,7 @@ export interface Product {
     name: string,
     description: string,
     price: number,
-    thumbnail: string | null,
+    thumbnail: string | null ,
     categoryId: number,
     material: string,
     width: Number,

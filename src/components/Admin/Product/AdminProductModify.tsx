@@ -38,7 +38,7 @@ const AdminProductModify = () => {
     categoryId: 1,
     material: "",
     width: 0,
-    status: "AVAILABLE",
+    status: "",
     height: 0,
     publishYear: 0,
   });
@@ -405,10 +405,11 @@ const AdminProductModify = () => {
                     <select
                       className="w-full p-2 border-2 border-solid border-black"
                       onChange={handleInput("status")}
+                      value={productInfo.status}
                     >
-                      <option value={Status.STOCKOUT}>Đã bán</option>
                       <option value={Status.AVAILABLE}>Đang bán</option>
                       <option value={Status.ORDERED}>Có người đặt</option>
+                      <option value={Status.STOCKOUT}>Đã bán</option>
                     </select>
                   </label>
                 </div>

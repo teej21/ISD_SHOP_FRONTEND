@@ -12,7 +12,6 @@ function useAccessToken() {
     };
     getAccessToken();
  }, []);
-
  return accessToken;
 }
 
