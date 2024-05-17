@@ -78,9 +78,6 @@ const GridBox = () => {
             ></img>
             <h1 className="font-bold text-lg text-center">{product.name}</h1>
           </div>
-          <div>
-            <span className="text-[#AEA093] italic">100 sản phẩm</span>
-          </div>
         </div>
       ))}
     </div>
