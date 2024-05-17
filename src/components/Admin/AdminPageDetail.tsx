@@ -16,13 +16,14 @@ const AdminPageDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
    useEffect(() => {
     const fetchCustomerDetails = async () => {
+      if (loading) return; 
       try {
         const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
           method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`}
         });
         const data = await response.json();
         if (response.ok) {
@@ -35,7 +36,7 @@ const AdminPageDetail = () => {
       }
     };
     fetchCustomerDetails()
-  }, [access_token]);
+  }, [accessToken]);
 
   if (!customerDetail) {
     return <p>Loading...</p>;

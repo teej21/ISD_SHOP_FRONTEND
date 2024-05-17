@@ -14,10 +14,12 @@ const PaymentDetail = () => {
     formState: { errors },
   } = useForm<InputForm>({ resolver: zodResolver(schema) });
   const addToCartList = useContext(CartContext);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
+  const userId : string | null = localStorage.getItem("userId");
   const navigate = useNavigate();
   const handleNav = () => {
     navigate('/');
+    addToCartList.setAddToCartProductList([]);
   }
   useEffect(() => {
     const calculateTotal = () => {
@@ -28,7 +30,9 @@ const PaymentDetail = () => {
 
   const onSubmit = async (data: InputForm) => {
     try {
-      await modifyConfirmation(access_token, data, handleNav);
+      if(userId){
+      await modifyConfirmation(accessToken, data, handleNav, +userId);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -87,6 +91,7 @@ const PaymentDetail = () => {
                   <textarea
                     className="border border-2 border-solid border-black p-2 h-[200px]"
                     placeholder="Ghi chú về đơn hàng, ví dụ: Thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn."
+                    {...register("note")}
                   ></textarea>
                 </label>
               </div>

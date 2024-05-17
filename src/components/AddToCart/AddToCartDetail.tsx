@@ -70,7 +70,7 @@ const AddToCartDetail = () => {
                         {new Intl.NumberFormat("vi-en").format(product.product_price)}đ
                       </span>
                     </div>
-                    <div><DeleteIcon className="hover:text-[#DF6A6A]" onClick={() => productList.deleteAddToCartProduct(product.product_id)}></DeleteIcon></div>
+                    <div><DeleteIcon className="hover:text-[#DF6A6A]" onClick={() => productList.deleteAddToCartProduct(product.orderdetail_id)}></DeleteIcon></div>
                   </div>
                 </div>
               ))}

@@ -19,6 +19,7 @@ export interface INewPassword {
 }
 
 export interface ResponseBody {
+  user_id: string | null,
   full_name: string,
   tokens: {
     access_token: string;
@@ -90,4 +91,11 @@ export interface Order {
   orderDetailList: OrderDetail[];
 }
 
- 
+// public enum OrderStatus {
+//   INIT("INIT"),
+//   PENDING("PENDING"),
+//   ASSIGNED("ASSIGNED"),
+//   SHIPPED("SHIPPING"),
+//   DELIVERED("DELIVERED"),
+//   CANCELLED("CANCELLED");
+// }

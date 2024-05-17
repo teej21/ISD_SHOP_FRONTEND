@@ -27,17 +27,17 @@ const AdminModifyEmployee = () => {
     full_name: "",
     date_of_birth: "",
   });
-  const accessToken = useAccessToken();
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { id } = useParams();
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
+      if (loading) return; 
       try {
         const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
           method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`}
         });
         const data = await response.json();
         if (response.ok) {
@@ -77,6 +77,7 @@ const AdminModifyEmployee = () => {
     data.password = "camonquykhach";
     console.log(data);
     try {
+      if (loading) return; 
       const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
         method: "PUT",
         headers: {

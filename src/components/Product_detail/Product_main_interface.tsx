@@ -13,13 +13,13 @@ import failMessage from "../LoadingFrame/FailMessage.ts";
 
 const Product_main_interface = () => {
   const productInfo = useContext(CartContext);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
 
   const handleAddToCart = () => {
     setIsLoading(true);
-    if (access_token) {
+    if (accessToken) {
       productInfo.handleAddToCart();
       setIsLoading(false);
     } else {
@@ -30,11 +30,6 @@ const Product_main_interface = () => {
 
   
   const { id } = useParams();
-  const [isLike, setIsLike] = useState(false);
-  const handleLike = () => {
-    setIsLike(isLike => !isLike);
-    isLike ? SuccessMessage("Đã thêm vào mục yêu thích!") : failMessage("Bỏ khỏi danh mục yêu thích!")
-  }
   useEffect(() => {
     const fetchProduct = () => {
       if(id){
@@ -62,13 +57,15 @@ const Product_main_interface = () => {
             </span>
           </div>
           <div className="w-[600px] h-[500px] relative">
+            {productInfo.productInfo.status === 'ORDERED' && <div className="absolute bg-black opacity-50 absolute w-[600px] h-[500px]"></div>}
+            {productInfo.productInfo.status === 'STOCKOUT' && <div className="absolute bg-black opacity-50 absolute w-[600px] h-[500px]"></div>}  
             <img
               src={productInfo.productInfo.thumbnail}
               alt="img_detail"
               className="h-full w-full object-cover"
             ></img>
-            {isLike ? <FavoriteIcon className="xl:w-[40px] xl:h-[40px] w-[20px] height-[20px] text-white border border-2 border-solid border-white p-2 absolute top-3 right-3 rounded-full hover:bg-red-500 hover:border-red-500 transition duration-300 ease-out" 
-            onClick={handleLike} /> : <FavoriteIcon className="xl:w-[40px] xl:h-[40px] w-[20px] height-[20px] p-2 absolute top-3 right-3 rounded-full text-white bg-red-500 hover:border-red-500 transition duration-300 ease-out" onClick={handleLike}/>}
+            {productInfo.productInfo.status === 'ORDERED' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}
+            {productInfo.productInfo.status === 'STOCKOUT' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}  
           </div>
           <div>
             <Button

@@ -25,14 +25,14 @@ const AdminAddUser = () => {
   const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   const submitCustomer = async (data: AddUser) => {
     data.password = getConfigObject('DEV').CUSTOMER_PASSWORD;
-    console.log(data);
+    if (loading) return; 
     try {
       const response = await fetch("http://localhost:8686/admin/users",{
         method: 'POST',
-        headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`},
+        headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`},
         body: JSON.stringify(data),
       });
 

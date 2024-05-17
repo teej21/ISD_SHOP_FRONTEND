@@ -32,7 +32,7 @@ const AdminProductList = () => {
   }));
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
   const role = localStorage.getItem("role");
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 100 },
     { 
@@ -93,7 +93,7 @@ const AdminProductList = () => {
   }
   useEffect(() => {
     const fetchProduct = async () => {
-      const productData : ProductGet[] = await getProductList(access_token);
+      const productData : ProductGet[] = await getProductList(accessToken);
       setProductInfo(productData);
     };
     fetchProduct();
@@ -102,11 +102,12 @@ const AdminProductList = () => {
   useEffect(() => {
     const fetchProductList = async () => {
       try {
+        if (loading) return; 
         const response = await fetch("http://localhost:8686/products", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         if (response.ok) {
@@ -169,11 +170,12 @@ const AdminProductList = () => {
   const handleDeleteClick = async (params: any) => {
     const param = params.row.id;
     try {
+      if (loading) return; 
       const response = await fetch(`http://localhost:8686/products/${param}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       if (response.ok) {

@@ -22,6 +22,7 @@ import AdminEmployeeDetail from "../components/Admin/AdminEmployeeDetail.tsx";
 import CategoryTotal from "../components/ProductList/Category/CategoryTotal.tsx";
 import AddToCart from "../components/AddToCart/AddToCart.tsx";
 import Payment from "../components/Payment/Payment.tsx";
+import AdminBillsDetail from "../components/Admin/Bill/AdminBillsDetail.tsx";
 
 const Page = () => {
   const [role, setRole] = useState<string | null >("");
@@ -65,7 +66,6 @@ const Page = () => {
               path="/admin/users/add_customers"
               element={<AdminAddUser />}
             />
-
             <Route
               path="/admin/users/:id/modify_customer"
               element={<AdminModify />}
@@ -98,9 +98,11 @@ const Page = () => {
               path="/admin/products/:id/modify_product"
               element={<AdminProductModify />}
             />
+            <Route path="/admin/orders/:id" element={<AdminBillsDetail></AdminBillsDetail>}></Route>
           </>
         )}
       <Route path="*" element={<Error_page />} />
+      {/* <Route path="*" element={<Error_page />} /> */}
       </Routes>
     </div>
   );

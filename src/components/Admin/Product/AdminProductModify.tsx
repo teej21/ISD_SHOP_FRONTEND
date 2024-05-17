@@ -54,7 +54,7 @@ const AdminProductModify = () => {
   const [preview, setPreview] = useState("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   const { id } = useParams();
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const AdminProductModify = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         if (response.ok) {
@@ -88,7 +88,7 @@ const AdminProductModify = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const data = await response.json();
@@ -151,7 +151,7 @@ const AdminProductModify = () => {
       const response = await fetch("http://localhost:8686/products/" + id, {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: formData,
       });

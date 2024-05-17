@@ -11,7 +11,8 @@ import { getCategories } from "../../../composables/getCategories.ts";
 import { ProductGet } from "../../../interface/IProduct.ts";
 import { getProductByID } from "../../../composables/getProductByID.ts";
 import { fetchImage } from "../../../composables/getImage.ts";
-import LoadingState from "../../LoadingFrame/Loading.tsx";
+import failMessage from "../../LoadingFrame/FailMessage.ts";
+
 
 interface ResponseBody {
   id: number;
@@ -34,7 +35,7 @@ const NavMain = () => {
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
   const [activeCategory, setActiveCategory] = useState<number>(0);
   const navigate = useNavigate();
-  const handleNaviagation = (id: number) => {
+  const handleNavigation = (id: number) => {
     navigate(`/category/${id}`);
   };
   useEffect(() => {
@@ -53,8 +54,12 @@ const handleCategoryHover = async (categoryId: number) => {
   setActiveCategory(categoryId);
   try {
     const productData: ProductGet[] = await getProductByID(categoryId);
+    if(categoryId){
     setProducts(productData);
-    
+  }
+    else{
+      failMessage("Đang xử lý...");
+    }
     setThumbnailFetched(Array(productData.length).fill(false));
   } catch (error) {
     console.error(error);
@@ -125,7 +130,7 @@ const handleCategoryHover = async (categoryId: number) => {
                           <div
                             key={product.id}
                             className="flex flex-row items-center gap-2 p-4 hover:bg-[#efb4b4]"
-                            onClick={() => handleNaviagation(product.id)}
+                            onClick={() => handleNavigation(product.id)}
                           >
                             <img
                               src={product.thumbnailImage}

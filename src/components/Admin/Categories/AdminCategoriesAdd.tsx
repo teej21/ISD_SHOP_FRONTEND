@@ -24,13 +24,14 @@ const AdminCategoryAdd = () => {
   } = useForm<ICategories>({ resolver: zodResolver(schema) });
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
 
   const submitCategories = async (data: ICategories) => {
+    if (loading) return; 
     try {
       const response = await fetch("http://localhost:8686/categories", {
         method: "POST",
-        headers: { "Content-Type": "application/json", 'Authorization' : `Bearer ${access_token}` },
+        headers: { "Content-Type": "application/json", 'Authorization' : `Bearer ${accessToken}` },
         body: JSON.stringify(data),
       });
 

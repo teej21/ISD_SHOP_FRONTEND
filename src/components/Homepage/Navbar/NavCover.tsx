@@ -34,10 +34,12 @@ const NavCover = () => {
       const token = localStorage.getItem("access_token");
       const refreshToken = localStorage.getItem("refresh_token");
       const full_name = localStorage.getItem("full_name");
+      const user_id = localStorage.getItem("user_id");
       console.log("access_token", token);
       if (role && token && refreshToken && full_name) {
         setIsActive({
           full_name: full_name,
+          user_id: user_id,
           tokens: {
             access_token: "",
             refresh_token: "",
@@ -54,6 +56,7 @@ const NavCover = () => {
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("full_name");
     localStorage.removeItem("role");
+    localStorage.removeItem("user_id");
     setIsActive(null);
     handleNavigation();
   };

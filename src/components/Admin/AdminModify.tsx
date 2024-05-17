@@ -14,9 +14,10 @@ import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
+import failMessage from "../LoadingFrame/FailMessage.ts";
 const AdminModify = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [message, setMessage] = useState<string>("");
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
     email: "",
@@ -31,13 +32,14 @@ const AdminModify = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { id } = useParams();
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
+        if (loading) return; 
         const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
           method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`}
         });
         const data = await response.json();
         if (response.ok) {
@@ -49,7 +51,7 @@ const AdminModify = () => {
       }
     };
     fetchCustomerDetails()
-  }, [access_token, id]);
+  }, [accessToken, id]);
 
   const resetInfo = () => {
     setCustomerDetail({
@@ -79,25 +81,21 @@ const AdminModify = () => {
     data.password = "camonquykhach";
     console.log(data);
     try {
+      if (loading) return; 
       const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json",
-          "Authorization" : `Bearer ${access_token}`
+          "Authorization" : `Bearer ${accessToken}`
          },
         body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        const responseBody = await response.json();
-        setMessage(responseBody.result);
-        alert("Chỉnh sửa thành công!")
+       SuccessMessage("Chỉnh sửa thành công!")
         handleNavigation();
         resetInfo();
       } else {
-        setTimeout(() => {
-          setErrorMessage("");
-        }, 3000)        
-        setErrorMessage((await response.json()).error);
+        failMessage((await response.json()).error);      
       }
     } catch (error) {
       console.error("Error adding user:", error);

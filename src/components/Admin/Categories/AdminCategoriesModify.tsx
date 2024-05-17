@@ -24,7 +24,7 @@ const AdminCategoriesModify = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const nav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -42,13 +42,13 @@ const AdminCategoriesModify = () => {
   }
   useEffect(() => {
     const fetchCustomerDetails = async () => {
-      console.log(categoryDetail);
+      if (loading) return; 
       try {
         const response = await fetch(`http://localhost:8686/categories/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         const data = await response.json();
@@ -62,7 +62,7 @@ const AdminCategoriesModify = () => {
       }
     };
     fetchCustomerDetails();
-  }, [access_token]);
+  }, [accessToken]);
 
   const {
     register,
@@ -75,13 +75,13 @@ const AdminCategoriesModify = () => {
   });
 
   const submitCategories = async (data: ICategories) => {
-    console.log(data);
+    if (loading) return; 
     try {
       const response = await fetch(`http://localhost:8686/categories/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(data),
       });
