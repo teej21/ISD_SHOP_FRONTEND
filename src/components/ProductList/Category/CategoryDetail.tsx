@@ -78,7 +78,6 @@ const CategoryDetail = () => {
             <div key={product.id} className='flex flex-col items-center border-4 border-[#f2f5f6] border-solid rounded-[10px] hover:-translate-y-4 hover:shadow-shadow_primary transition ease-in-out duration-300' onClick={() => handleNaviagation(product.id)}>
               {product.thumbnailImage && <img src={product.thumbnailImage} alt={product.name} className='w-full h-[70%] object-cover rounded-[10px]' />}
               <h1 className="font-bold text-lg text-center">{product.name}</h1>
-              <span className="text-[#AEA093] italic text-center">100 sản phẩm</span>
             </div>
           ))}
         </div>
