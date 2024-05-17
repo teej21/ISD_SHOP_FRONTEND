@@ -21,7 +21,6 @@ const AdminCategoryDetail = () => {
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        if (loading) return; 
         const response = await fetch(`http://localhost:8686/categories/${id}`, {
           method: 'GET',
           headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`}
