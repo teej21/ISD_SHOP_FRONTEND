@@ -45,23 +45,21 @@ const AdminProductDetail = () => {
 
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
-  console.log(access_token);
+  const { accessToken, loading } = useAccessToken();
+  console.log(accessToken);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchProductDetails = async () => {
-      console.log(access_token);
       try {
         const response = await fetch(`http://localhost:8686/products/${id}`, {
           method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`}
         });
         const data : ResponseBody = await response.json();
         if (response.ok) {
           setProductInfo(data);
           console.log(data.status);
-
           fetchImage(data.thumbnail);
         }
       } catch (error) {

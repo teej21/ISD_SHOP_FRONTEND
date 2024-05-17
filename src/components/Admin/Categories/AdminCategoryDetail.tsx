@@ -9,19 +9,22 @@ import { ClickAdmin } from "../../../context/AdminController.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
+import LoadingState from "../../LoadingFrame/Loading.tsx";
+import AdminHorizontal from "../AdminHorizontal.tsx";
 const AdminCategoryDetail = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
   const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleNav = useContext(ClickAdmin);
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
+        if (loading) return; 
         const response = await fetch(`http://localhost:8686/categories/${id}`, {
           method: 'GET',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`}
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`}
         });
         const data = await response.json();
         if (response.ok) {
@@ -38,12 +41,13 @@ const AdminCategoryDetail = () => {
   }, [id]);
 
   if (!categoryDetail) {
-    return <p>Loading...</p>;
+    return <LoadingState></LoadingState>;
   }
 
   return (
-    <div> <AdminNavigation/>
-    <div className="absolute top-[55%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
+    <div>
+      <AdminHorizontal/>
+    <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
       <div>
         <div className="flex flex-row justify-between items-center px-8 py-4">
           <div>
@@ -64,7 +68,6 @@ const AdminCategoryDetail = () => {
           </div>
         </div>
       </div>
-
       <div className="flex flex-col justify-between gap-[10px] gap-4 px-8 py-4 bg-[#EEF0F1] h-[75%] w-[85%] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div className="flex flex-row justify-between w-full">
           <DetailRow label="Tên danh mục" value={categoryDetail.name} />

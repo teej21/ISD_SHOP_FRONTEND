@@ -66,11 +66,12 @@ const AdminContent = () => {
   ];
 
   const navigate = useNavigate();
-  const accessToken = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
 
   useEffect(() => {
     const fetchCustomerList = async () => {    
       try {
+        if (loading) return; 
         const response = await fetch(
           "http://localhost:8686/admin/users/role=CUSTOMER",
           {
@@ -122,7 +123,7 @@ const AdminContent = () => {
 
   const handleDeleteClick = async (params: any) => {
     const customerId = params.row.id;
-
+    if (loading) return; 
     const response = await fetch(
       `http://localhost:8686/admin/users/${customerId}`,
       {

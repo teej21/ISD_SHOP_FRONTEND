@@ -61,7 +61,7 @@ const AdminContent = () => {
   ];
 
   const navigate = useNavigate();
-   const access_token = useAccessToken();
+   const { accessToken, loading } = useAccessToken();
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
@@ -71,7 +71,7 @@ const AdminContent = () => {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${access_token}`
+              "Authorization": `Bearer ${accessToken}`
             },
           }
         );
@@ -107,6 +107,7 @@ const AdminContent = () => {
   };
 
   const handleDeleteClick = async (params: any) => {
+  
     const categoryId = params.row.id;
     const controller = new AbortController();
     const signal = controller.signal;
@@ -116,7 +117,7 @@ const AdminContent = () => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`
+          Authorization: `Bearer ${accessToken}`
         },
         signal: signal
       }

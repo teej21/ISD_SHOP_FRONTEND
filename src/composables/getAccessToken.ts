@@ -1,19 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-function useAccessToken() {
- const [accessToken, setAccessToken] = useState<string | null>(null);
+const useAccessToken = () => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
- useEffect(() => {
+  useEffect(() => {
     const getAccessToken = () => {
       const token = localStorage.getItem("access_token");
       if (token) {
         setAccessToken(token);
       }
+      setLoading(false);
     };
     getAccessToken();
- }, []);
- return accessToken;
-}
+  }, []);
+
+  return { accessToken, loading };
+};
 
 export default useAccessToken;
 

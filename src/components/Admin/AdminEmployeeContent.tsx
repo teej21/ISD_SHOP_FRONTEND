@@ -66,16 +66,17 @@ const AdminEmployeeContent = () => {
   ];
 
   const navigate = useNavigate();
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   useEffect(() => {
     const fetchCustomerList = async () => {
       try {
+        if (loading) return; 
         const roles = ["ADMIN", "MANAGER", "EMPLOYEE"];
         const fetchPromises = roles.map((role) => fetch(`http://localhost:8686/admin/users/role=${role}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${access_token}`,
+            "Authorization": `Bearer ${accessToken}`,
           },
         })
         );
@@ -101,7 +102,7 @@ const AdminEmployeeContent = () => {
     };
 
     fetchCustomerList();
- }, [access_token]); 
+ }, [accessToken]); 
 
 
   const handleSearch = (e: any) => {
@@ -121,14 +122,14 @@ const AdminEmployeeContent = () => {
 
   const handleDeleteClick = async (params: any) => {
     const customerId = params.row.id;
-
+    if (loading) return; 
     const response = await fetch(
       `http://localhost:8686/admin/users/${customerId}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`
+          Authorization: `Bearer ${accessToken}`
         },
       }
     );

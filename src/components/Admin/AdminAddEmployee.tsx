@@ -22,14 +22,15 @@ const AdminAddEmployee = () => {
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [message, setMessage] = useState<string>("");
     const navigate = useNavigate();
-    const access_token = useAccessToken();
+    const { accessToken, loading } = useAccessToken();
     const nav = useContext(ClickAdmin);
     const submitCustomer = async (data: AddUser) => {
       try {
         data.password= getConfigObject('DEV').ADMIN_PASSWORD;
+        if (loading) return; 
         const response = await fetch("http://localhost:8686/admin/users",{
           method: 'POST',
-          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${access_token}`},
+          headers: {'Content-Type' : 'application/json', 'Authorization' : `Bearer ${accessToken}`},
           body: JSON.stringify(data),
         });
   

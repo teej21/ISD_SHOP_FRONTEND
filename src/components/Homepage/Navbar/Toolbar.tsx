@@ -27,7 +27,7 @@ const ToolBar = () => {
   const addToCartList = useContext(CartContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const access_token = useAccessToken();
+  const { accessToken, loading } = useAccessToken();
   const handleNavigate = () => {
     navigate("/");
   };
@@ -54,7 +54,7 @@ const ToolBar = () => {
   const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
 
   const handleAddToCart = () => {
-    if (access_token) {
+    if (accessToken) {
       handleNavigateForAddToCart();
     } else {
       setShowSignInDialog(true);

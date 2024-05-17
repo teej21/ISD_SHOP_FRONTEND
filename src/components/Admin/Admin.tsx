@@ -5,7 +5,7 @@ import { ClickAdmin } from "../../context/AdminController.tsx";
 import AdminPageDetail from "./AdminPageDetail.tsx";
 import AdminEmployeeContent from "./AdminEmployeeContent.tsx";
 import AdminAddUser from "./AdminAddUser.tsx";
-import AdminBills from "./AdminBills.tsx";
+import AdminBills from "./Bill/AdminBills.tsx";
 import AdminModify from "./AdminModify.tsx";
 import AdminCategoriesList from "./Categories/AdminCategoriesList.tsx";
 import AdminProductList from "./Product/AdminProductList.tsx";

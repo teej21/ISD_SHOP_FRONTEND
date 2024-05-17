@@ -42,6 +42,7 @@ const Login = () => {
         localStorage.setItem("full_name", responseBody.full_name);
         localStorage.setItem("access_token", responseBody.tokens.access_token);
         localStorage.setItem("refresh_token", responseBody.tokens.refresh_token);
+        localStorage.setItem("userId", String(responseBody.user_id))
         localStorage.setItem("role", responseBody.role);
         SuccessMessage("Đăng nhập thành công");
         if (responseBody.tokens && responseBody.role !== "CUSTOMER") {

@@ -5,6 +5,7 @@ import confirmMessage from "../components/LoadingFrame/ConfirmMessage.ts";
 import Swal from "sweetalert2";
 import getAddToCart from "../composables/getAddToCart.ts";
 import useAccessToken from "../composables/getAccessToken.ts";
+import deleteProduct from "../composables/deleteProduct.ts";
 interface AddToCartElement {
     orderdetail_id: number,
     order_id: number,
@@ -81,50 +82,80 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
   const [AddToCartProductList, setAddToCartProductList] = useState<AddToCartElement[]>([]);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const access_token = useAccessToken();
-
+  const { accessToken, loading } = useAccessToken();
+  const uid : string | null = localStorage.getItem("userId");
   const handleAddToCart = async () => {
     try {
-      const addToCartProduct = await getAddToCart(access_token, {
-        product_id: productInfo.id,
-        user_id: 11,
-      });
-
-      if (addToCartProduct && !AddToCartProductList.some(item => item.product_id === addToCartProduct.product_id)) {
-        const outputImage = await fetchImage(addToCartProduct.product_thumbnail);
-        if(outputImage){
-          addToCartProduct.product_thumbnail = outputImage;
-          setAddToCartProductList(prev => [...prev, addToCartProduct]);
-          SuccessMessage("Thêm sản phẩm thành công!");
-        }
-        else{
-          failMessage(addToCartProduct.error);
+      if (uid) {
+        const addToCartProduct = await getAddToCart(accessToken, {
+          product_id: productInfo.id,
+          user_id: +uid,
+        });
+  
+        if (addToCartProduct) {
+          if (!AddToCartProductList.some(item => item.product_id === addToCartProduct.product_id)) {
+            const outputImage = await fetchImage(addToCartProduct.product_thumbnail);
+            if (outputImage) {
+              addToCartProduct.product_thumbnail = outputImage;
+              setAddToCartProductList(prev => [...prev, addToCartProduct]);
+              SuccessMessage("Thêm sản phẩm thành công!");
+              console.log(addToCartProduct);
+              
+            } else {
+              failMessage("Sản phẩm đã có trong giỏ hàng.");
+            }
+          } else {
+            failMessage("Sản phẩm đã có trong giỏ hàng.");
+          }
+        } else {
+          failMessage("Không thể thêm sản phẩm vào giỏ hàng.");
         }
       } else {
-        failMessage(addToCartProduct.error);
+        failMessage("Người dùng không hợp lệ.");
       }
     } catch (error) {
       failMessage("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
     }
   };
+  
 
 
   const deleteAddToCartProduct = (id: number | null) => {
-    if(id){
-    Swal.fire({
-      title: "Do you want delete the product?",
-      showDenyButton: false,
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-    }).then((result) => {
-      if (result.isConfirmed) {
-          SuccessMessage("Xóa sản phẩm thành công!");
-          setAddToCartProductList(prev => prev.filter(item => item.product_id !== id));
-          setIsDeleted(true);
-      }
-    });
+    if (id) {
+      Swal.fire({
+        title: "Bạn có muốn xóa sản phẩm này?",
+        showDenyButton: false,
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`http://localhost:8686/order-details/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+              }
+            });
+  
+            if (!response.ok) {
+              console.log(response);
+              
+            }
+  
+            const data = await response.json();
+            SuccessMessage(data.result);
+            setAddToCartProductList(prev => prev.filter(item => item.orderdetail_id !== id));
+            setIsDeleted(true);
+          } catch (error) {
+            console.error('Error deleting product:', error);
+            Swal.fire('Error', 'There was a problem deleting the product.', 'error');
+          }
+        }
+      });
     }
   };
+  
 
   const fetchProductDetails = async (id: number | null) => {
     try {
@@ -153,7 +184,7 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
 
   const fetchImage = async (thumbnail: string) => {
     try {
-      const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`);
+      const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`, {});
       if (response.ok) {
         const image: Blob = await response.blob();
         const outputImage = URL.createObjectURL(image);
