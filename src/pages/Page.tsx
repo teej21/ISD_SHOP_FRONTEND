@@ -23,6 +23,8 @@ import CategoryTotal from "../components/ProductList/Category/CategoryTotal.tsx"
 import AddToCart from "../components/AddToCart/AddToCart.tsx";
 import Payment from "../components/Payment/Payment.tsx";
 import AdminBillsDetail from "../components/Admin/Bill/AdminBillsDetail.tsx";
+import AdminImgDetail from "../components/Admin/Bill/AdminImgDetail.tsx";
+import AdminBillsModify from "../components/Admin/Bill/AdminBillsModify.tsx";
 
 const Page = () => {
   const [role, setRole] = useState<string | null >("");
@@ -98,7 +100,9 @@ const Page = () => {
               path="/admin/products/:id/modify_product"
               element={<AdminProductModify />}
             />
+            <Route path="admin/order/:id/img" element={<AdminImgDetail></AdminImgDetail>}></Route>
             <Route path="/admin/orders/:id" element={<AdminBillsDetail></AdminBillsDetail>}></Route>
+            {/* <Route path="/admin/orders/:id/modify" element={<AdminBillsModify></AdminBillsModify>}></Route> */}
           </>
         )}
       <Route path="*" element={<Error_page />} />

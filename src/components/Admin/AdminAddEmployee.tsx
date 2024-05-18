@@ -59,8 +59,6 @@ const AdminAddEmployee = () => {
     <div>
       <AdminHorizontal />
       <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-      {message && <SystemSuccessMessage message={message}/>}
-      {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>
