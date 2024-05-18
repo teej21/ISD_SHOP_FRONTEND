@@ -1,18 +1,13 @@
 import React, { useContext, useEffect } from "react";
-import { Customer, Order } from "../../../interface/IUSerInfo";
+import { Order } from "../../../interface/IUSerInfo";
 import { useState } from "react";
-import { Button } from "@mui/material";
-import { DataGrid, GridColDef, GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import useRole from "../../../composables/getRole.ts";
-import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
-import getOrderProduct from "../../../composables/getOrderProduct.ts";
 import getOrderByEmployee from "../../../composables/getOrderByEmployee.ts";
 const AdminBills = () => {
   const [orderInfo, setOrderInfo] = useState<Order[]>([]);
@@ -47,16 +42,18 @@ const AdminBills = () => {
       headerName: "Nhân viên tư vấn",
       width: 200,
       renderCell: (params) => {
-        if (role === 'ADMIN') {
-          return <span>{params.row.employee[0].fullName}</span>;
-        } else {
-          return <span>Not Available</span>;
-        }
+        const employee = params.row.employee;
+        return (
+          <div>
+            {employee && employee.fullName ? employee.fullName : "Không"}
+          </div>
+        );
       },
     },
+    
     {
       field: "",
-      headerName: "Sửa đơn hàng",
+      headerName: "",
       width: 150,
       renderCell: (params) => (
         <div className="flex flex-row gap-[40px]">
@@ -79,7 +76,6 @@ const AdminBills = () => {
   const { accessToken, loading } = useAccessToken();
   useEffect(() => {
     const fetchCustomerList = async () => {
-      if (loading) return;
       try {
         const response = await fetch("http://localhost:8686/orders/admin", {
           method: "GET",
@@ -91,7 +87,6 @@ const AdminBills = () => {
         if (response.ok) {
           const data: Order[] = await response.json();
           setOrderInfo(data);
-          console.log(data);
         } else {
           const errorData = await response.json();
           setEmptyMessage(errorData.error);
@@ -123,6 +118,7 @@ const AdminBills = () => {
   };
 
   const filteredStatus = async (status: string) => {
+    if(loading) return;
     const response = await fetch(
       `http://localhost:8686/orders/admin/${status}`,
       {
@@ -167,6 +163,7 @@ const AdminBills = () => {
               <select
                 className="p-4 rounded-[10px] bg-[#E9ECEF]"
                 onChange={(e) => filteredStatus(e.target.value)}
+                disabled={role !== 'ADMIN'}
               >
                 <option selected disabled value="">
                   Tìm kiếm trạng thái!

@@ -13,7 +13,6 @@ const modifyConfirmation = async (access_token: string | null, params: InputForm
     });
     if(response.ok){
     const data: Order = await response.json();
-    console.log(data);
     Swal.fire({
         title: "Mua hàng thành công!",
         text: "Người tư vấn sẽ liên lạc với bạn sớm, cảm ơn vì đã mua hàng của chúng tôi",
@@ -24,7 +23,6 @@ const modifyConfirmation = async (access_token: string | null, params: InputForm
     }).then((result) => {
         if (result.isConfirmed) {
             callback()
-            
         }
       });
       return data;

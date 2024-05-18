@@ -11,6 +11,7 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Admin from "../../assets/admin_icon.png";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../../context/AddToCartContext.tsx";
 interface ResponseBody {
   full_name: string;
   eRole: string;
@@ -18,6 +19,8 @@ interface ResponseBody {
 const AdminNavigation = () => {
   const [clickExpand, setClickPlan] = useState(false);
   const navigatePage = useContext(ClickAdmin);
+  const cartContext = useContext(CartContext);
+  const [hover, setHover] = useState<boolean>(false);
   const [employeeData, setEmployeeData] = useState<ResponseBody>({
     full_name: "",
     eRole: "",
@@ -46,6 +49,10 @@ const AdminNavigation = () => {
   const handleNav = () => {
     navigate("/login")
     localStorage.removeItem("access_token");
+  }
+  const handleClick = () => {
+    cartContext.handleSuccess(11);
+    setHover(false);
   }
   return (
     <div className="flex flex-row justify-between items-start">
@@ -180,8 +187,10 @@ const AdminNavigation = () => {
       </div>
 
       <div className="w-full shadow-shadow_primary flex flex-row items-center gap-[10px] p-4 justify-end">
-        <div className="w-[30px] h-[30px]">
-          <NotificationsNoneIcon className="w-full h-full object-cover text-[#A2A3A6]"></NotificationsNoneIcon>
+        <div className="w-[30px] h-[30px] relative">
+          <NotificationsNoneIcon className="w-full h-full object-cover text-[#A2A3A6]" ></NotificationsNoneIcon>
+          {cartContext.isSuccess && <div className="w-[15px] h-[15px] bg-orange-500 rounded-full absolute top-0 right-0 z-10"></div>}
+          {hover && <div>Có đơn hàng mới!</div>}
         </div>
         <div className="w-[50px] h-[50px]">
           <div>

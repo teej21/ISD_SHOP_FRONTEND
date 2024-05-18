@@ -38,7 +38,6 @@ const Login = () => {
       console.log(response);
       if (response.ok) {
         const responseBody: ResponseBody = await response.json();
-
         localStorage.setItem("full_name", responseBody.full_name);
         localStorage.setItem("access_token", responseBody.tokens.access_token);
         localStorage.setItem("refresh_token", responseBody.tokens.refresh_token);

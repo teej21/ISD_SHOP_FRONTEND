@@ -6,13 +6,14 @@ import Swal from "sweetalert2";
 import getAddToCart from "../composables/getAddToCart.ts";
 import useAccessToken from "../composables/getAccessToken.ts";
 import deleteProduct from "../composables/deleteProduct.ts";
+
 interface AddToCartElement {
-    orderdetail_id: number,
-    order_id: number,
-    product_id: number,
-    product_price: number,
-    product_name: string,
-    product_thumbnail: string,
+    orderdetail_id: number;
+    order_id: number;
+    product_id: number;
+    product_price: number;
+    product_name: string;
+    product_thumbnail: string;
 }
 
 interface ResponseBody {
@@ -29,17 +30,25 @@ interface ResponseBody {
   publishYear: string;
 }
 
+interface SuccessState {
+  [index: number]: boolean;
+}
+
 const CartContext = createContext<{
   productInfo: ResponseBody;
   AddToCartProductList: AddToCartElement[];
-  isDeleted: boolean,
-  totalPrice: number,
-  handleTotalPrice: () => void,
-  setIsDeleted: React.Dispatch<React.SetStateAction<boolean>>,
+  isDeleted: boolean;
+  totalPrice: number;
+  isSuccess: boolean;
+  successState: SuccessState;
+  setIsSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+  handleTotalPrice: () => void;
+  setIsDeleted: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddToCart: () => void;
-  fetchProductDetails: (id: number | null) => void,
+  fetchProductDetails: (id: number | null) => void;
   setAddToCartProductList: React.Dispatch<React.SetStateAction<AddToCartElement[]>>;
-  deleteAddToCartProduct: (id: number | null) => void,
+  deleteAddToCartProduct: (id: number | null) => void;
+  handleSuccess: (id: number) => void;
 }>({
   productInfo: {
     categoryName: "",
@@ -57,12 +66,16 @@ const CartContext = createContext<{
   AddToCartProductList: [],
   isDeleted: false,
   totalPrice: 0,
+  isSuccess: false,
+  successState: {},
+  setIsSuccess: () => {},
   handleTotalPrice: () => {},
   setIsDeleted: () => {},
   handleAddToCart: () => {},
   fetchProductDetails: (id: number | null) => {},
   setAddToCartProductList: () => {},
   deleteAddToCartProduct: (id: number | null) => {},
+  handleSuccess: (id: number) => {},
 });
 
 const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
@@ -82,8 +95,11 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
   const [AddToCartProductList, setAddToCartProductList] = useState<AddToCartElement[]>([]);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [successState, setSuccessState] = useState<SuccessState>({});
   const { accessToken, loading } = useAccessToken();
   const uid : string | null = localStorage.getItem("userId");
+
   const handleAddToCart = async () => {
     try {
       if (uid) {
@@ -117,8 +133,6 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
       failMessage("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
     }
   };
-  
-
 
   const deleteAddToCartProduct = (id: number | null) => {
     if (id) {
@@ -155,7 +169,6 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
       });
     }
   };
-  
 
   const fetchProductDetails = async (id: number | null) => {
     try {
@@ -196,7 +209,7 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
       console.error("Error fetching image:", error);
     }
   };
-  
+
   const handleTotalPrice = () => {
     let totalPrice = 0;
     AddToCartProductList.forEach((product) => {
@@ -205,9 +218,17 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
     setTotalPrice(totalPrice);
   };
 
+  const handleSuccess = (id: number) => {
+    setSuccessState(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+    console.log(successState);
+  };
+
 
   return (
-    <CartContext.Provider value={{ productInfo, AddToCartProductList, totalPrice, handleAddToCart, fetchProductDetails, setAddToCartProductList, deleteAddToCartProduct, isDeleted, setIsDeleted, handleTotalPrice }}>
+    <CartContext.Provider value={{ productInfo, AddToCartProductList, totalPrice, handleAddToCart, fetchProductDetails, setAddToCartProductList, deleteAddToCartProduct, isDeleted, setIsDeleted, handleTotalPrice, handleSuccess, isSuccess, setIsSuccess, successState }}>
       {children}
     </CartContext.Provider>
   );

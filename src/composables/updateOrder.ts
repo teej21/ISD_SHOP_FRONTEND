@@ -1,10 +1,10 @@
-import SuccessMessage from "../components/LoadingFrame/SuccessMessage";
+import SuccessMessage from "../components/LoadingFrame/SuccessMessage.ts";
 
 interface InputBody {
     orderId: number,
     name: string,
     address: string,
-    phoneNumber: string,
+    phone: string,
     note? : string,
     status: string,
 }
@@ -21,6 +21,7 @@ const updateOrder = async (access_token: string | null, params: InputBody, callb
         });
         if(response.ok){
             SuccessMessage("Cập nhật đơn hàng thành công!");
+            console.log(await response.json());
             callback();
         }
     }

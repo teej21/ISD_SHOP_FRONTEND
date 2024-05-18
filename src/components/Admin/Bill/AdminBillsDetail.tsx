@@ -1,12 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from ".././AdminNavigation.tsx";
 import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
-import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import LoadingState from "../../LoadingFrame/Loading.tsx";
@@ -34,16 +30,15 @@ const AdminBillsDetail = () => {
   const [orderDetail, setOrderDetail] = useState<Order | null>(null);
   const [employeeList, setEmployeeList] = useState<Customer[]>([]);
   const [orderedProduct, setOrderedProduct] = useState<AddToCartElement[]>([]);
-
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
   const [eid, setEid] = useState<string>("");
+  const role = localStorage.getItem("role");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleNav = useContext(ClickAdmin);
   const { accessToken, loading } = useAccessToken();
   const handleValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setEid(e.target.value);
-    console.log(eid);
   };
 
   const handleNavigation = () => {
@@ -58,11 +53,9 @@ const AdminBillsDetail = () => {
   const handleMoreImg = (id: string) => {
     navigate(`/admin/order/${id}/img`)
   }
-
   useEffect(() => {
-    if (loading) return; 
-
     const fetchEmployee = async (accessToken: string) => {
+      if (loading) return; 
       try {
         const response = await fetch(
           `http://localhost:8686/admin/users/role=EMPLOYEE`,
@@ -114,7 +107,7 @@ const AdminBillsDetail = () => {
         },
         body: JSON.stringify(inputData),
       });
-      const data = await response.json();
+      const data = await response.json();  
       if (response.ok) {
         SuccessMessage("Giao việc thành công!");
         handleNavigation();
@@ -216,7 +209,7 @@ const AdminBillsDetail = () => {
                 <DetailRow
                   label="Giao công việc này cho"
                   value={
-                    orderDetail.status !== 'ASSIGNED' ? (
+                    orderDetail.status === 'PENDING' || orderDetail.status === 'INIT' ? (
                     <select onChange={handleValue} className="w-[550px]">
                       <option selected disabled value="">
                         Chọn nhân viên cho đơn hàng này!
@@ -227,7 +220,7 @@ const AdminBillsDetail = () => {
                         </option>
                       ))}
                     </select>) : (
-                      <div>Task này đã được giao!</div>
+                      <div>{orderDetail.employee.fullName}</div>
                     )
                   }
                 ></DetailRow>
@@ -263,14 +256,15 @@ const AdminBillsDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between py-12">
+            {role === 'ADMIN' && <div className="flex justify-between py-12">
               <Button
                 type="submit"
                 className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
+                disabled={orderDetail.status !== 'PENDING'}
               >
                 Lưu
               </Button>
-            </div>
+            </div>}
           </form>
         </div>
       </div>

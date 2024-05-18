@@ -17,7 +17,6 @@ import AdminHorizontal from "./AdminHorizontal.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 import failMessage from "../LoadingFrame/FailMessage.ts";
 const AdminModify = () => {
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
     email: "",
@@ -77,7 +76,7 @@ const AdminModify = () => {
     }));
    };
 
-  const submitCustomer = async (data: any) => {
+  const submitCustomer = async (data: AddUser) => {
     data.password = "camonquykhach";
     console.log(data);
     try {
@@ -123,7 +122,6 @@ const AdminModify = () => {
     <div>
       <AdminHorizontal />
       <div className="absolute top-[55%] left-1/2  transform -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] bg-[#D9D9D9]">
-      {errorMessage.length > 0 && <SystemErrorMessage message={errorMessage}/>}
         <div>
           <div className="flex flex-row justify-between items-center px-8 py-4">
             <div>

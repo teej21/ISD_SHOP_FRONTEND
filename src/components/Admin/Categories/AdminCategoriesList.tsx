@@ -11,10 +11,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
+import failMessage from "../../LoadingFrame/FailMessage.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<ICategories[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
@@ -83,7 +83,7 @@ const AdminContent = () => {
           setEmptyMessage(errorData.error);
         }
       } catch (error) {
-        console.log(error);
+        failMessage("Loading...");
       }
     };
 
@@ -96,7 +96,6 @@ const AdminContent = () => {
 
   const handleRowClick = (params: any) => {
     const categoryId = params.row.id;
-    console.log(categoryId);
     navigate(`/admin/categories/${categoryId}`);
     navHeader.handleSetMode("customer-detail");
   };
@@ -163,11 +162,6 @@ const AdminContent = () => {
             </Button>
           </div>
         </div>
-        {successMessage && (
-          <h1 className="text-green-500 text-xl font-bold ml-[20px]">
-            {successMessage}
-          </h1>
-        )}
      {customerInfo ? (
           <div>
             <DataGrid

@@ -86,7 +86,7 @@ export interface Order {
   phoneNumber: string;
   note: string;
   user: User;
-  caringEmployee: null | any;
+  employee: null | any;
   status: string;
   orderDetailList: OrderDetail[];
 }

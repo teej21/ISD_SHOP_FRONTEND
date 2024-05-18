@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, accordionClasses } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
+import { Button } from "@mui/material";
 import { useParams } from "react-router-dom";
 import AdminNavigation from "../AdminNavigation.tsx";
 import schema from "../../../validation/AddCategoryForm.ts";
@@ -13,6 +11,7 @@ import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
+import failMessage from "../../LoadingFrame/FailMessage.ts";
 const AdminCategoriesModify = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories>({
     id: 0,
@@ -32,8 +31,6 @@ const AdminCategoriesModify = () => {
       ...prevState,
       [name]: value,
     }));
-    console.log('abc');
-    
   };
 
 
@@ -54,11 +51,11 @@ const AdminCategoriesModify = () => {
         const data = await response.json();
         if (response.ok) {
           setCategoryDetail(data);
-          console.log(categoryDetail);
         } else {
+          failMessage("Loading...");
         }
       } catch (error) {
-        console.log(error);
+        failMessage("Loading...");
       }
     };
     fetchCustomerDetails();

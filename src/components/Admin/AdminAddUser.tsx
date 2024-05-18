@@ -6,8 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
-import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
-import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
@@ -21,13 +19,12 @@ const AdminAddUser = () => {
     formState: { errors },
     reset,
   } = useForm<AddUser>({ resolver: zodResolver(schema) });
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { accessToken, loading } = useAccessToken();
   const submitCustomer = async (data: AddUser) => {
     data.password = getConfigObject('DEV').CUSTOMER_PASSWORD;
+    console.log(data);  
     if (loading) return; 
     try {
       const response = await fetch("http://localhost:8686/admin/users",{
