@@ -30,59 +30,26 @@ interface AddToCartElement {
   product_thumbnail: string | null;
 }
 
-const AdminBillsDetail = () => {
+const AdminImgDetail = () => {
   const [orderDetail, setOrderDetail] = useState<Order | null>(null);
-  const [employeeList, setEmployeeList] = useState<Customer[]>([]);
   const [orderedProduct, setOrderedProduct] = useState<AddToCartElement[]>([]);
-
   const [thumbnailFetched, setThumbnailFetched] = useState<boolean[]>([]);
-  const [eid, setEid] = useState<string>("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleNav = useContext(ClickAdmin);
   const { accessToken, loading } = useAccessToken();
-  const handleValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEid(e.target.value);
-    console.log(eid);
-  };
 
   const handleNavigation = () => {
-    handleNav.handleSetMode("bills");
-    navigate(-1);
+    navigate(`/admin/orders/${id}`)
   };
 
   const handleImg = (id: number) => {
     navigate(`/admin/products/${id}`);
   }
 
-  const handleMoreImg = (id: string) => {
-    navigate(`/admin/order/${id}/img`)
-  }
 
   useEffect(() => {
     if (loading) return; 
-
-    const fetchEmployee = async (accessToken: string) => {
-      try {
-        const response = await fetch(
-          `http://localhost:8686/admin/users/role=EMPLOYEE`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setEmployeeList(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
     const fetchOrder = async (accessToken: string | null) => {
       const data = await getUserOrderInfo(accessToken, id);
@@ -96,35 +63,10 @@ const AdminBillsDetail = () => {
     };
 
     if (accessToken) {
-      fetchEmployee(accessToken);
       fetchOrder(accessToken);
       fetchOrderProduct(accessToken);
     }
   }, [accessToken, loading]);
-
-  const fetchCustomerDetails = async (e) => {
-    e.preventDefault();
-    try {
-      const inputData = { employeeId: eid, orderId: id };
-      const response = await fetch(`http://localhost:8686/orders/admin/update-employee`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(inputData),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        SuccessMessage("Giao việc thành công!");
-        handleNavigation();
-      } else {
-        failMessage(data.error);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   const fetchThumbnails = async (index: number) => {
     if (orderDetail) {
@@ -176,10 +118,7 @@ const AdminBillsDetail = () => {
                 <Button
                   variant="contained"
                   className="bg-[#899BE0]"
-                  onClick={() => {
-                    handleNav.handleSetMode("bills");
-                    navigate("/admin");
-                  }}
+                  onClick={handleNavigation}
                 >
                   <div className="flex items-center gap-[10px]">
                     <KeyboardReturn></KeyboardReturn>
@@ -192,58 +131,12 @@ const AdminBillsDetail = () => {
         </div>
 
         <div className="flex flex-col justify-between gap-[10px] gap-4 px-8 py-4 bg-[#EEF0F1] h-[75%] w-[85%] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <form onSubmit={fetchCustomerDetails}>
             <div className="flex flex-col gap-[50px]">
-              <div className="flex flex-row justify-between items-center">
-                <DetailRow
-                  label="Tên khách hàng"
-                  value={orderDetail.name}
-                ></DetailRow>
-                <DetailRow label="ID đơn hàng" value={id}></DetailRow>
-              </div>
-              <div className="flex flex-row justify-between items-center">
-                <DetailRow
-                  label="Số điện thoại"
-                  value={orderDetail.phoneNumber}
-                ></DetailRow>
-                <DetailRow label="Ghi chú" value={orderDetail.note}></DetailRow>
-              </div>
               <div className="flex flex-row justify-between w-full">
-                <DetailRow
-                  label="Địa chỉ"
-                  value={orderDetail.address}
-                ></DetailRow>
-                <DetailRow
-                  label="Giao công việc này cho"
-                  value={
-                    orderDetail.status !== 'ASSIGNED' ? (
-                    <select onChange={handleValue} className="w-[550px]">
-                      <option selected disabled value="">
-                        Chọn nhân viên cho đơn hàng này!
-                      </option>
-                      {employeeList.map((employee) => (
-                        <option key={employee.id} value={employee.id}>
-                          {employee.full_name}
-                        </option>
-                      ))}
-                    </select>) : (
-                      <div>Task này đã được giao!</div>
-                    )
-                  }
-                ></DetailRow>
-              </div>
-              <div className="flex flex-row justify-between w-full">
-                <DetailRow2
-                  label="Tên hàng"
-                  value={orderedProduct.slice(0,4)
-                    .map((product) => product.product_name)
-                    .join(" ,")}
-                    order={orderedProduct.length}
-                ></DetailRow2>
                 <div className="flex flex-col gap-[10px]">
-                  <h1 className="font-bold text-2xl">Sản phẩm*</h1>
-                  <div className="flex flex-row gap-[20px]">
-                    {orderedProduct.slice(0, 4).map((product) => (
+                  <h1 className="font-bold text-2xl">Ảnh minh họa *</h1>
+                  <div className="grid grid-cols-12 gap-[20px]">
+                    {orderedProduct.map((product) => (
                       <div>
                         <div
                           key={product.order_id}
@@ -258,20 +151,10 @@ const AdminBillsDetail = () => {
                         </div>
                       </div>
                     ))}
-                    {orderedProduct.length > 4 && <span onClick={() => handleMoreImg(id)}>And {orderedProduct.length - 4} more,<br/><span className="font-bold">nhấn để xem tiếp</span></span>}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex justify-between py-12">
-              <Button
-                type="submit"
-                className="bg-emerald-600 text-white text-xl font-bold font-bold px-12 py-4 cursor-pointer hover:bg-emerald-900 hover:font-bold"
-              >
-                Lưu
-              </Button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
@@ -283,11 +166,6 @@ interface DetailRowProps {
   value: React.ReactNode[] | string;
 }
 
-interface DetailRowProps2 {
-  label: string;
-  value: React.ReactNode[] | string;
-  order: number;
-}
 
 const DetailRow: React.FC<DetailRowProps> = ({ label, value }) => {
   return (
@@ -306,21 +184,4 @@ const DetailRow: React.FC<DetailRowProps> = ({ label, value }) => {
   );
 };
 
-const DetailRow2: React.FC<DetailRowProps2> = ({ label, value, order }) => {
-  return (
-    <div className="flex flex-col gap-[10px]">
-      <h1 className="font-bold text-2xl">{label} *</h1>
-      {value ? (
-        <div className="bg-white p-2 border-2 border-solid border-black w-[600px] h-[80px] text-xl flex flex-row ">
-          {value}
-          {order > 5 && <p>And {order - 5} more</p>}
-        </div>
-      ) : (
-        <div className="bg-white p-2 border-2 border-solid border-black w-full">
-          <span className="text-2xl">No information</span>
-        </div>
-      )}
-    </div>
-  );
-};
-export default AdminBillsDetail;
+export default AdminImgDetail;

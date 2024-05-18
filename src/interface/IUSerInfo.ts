@@ -91,6 +91,9 @@ export interface Order {
   orderDetailList: OrderDetail[];
 }
 
+export interface OrderGetInfo{
+  
+}
 // public enum OrderStatus {
 //   INIT("INIT"),
 //   PENDING("PENDING"),
