@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from ".././AdminNavigation.tsx";
 import { useNavigate } from 'react-router-dom';
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import { ICategories } from "../../../interface/ICategory.ts";
@@ -11,9 +8,9 @@ import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import LoadingState from "../../LoadingFrame/Loading.tsx";
 import AdminHorizontal from "../AdminHorizontal.tsx";
+import failMessage from "../../LoadingFrame/FailMessage.ts";
 const AdminCategoryDetail = () => {
   const [categoryDetail, setCategoryDetail] = useState<ICategories | null>(null);
-  const [emptyMessage, setEmptyMessage] = useState("");
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const handleNav = useContext(ClickAdmin);
@@ -28,12 +25,11 @@ const AdminCategoryDetail = () => {
         const data = await response.json();
         if (response.ok) {
           setCategoryDetail(data);
-          console.log(categoryDetail);
         } else {
-          setEmptyMessage(data.error);
+          failMessage("Loading...");
         }
       } catch (error) {
-        console.log(error);
+        failMessage("Loading...");
       }
     };
     fetchCustomerDetails();
@@ -83,7 +79,7 @@ const AdminCategoryDetail = () => {
 
 interface DetailRowProps {
   label: string;
-  value: string;
+  value: string | number;
 }
 
 const DetailRow: React.FC<DetailRowProps> = ({ label, value }) => {

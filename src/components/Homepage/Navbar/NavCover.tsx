@@ -74,7 +74,6 @@ const NavCover = () => {
             >
               Giới thiệu
             </li>
-            <li className="text-white">Liên hệ</li>
             <li className="text-white" onClick={() => handleClick("products")}>
               Tranh nổi bật
             </li>
@@ -93,11 +92,6 @@ const NavCover = () => {
               )}
             </li>
           </ul>
-        </div>
-        <div className="md:text-white md:block hidden">
-          <FacebookIcon />
-          <TwitterIcon />
-          <MailIcon />
         </div>
       </div>
     </div>

@@ -1,9 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from "./AdminNavigation.tsx";
 import schema from "../../validation/AddUserForm.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,9 +10,8 @@ import { AddUser } from "../../interface/IUSerInfo.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
+import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 const AdminModifyEmployee = () => {
-  const [errorMessage, setErrorMessage] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
     email: "",
@@ -73,10 +69,11 @@ const AdminModifyEmployee = () => {
     });
   };
 
-  const submitCustomer = async (data: any) => {
+  const submitCustomer = async (data: AddUser) => {
     data.password = "camonquykhach";
-    console.log(data);
     try {
+      console.log(data);
+      
       if (loading) return; 
       const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
         method: "PUT",
@@ -88,16 +85,12 @@ const AdminModifyEmployee = () => {
       });
 
       if (response.ok) {
-        const responseBody = await response.json();
-        alert("Chỉnh sửa thành công!")
-        setMessage(responseBody.result);
+        SuccessMessage("Chỉnh sửa thành công!")
+        console.log(await response.json());
         handleNavigation();
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
         resetInfo();
       } else {
-        setErrorMessage((await response.json()).error);
+        SuccessMessage((await response.json()).error);
       }
     } catch (error) {
       console.error("Error adding user:", error);

@@ -39,7 +39,7 @@ const Product_additional_detail = () => {
     fetchProductDetails();
   }, [id]);
   return (
-    <div>
+    <div className="px-8">
       <hr className="mb-[20px]"></hr>
       <div className="flex flex-col gap-[30px] my-[40px]">
         <h1 className="text-2xl font-bold my-8">THÔNG TIN KĨ THUẬT</h1>

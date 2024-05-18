@@ -32,6 +32,7 @@ const PaymentDetail = () => {
     try {
       if(userId){
       await modifyConfirmation(accessToken, data, handleNav, +userId);
+      addToCartList.handleSuccess(11)
       }
     } catch (error) {
       console.log(error);
@@ -48,7 +49,7 @@ const PaymentDetail = () => {
       <div className="text-center">
         <h1 className="text-[#8D8D8D] font-bold text-3xl">ĐẶT HÀNG</h1>
       </div>
-      <div className="flex flex-row justify-between items-start max-w-[1500px] mx-auto">
+      <div className="flex md:flex-row flex-col-reverse mx-auto justify-between md:items-start max-w-[1500px] mx-auto px-4">
         <div className="flex flex-col gap-[20px] basis-[50%] mt-[100px]">
           <h1 className="text-[#8D8D8D] font-bold text-2xl">
             THÔNG TIN ĐẶT HÀNG
@@ -95,16 +96,16 @@ const PaymentDetail = () => {
                   ></textarea>
                 </label>
               </div>
-              <Button className="bg-[#B33141] text-white font-bold text-xl w-full py-4 mx-auto mt-[30px]" type="submit">Đặt hàng</Button>
+              <Button className="bg-[#B33141] text-white font-bold text-xl w-full py-4 mx-auto mt-[30px] md:mb-0 mb-[30px]" type="submit">Đặt hàng</Button>
             </form>
           </div>
         </div>
         <div className="flex flex-col border border-solid border-2 border-red-500 basis-[40%] p-8 gap-[20px] mt-[100px]">
-          <h1 className="text-[#8D8D8D] font-bold text-2xl">ĐƠN HÀNG CỦA BẠN</h1>
-          <h1 className="text-xl font-bold">SẢN PHẨM</h1>
+          <h1 className="text-[#8D8D8D] font-bold text-2xl ">ĐƠN HÀNG CỦA BẠN</h1>
+          <h1 className="text-xl  font-bold">SẢN PHẨM</h1>
           <div className="flex flex-col gap-[20px]">{addToCartList.AddToCartProductList.map((cart) => (
             <div key={cart.product_id} className="flex flex-row justify-between items-center">
-              <span className="text-xl">{cart.product_name}</span><span className="text-xl text-[#D73F3F]">{new Intl.NumberFormat("vi-en").format(cart.product_price)}đ</span>
+              <span className="text-xl ">{cart.product_name}</span><span className="text-xl text-[#D73F3F]">{new Intl.NumberFormat("vi-en").format(cart.product_price)}đ</span>
             </div>
           ))}</div>
           <div className="flex flex-row justify-between items-center"><span className="text-xl text-[#D73F3F] font-bold">Tổng:</span><span className="text-xl text-[#D73F3F] font-bold">{new Intl.NumberFormat("vi-en").format(addToCartList.totalPrice)}đ</span></div>

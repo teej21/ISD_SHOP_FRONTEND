@@ -1,26 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from ".././AdminNavigation.tsx";
 import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
-import { ICategories } from "../../../interface/ICategory.ts";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import LoadingState from "../../LoadingFrame/Loading.tsx";
-import { Customer, Order } from "../../../interface/IUSerInfo.ts";
+import { Order } from "../../../interface/IUSerInfo.ts";
 import AdminHorizontal from "../AdminHorizontal.tsx";
-import SuccessMessage from "../../LoadingFrame/SuccessMessage.ts";
-import failMessage from "../../LoadingFrame/FailMessage.ts";
 import getUserOrderInfo from "../../../composables/getUserOrderInfo.ts";
 import getOrderProduct from "../../../composables/getOrderProduct.ts";
 import { fetchImage } from "../../../composables/getImage.ts";
-interface inputData{
-  employeeId: string,
-  orderId: string | undefined,
-}
+
 interface AddToCartElement {
   orderdetail_id: number;
   order_id: number;

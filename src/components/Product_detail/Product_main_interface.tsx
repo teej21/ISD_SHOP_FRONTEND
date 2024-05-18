@@ -42,13 +42,13 @@ const Product_main_interface = () => {
   }, [id]);
 
   return (
-    <div>
+    <div className="px-8">
        {showSignInDialog && <SignInDialog
         open={showSignInDialog}
         handleClose={() => setShowSignInDialog(false)}
       />}
       {isLoading && <LoadingState></LoadingState>}
-      <div className="flex flex-row gap-[50px]">
+      <div className="flex lg:flex-row flex-col items-center gap-[50px]">
         <div className="flex flex-col gap-[40px]">
           <div className="flex flex-row mt-[30px] gap-[5px]">
             <span className="font-bold text-[#8D8D8D]">TRANG CHỦ /</span>
@@ -56,13 +56,13 @@ const Product_main_interface = () => {
               {productInfo.productInfo.categoryName}
             </span>
           </div>
-          <div className="w-[600px] h-[500px] relative">
-            {productInfo.productInfo.status === 'ORDERED' && <div className="absolute bg-black opacity-50 absolute w-[600px] h-[500px]"></div>}
-            {productInfo.productInfo.status === 'STOCKOUT' && <div className="absolute bg-black opacity-50 absolute w-[600px] h-[500px]"></div>}  
+          <div className="lg:w-[600px] lg:h-[500px] w-[500px] h-[400px] relative">
+            {productInfo.productInfo.status === 'ORDERED' && <div className="absolute bg-black opacity-50 absolute lg:w-[600px] lg:h-[500px] w-[500px] h-[400px]"></div>}
+            {productInfo.productInfo.status === 'STOCKOUT' && <div className="absolute bg-black opacity-50 absolute lg:w-[600px] lg:h-[500px] w-[500px] h-[400px]"></div>}  
             <img
               src={productInfo.productInfo.thumbnail}
               alt="img_detail"
-              className="h-full w-full object-cover"
+              className="lg:w-[600px] lg:h-[500px] w-[500px] h-[400px] object-cover"
             ></img>
             {productInfo.productInfo.status === 'ORDERED' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}
             {productInfo.productInfo.status === 'STOCKOUT' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}  
@@ -70,20 +70,20 @@ const Product_main_interface = () => {
           <div>
             <Button
               variant="contained"
-              className="bg-[#472A4B] pr-12 py-4 rounded-[10px] "
+              className="bg-[#472A4B] pr-12 py-4 rounded-[10px] lg:block hidden "
             >
               <ZoomOutMapIcon className="mr-[30px]"></ZoomOutMapIcon>
               <span className="text-xl font-bold cursor">PHÓNG TO</span>
             </Button>
           </div>
         </div>
-        <div className="flex flex-col gap-[20px] my-24">
+        <div className="flex flex-col gap-[20px] lg:my-24 mb-24 w-screen px-8">
           <div>
             <span className="text-3xl font-bold">{productInfo.productInfo.name}</span>
             <div className="h-2 w-[20%] bg-[#D9D9D9] mt-[5px]"></div>
           </div>
           <div>
-            <span className="text-lg text-[#BF3744] font-bold">
+            <span className="lg:text-lg text-2xl text-[#BF3744] font-bold">
               {new Intl.NumberFormat("vi-en").format(productInfo.productInfo.price)}đ
             </span>
           </div>
@@ -95,7 +95,7 @@ const Product_main_interface = () => {
           <div>
             <Button
               variant="contained"
-              className="bg-[#DF6A6A] rounded-[10px] p-4 text-xl font-bold"
+              className="bg-[#DF6A6A] rounded-[10px] p-4 text-xl font-bold lg:max-w-[200px] w-full"
               onClick={handleAddToCart}
             >
               THÊM VÀO GIỎ
@@ -104,13 +104,13 @@ const Product_main_interface = () => {
           <div>
             <Button
               variant="contained"
-              className="bg-[#FB6E2E] rounded-[10px] px-9 py-4 text-xl font-bold"
+              className="bg-[#FB6E2E] rounded-[10px] px-9 py-4 text-xl font-bold lg:max-w-[200px] w-full"
               onClick={handleAddToCart}
             >
              <Link to="/add-to-cart">MUA NGAY</Link>
             </Button>
           </div>
-          <div className="flex flex-col gap-[10px] text-[#8F8667] text-lg font-bold">
+          <div className="flex flex-col gap-[10px] text-[#8F8667] text-xl font-bold">
             <span>Mã: {productInfo.productInfo.id}</span>
             <hr></hr>
             <span>Danh mục: {productInfo.productInfo.categoryName}</span>

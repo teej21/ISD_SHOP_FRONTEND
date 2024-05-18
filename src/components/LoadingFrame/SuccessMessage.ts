@@ -1,4 +1,3 @@
-import React from 'react'
 import Swal from 'sweetalert2';
 const SuccessMessage = (title: string) => {
     const Toast = Swal.mixin({

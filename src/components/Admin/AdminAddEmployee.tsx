@@ -19,8 +19,6 @@ import failMessage from "../LoadingFrame/FailMessage.ts";
 import getConfigObject from "../../env/env.ts";
 const AdminAddEmployee = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AddUser>({ resolver: zodResolver(schema) });
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const [message, setMessage] = useState<string>("");
     const navigate = useNavigate();
     const { accessToken, loading } = useAccessToken();
     const nav = useContext(ClickAdmin);

@@ -3,7 +3,11 @@ import TeamIcon from "../../../assets/team_icon.png";
 import Badge from "../../../assets/icon_1.png";
 import DMCA from "../../../assets/dmca-badge-w100-2x1-04 1.png";
 import ConfirmDMCA from '../../../assets/dmca 1.png'
+import { Link } from "react-router-dom";
 const Footer = () => {
+  const scrollToTop = () => {
+    window.scrollTo(0,200);
+  }
   return (
     <div className="bg-[#ECD2B3] md:flex md:flex-row md:justify-between md:items-center md:gap-[20px] md:px-12 md:mt-12 md:py-4 grid grid-cols-gridFlexible2 p-8 gap-[20px]">
       <div className="md:w-3/10 w-8/10 h-full flex flex-col gap-[10px]">
@@ -72,22 +76,19 @@ const Footer = () => {
           <h1 className="font-bold lg:text-base text-sm ">Có thể bạn muốn</h1>
         </div>
         <div>
-          <span className="lg:text-base text-xs ">Tranh sơn dầu</span>
+          <Link to="/1" onClick={scrollToTop}><span className="lg:text-base text-xs ">Tranh phong cảnh</span></Link>
         </div>
         <div>
-          <span className="lg:text-base text-xs ">Tranh phong cảnh</span>
+        <Link to="/2" onClick={scrollToTop}><span className="lg:text-base text-xs ">Tranh nghệ thuật</span></Link>
         </div>
         <div>
-          <span className="lg:text-base text-xs ">Tranh nghệ thuật</span>
+        <Link to="/3" onClick={scrollToTop}><span className="lg:text-base text-xs ">Tranh hoa</span></Link>
         </div>
         <div>
-          <span className="lg:text-base text-xs ">Tranh trừu tượng</span>
+        <Link to="/4" onClick={scrollToTop}><span className="lg:text-base text-xs ">Tranh sơn dầu</span></Link>
         </div>
         <div>
-          <span className="lg:text-base text-xs ">Tranh sơn mài</span>
-        </div>
-        <div>
-          <span className="lg:text-base text-xs ">Khung tranh</span>
+        <Link to="/5" onClick={scrollToTop}><span className="lg:text-base text-xs ">Tranh sơn mài</span></Link>
         </div>
       </div>
       <div className="flex flex-col justify-evenly gap-[30px]">

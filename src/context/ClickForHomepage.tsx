@@ -18,10 +18,10 @@ type ClickForHomepageProps = {
 
 const ClickForHomepage: React.FC<ClickForHomepageProps> = ({ children }) => {
   const [barClick, setBarClick] = useState(false);
-  const introductionRef = useRef<HTMLDivElement | null>(null); // Đặt useRef trong Component chức năng
+  const introductionRef = useRef<HTMLDivElement | null>(null); 
 
   const handleBarClick = () => {
-    setBarClick((state) =>state);
+    setBarClick((state) => !state);
   };
 
   const value = { barClick, handleBarClick, introductionRef };

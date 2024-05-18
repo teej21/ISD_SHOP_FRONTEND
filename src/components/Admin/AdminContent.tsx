@@ -15,7 +15,6 @@ import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 const AdminContent = () => {
   const [customerInfo, setCustomerInfo] = useState<AddUser[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
@@ -91,7 +90,8 @@ const AdminContent = () => {
               .split("T")[0],
           }));
           setCustomerInfo(updatedData);
-
+          console.log(customerInfo);
+          
           
         } else {
           const errorData = await response.json();
