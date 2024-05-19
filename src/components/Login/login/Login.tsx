@@ -43,8 +43,9 @@ const Login = () => {
         localStorage.setItem("access_token", responseBody.tokens.access_token);
         localStorage.setItem("refresh_token", responseBody.tokens.refresh_token);
         localStorage.setItem("role", responseBody.role);
+        localStorage.setItem("user_id", responseBody.user_id);
         SuccessMessage("Đăng nhập thành công");
-        if (responseBody.tokens && responseBody.role !== "CUSTOMER") {
+        if (localStorage.getItem("access_token") !== null && localStorage.getItem("role") !== "CUSTOMER") {
           navigate("/admin");
         } else {
           navigate("/");

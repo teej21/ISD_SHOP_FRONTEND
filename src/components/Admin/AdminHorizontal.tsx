@@ -18,6 +18,7 @@ const AdminHorizontal = () => {
     navigate("/login")
     localStorage.removeItem("access_token");
     localStorage.removeItem("role");
+    localStorage.removeItem("user_id");
   }
 
   useEffect(() => {

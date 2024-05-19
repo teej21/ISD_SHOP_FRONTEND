@@ -49,11 +49,13 @@ const AdminNavigation = () => {
   const handleNav = () => {
     navigate("/login")
     localStorage.removeItem("access_token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user_id");
   }
-  const handleClick = () => {
-    cartContext.handleSuccess(11);
-    setHover(false);
-  }
+  // const handleClick = () => {
+  //   cartContext.handleSuccess(11);
+  //   setHover(false);
+  // }
   return (
     <div className="flex flex-row justify-between items-start">
       <div className=" flex flex-col gap-20 shadow-shadow_primary w-[20%] p-8 h-screen">

@@ -10,6 +10,15 @@ import useAccessToken from "../../../composables/getAccessToken.ts";
 import useRole from "../../../composables/getRole.ts";
 import getOrderByEmployee from "../../../composables/getOrderByEmployee.ts";
 const AdminBills = () => {
+  const statusMapping: { [key: string]: string } = {
+    INIT: "KHỞI TẠO",
+    PENDING: "ĐANG CHỜ",
+    ASSIGNED: "ĐƯỢC GIAO VIỆC",
+    SHIPPING: "ĐANG VẬN CHUYỂN",
+    DELIVERED: "ĐÃ BÁN",
+    CANCELLED: "HỦY ĐƠN HÀNG",
+  };
+  
   const [orderInfo, setOrderInfo] = useState<Order[]>([]);
   const [emptyMessage, setEmptyMessage] = useState("");
   const [employeeOrderList, setEmployeeOrderList] = useState<Order[]>([]);
@@ -26,7 +35,12 @@ const AdminBills = () => {
     { field: "phoneNumber", headerName: "Số điện thoại", width: 200 },
     { field: "note", headerName: "Ghi chú", width: 200 },
     { field: "address", headerName: "Địa chỉ", width: 150 },
-    { field: "status", headerName: "Trạng thái xử lý", width: 200 },
+    {
+      field: "status",
+      headerName: "Trạng thái xử lý",
+      width: 200,
+      renderCell: (params) => statusMapping[params.value] || params.value,
+    },
     {
       field: "orderDetailList",
       headerName: "ID Sản phẩm",
@@ -95,7 +109,7 @@ const AdminBills = () => {
       }
     };
     const getOrderById = async () => {
-      const employeeId = localStorage.getItem("userId");
+      const employeeId = localStorage.getItem("user_id");
       if (employeeId && role === "EMPLOYEE") {
         const employeeOrder = await getOrderByEmployee(employeeId, accessToken);
         setEmployeeOrderList(employeeOrder);
@@ -167,11 +181,11 @@ const AdminBills = () => {
                 <option selected disabled value="">
                   Tìm kiếm trạng thái!
                 </option>
-                <option value="INIT">INIT</option>
-                <option value="PENDING">PENDING</option>
-                <option value="SHIPPING">SHIPPING</option>
-                <option value="DELIVERED">DELIVERED</option>
-                <option value="CANCELLED">CANCELLED</option>
+                <option value="INIT">KHỞI TẠO</option>
+                <option value="PENDING">ĐANG CHỜ</option>
+                <option value="SHIPPING">ĐANG VẬN CHUYỂN</option>
+                <option value="DELIVERED">ĐÃ BÁN</option>
+                <option value="CANCELLED">HỦY ĐƠN HÀNG</option>
               </select>
             </div>
           </div>

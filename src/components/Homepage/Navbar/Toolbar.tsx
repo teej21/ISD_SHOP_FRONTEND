@@ -161,7 +161,6 @@ useEffect(() => {
             GIỎ HÀNG</span>
           <div className="relative">
           <ShoppingCartIcon className="text-[#7D7D7D] xl:w-[25px] xl:h-[25px] w-[20px] height-[20px] hover:text-[#DF6A6A] " />
-          <div className="absolute -top-1 -right-1 bg-[#DF6A6A] w-[17px] h-[17px] rounded-full"><span className="absolute top-1/2 left-1/2 -transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-sm">{addToCartList.AddToCartProductList.length}</span></div>
           </div>
         </div>
       </div>
