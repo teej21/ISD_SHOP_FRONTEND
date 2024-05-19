@@ -78,7 +78,7 @@ const handleNav = (id: number) => {
         {productImage.map((productImg) => (
         <SwiperSlide>
          <div className='relative' onClick={() => handleNav(productImg.id)}>
-          <div className='w-full lg:h-[500px] md:h-[400px] h-[200px]'>
+          <div className='w-full lg:h-[500px] md:h-[400px] sm:h-[300px] h-[200px]'>
           <img
             key={productImg.id}
             src={productImg.thumbnail}
@@ -86,7 +86,7 @@ const handleNav = (id: number) => {
             className="w-full h-full object-cover"
           />
           </div>
-          <div className='lg:text-xl text-white absolute xl:left-[70%] xl:top-[70%] lg:left-[65%] lg:top-[70%] md:top-[65%] md:left-[55%] top-[40%] left-[50%] font-semibold bg-[#DF6A6A] shadow-shadow_primary p-4 rounded-[20px] flex flex-col gap-[20px] sm:flex hidden'>
+          <div className='lg:text-xl text-base text-white absolute xl:left-[70%] xl:top-[70%] lg:left-[65%] lg:top-[70%] md:top-[65%] md:left-[55%] sm:top-[50%] sm:left-[50%] top-[40%] left-[45%] font-semibold bg-[#DF6A6A] shadow-shadow_primary p-4 rounded-[20px] flex flex-col gap-[20px]  '>
           <h1>Tên tranh: {productImg.name}</h1>
           <Button className="bg-[#DF6A6A] rounded-[10px] bg-black text-white w-full">Xem ngay</Button>
           </div>

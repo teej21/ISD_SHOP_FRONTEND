@@ -115,8 +115,6 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
               addToCartProduct.product_thumbnail = outputImage;
               setAddToCartProductList(prev => [...prev, addToCartProduct]);
               SuccessMessage("Thêm sản phẩm thành công!");
-              console.log(addToCartProduct);
-              
             } else {
               failMessage("Sản phẩm đã có trong giỏ hàng.");
             }

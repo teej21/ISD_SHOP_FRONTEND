@@ -9,10 +9,12 @@ import { ClickForHomepage } from "./context/ClickForHomepage.tsx";
 import { createRoot } from "react-dom/client";
 import { AdminController } from "./context/AdminController.tsx";
 import { AddToCartContext } from "./context/AddToCartContext.tsx";
+import { AuthProvider } from "./context/LoginContext.tsx";
 const root = createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
+  <AuthProvider>
     <ClickTheme>
       <ClickForHomepage>
         <AdminController>
@@ -22,6 +24,7 @@ root.render(
         </AdminController>
       </ClickForHomepage>
     </ClickTheme>
+    </AuthProvider>
   </BrowserRouter>
 );
 

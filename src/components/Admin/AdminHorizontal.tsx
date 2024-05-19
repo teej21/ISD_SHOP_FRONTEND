@@ -2,15 +2,23 @@ import React from "react";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Admin from "../../assets/admin_icon.png";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 interface ResponseBody {
   full_name: string;
   eRole: string;
 }
 const AdminHorizontal = () => {
+  const navigate = useNavigate();
   const [employeeData, setEmployeeData] = useState<ResponseBody>({
     full_name: "",
     eRole: "",
   });
+
+  const handleNav = () => {
+    navigate("/login")
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("role");
+  }
 
   useEffect(() => {
     const getEmployeeInfor = () => {
@@ -45,7 +53,7 @@ const AdminHorizontal = () => {
         </span>
         <span>{employeeData.eRole}</span>
       </div>
-      <div><span className="text-xl">Log out</span></div>
+      <div onClick={handleNav}><span className="text-xl">Log out</span></div>
     </div>
   );
 };

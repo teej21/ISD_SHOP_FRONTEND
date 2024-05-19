@@ -1,30 +1,30 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from "./AdminNavigation.tsx";
 import schema from "../../validation/AddUserForm.ts";
 import { AddUser } from "../../interface/IUSerInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitErrorHandler  } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ClickAdmin } from "../../context/AdminController.tsx";
-import SystemErrorMessage from "../Login/login/SystemErrorMessage.tsx";
-import SystemSuccessMessage from "../Login/login/SystemSuccessMessage.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 import failMessage from "../LoadingFrame/FailMessage.ts";
 import getConfigObject from "../../env/env.ts";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 const AdminAddEmployee = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AddUser>({ resolver: zodResolver(schema) });
     const navigate = useNavigate();
     const { accessToken, loading } = useAccessToken();
+    const [isText, setIsText] = useState<boolean>(false);
+    const handleText = () => {
+      setIsText(prev => !prev);
+    }
     const nav = useContext(ClickAdmin);
     const submitCustomer = async (data: AddUser) => {
       try {
-        data.password= getConfigObject('DEV').ADMIN_PASSWORD;
         if (loading) return; 
         const response = await fetch("http://localhost:8686/admin/users",{
           method: 'POST',
@@ -88,6 +88,22 @@ const AdminAddEmployee = () => {
                       </h1>
                     )}
                   </label>
+                  <label className="flex flex-col text-xl font-bold gap-[10px]">
+                   Mật khẩu
+                   <div className="relative">
+                  <input
+                    type={isText ? 'text' : 'password'}
+                    {...register("password")}
+                    className="w-full p-2 border-2 border-solid border-black"
+                  />
+                  {errors.password && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.password.message}
+                    </h1>
+                  )}
+                  <div className="absolute right-3 top-[10%]">{isText ? <VisibilityIcon onClick={handleText}></VisibilityIcon> : <VisibilityOffIcon onClick={handleText}></VisibilityOffIcon>}</div>
+                  </div>
+                </label>
                    <label className="flex flex-col text-xl font-bold gap-[10px]">
                     Số điện thoại:
                     <input type="text" {...register("phone_number")} className="w-full p-2 border-2 border-solid border-black" />

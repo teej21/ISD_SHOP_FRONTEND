@@ -71,7 +71,6 @@ const AdminBills = () => {
       )
     },
   ];
-
   const navigate = useNavigate();
   const { accessToken, loading } = useAccessToken();
   useEffect(() => {

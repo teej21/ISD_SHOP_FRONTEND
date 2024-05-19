@@ -11,6 +11,8 @@ import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 const AdminModifyEmployee = () => {
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
@@ -27,6 +29,11 @@ const AdminModifyEmployee = () => {
   const nav = useContext(ClickAdmin);
   const { id } = useParams();
   const { accessToken, loading } = useAccessToken();
+  const [isText, setIsText] = useState<boolean>(false);
+  
+  const handleText = () => {
+    setIsText(prev => !prev);
+  }
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       if (loading) return; 
@@ -37,8 +44,9 @@ const AdminModifyEmployee = () => {
         });
         const data = await response.json();
         if (response.ok) {
-          setCustomerDetail(data);
-          console.log(data);
+          let list = {...data};
+          list.password = ""
+          setCustomerDetail(list);
         }
       } catch (error) {
         console.log(error);
@@ -70,7 +78,7 @@ const AdminModifyEmployee = () => {
   };
 
   const submitCustomer = async (data: AddUser) => {
-    data.password = "camonquykhach";
+    data.password = customerDetail.password;
     try {
       console.log(data);
       
@@ -151,6 +159,18 @@ const AdminModifyEmployee = () => {
                     onChange={handleInput}
                   />
                   {errors.full_name && <h1 className="text-base text-red-500">{errors.full_name.message}</h1>}
+                </label>
+                <label className="flex flex-col text-xl font-bold gap-[10px]">
+                   Đổi Mật khẩu 
+                   <div className="relative">
+                  <input
+                    type={isText ? 'text' : 'password'}
+                    {...register("password")}
+                    className="w-full p-2 border-2 border-solid border-black"
+                    onChange={handleInput}
+                  />
+                  {isText ? <VisibilityIcon onClick={handleText}  className="absolute right-3 top-[20%]"></VisibilityIcon> : <VisibilityOffIcon onClick={handleText}  className="absolute right-3 top-[20%]"></VisibilityOffIcon>}
+                  </div>
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Số điện thoại:
