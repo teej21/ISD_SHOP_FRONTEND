@@ -6,14 +6,17 @@ import Swal from "sweetalert2";
 import getAddToCart from "../composables/getAddToCart.ts";
 import useAccessToken from "../composables/getAccessToken.ts";
 import deleteProduct from "../composables/deleteProduct.ts";
+import getOrderById from "../composables/getOrderById.ts";
+import { Order } from "../interface/IUSerInfo.ts";
+import getOrderProductDetail from "../composables/getOrderProductDetail.ts";
 
 interface AddToCartElement {
-    orderdetail_id: number;
-    order_id: number;
-    product_id: number;
-    product_price: number;
-    product_name: string;
-    product_thumbnail: string;
+  orderdetail_id: number;
+  order_id: number;
+  product_id: number;
+  product_price: number;
+  product_name: string;
+  product_thumbnail: string;
 }
 
 interface ResponseBody {
@@ -41,12 +44,15 @@ const CartContext = createContext<{
   totalPrice: number;
   isSuccess: boolean;
   successState: SuccessState;
+  showAddToCart: (access_token : string | null, uid: string | null) => void,
   setIsSuccess: React.Dispatch<React.SetStateAction<boolean>>;
   handleTotalPrice: () => void;
   setIsDeleted: React.Dispatch<React.SetStateAction<boolean>>;
   handleAddToCart: () => void;
   fetchProductDetails: (id: number | null) => void;
-  setAddToCartProductList: React.Dispatch<React.SetStateAction<AddToCartElement[]>>;
+  setAddToCartProductList: React.Dispatch<
+    React.SetStateAction<AddToCartElement[]>
+  >;
   deleteAddToCartProduct: (id: number | null) => void;
   handleSuccess: (id: number) => void;
 }>({
@@ -68,6 +74,7 @@ const CartContext = createContext<{
   totalPrice: 0,
   isSuccess: false,
   successState: {},
+  showAddToCart: (access_token : string | null, uid: string | null) => {},
   setIsSuccess: () => {},
   handleTotalPrice: () => {},
   setIsDeleted: () => {},
@@ -92,31 +99,68 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
     thumbnail: "",
     publishYear: "",
   });
-  const [AddToCartProductList, setAddToCartProductList] = useState<AddToCartElement[]>([]);
+  const [AddToCartProductList, setAddToCartProductList] = useState<
+    AddToCartElement[]
+  >([]);
   const [isDeleted, setIsDeleted] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [successState, setSuccessState] = useState<SuccessState>({});
   const { accessToken, loading } = useAccessToken();
-  const uid : string | null = localStorage.getItem("userId");
+  const uid: string | null = localStorage.getItem("user_id");
 
   const handleAddToCart = async () => {
     try {
       if (uid) {
-        const addToCartProduct = await getAddToCart(accessToken, {
+         await getAddToCart(accessToken, {
           product_id: productInfo.id,
           user_id: +uid,
         });
-  
+      }
+      
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      failMessage("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+    }
+  };
+
+  const showAddToCart = async (accessToken : string | null, uid: string | null) => {
+    
+    const listOrder = await getOrderById(uid, accessToken);
+    let listProduct = [];
+
+    listOrder.forEach((order) => {
+      listProduct.push(...order.orderDetailList);
+    });
+      
+    if (uid) {
+      const addToCartProducts = await Promise.all(
+        listProduct.map(async (order) => {            
+          return await getOrderProductDetail(accessToken, order.id);
+        })
+      );
+      console.log(addToCartProducts);
+      
+      addToCartProducts.forEach(async (addToCartProduct) => {
         if (addToCartProduct) {
-          if (!AddToCartProductList.some(item => item.product_id === addToCartProduct.product_id)) {
-            const outputImage = await fetchImage(addToCartProduct.product_thumbnail);
+          if (
+            !AddToCartProductList.some(
+              (item) => item.product_id === addToCartProduct.product_id
+            )
+          ) {
+            const outputImage = await fetchImage(
+              addToCartProduct.product_thumbnail
+            );
+
             if (outputImage) {
               addToCartProduct.product_thumbnail = outputImage;
-              setAddToCartProductList(prev => [...prev, addToCartProduct]);
+              setAddToCartProductList((prev) => [
+                ...prev,
+                addToCartProduct,
+              ]);
               SuccessMessage("Thêm sản phẩm thành công!");
             } else {
-              failMessage("Sản phẩm đã có trong giỏ hàng.");
+              failMessage("Không thể tải ảnh sản phẩm.");
             }
           } else {
             failMessage("Sản phẩm đã có trong giỏ hàng.");
@@ -124,14 +168,12 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
         } else {
           failMessage("Không thể thêm sản phẩm vào giỏ hàng.");
         }
-      } else {
-        failMessage("Người dùng không hợp lệ.");
-      }
-    } catch (error) {
-      failMessage("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+      });
+    } else {
+      failMessage("Người dùng không hợp lệ.");
     }
-  };
-
+  }
+  
   const deleteAddToCartProduct = (id: number | null) => {
     if (id) {
       Swal.fire({
@@ -142,26 +184,34 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = await fetch(`http://localhost:8686/order-details/${id}`, {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
+            const response = await fetch(
+              `http://localhost:8686/order-details/${id}`,
+              {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${accessToken}`,
+                },
               }
-            });
-  
+            );
+
             if (!response.ok) {
               console.log(response);
-              
             }
-  
+
             const data = await response.json();
             SuccessMessage(data.result);
-            setAddToCartProductList(prev => prev.filter(item => item.orderdetail_id !== id));
+            setAddToCartProductList((prev) =>
+              prev.filter((item) => item.orderdetail_id !== id)
+            );
             setIsDeleted(true);
           } catch (error) {
-            console.error('Error deleting product:', error);
-            Swal.fire('Error', 'There was a problem deleting the product.', 'error');
+            console.error("Error deleting product:", error);
+            Swal.fire(
+              "Error",
+              "There was a problem deleting the product.",
+              "error"
+            );
           }
         }
       });
@@ -195,7 +245,11 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
 
   const fetchImage = async (thumbnail: string) => {
     try {
-      const response = await fetch(`http://localhost:8686/products/images/${thumbnail}`, {});
+      console.log(thumbnail);
+      
+      const response = await fetch(
+        `http://localhost:8686/products/images/${thumbnail}`, 
+      );
       if (response.ok) {
         const image: Blob = await response.blob();
         const outputImage = URL.createObjectURL(image);
@@ -217,16 +271,33 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleSuccess = (id: number) => {
-    setSuccessState(prev => ({
+    setSuccessState((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: !prev[id],
     }));
     console.log(successState);
   };
 
-
   return (
-    <CartContext.Provider value={{ productInfo, AddToCartProductList, totalPrice, handleAddToCart, fetchProductDetails, setAddToCartProductList, deleteAddToCartProduct, isDeleted, setIsDeleted, handleTotalPrice, handleSuccess, isSuccess, setIsSuccess, successState }}>
+    <CartContext.Provider
+      value={{
+        productInfo,
+        AddToCartProductList,
+        totalPrice,
+        handleAddToCart,
+        fetchProductDetails,
+        setAddToCartProductList,
+        deleteAddToCartProduct,
+        isDeleted,
+        setIsDeleted,
+        handleTotalPrice,
+        handleSuccess,
+        isSuccess,
+        setIsSuccess,
+        successState,
+        showAddToCart
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

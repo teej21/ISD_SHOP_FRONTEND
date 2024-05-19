@@ -9,7 +9,6 @@ export const getProductByID = async (id: number) => {
       `http://localhost:8686/products/category=${id}`
     );
     const data: ResponseBody = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error);

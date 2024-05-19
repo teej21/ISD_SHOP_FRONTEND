@@ -9,6 +9,7 @@ const useAccessToken = () => {
       const token = localStorage.getItem("access_token");
       if (token) {
         setAccessToken(token);
+        console.log("Finished");
       }
       setLoading(false);
     };

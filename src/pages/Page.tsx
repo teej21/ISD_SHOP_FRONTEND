@@ -102,11 +102,10 @@ const Page = () => {
             />
             <Route path="admin/order/:id/img" element={<AdminImgDetail></AdminImgDetail>}></Route>
             <Route path="/admin/orders/:id" element={<AdminBillsDetail></AdminBillsDetail>}></Route>
-            {/* <Route path="/admin/orders/:id/modify" element={<AdminBillsModify></AdminBillsModify>}></Route> */}
+            <Route path="/admin/orders/:id/modify" element={<AdminBillsModify></AdminBillsModify>}></Route>
           </>
         )}
       <Route path="*" element={<Error_page />} />
-      {/* <Route path="*" element={<Error_page />} /> */}
       </Routes>
     </div>
   );

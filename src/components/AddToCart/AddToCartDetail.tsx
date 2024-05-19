@@ -7,16 +7,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 const AddToCartDetail = () => {
  const productList = useContext(CartContext);
   const navigate = useNavigate();
+ const access_token = localStorage.getItem("access_token");
+ const uid: string | null = localStorage.getItem("user_id");
   useEffect(() => {
-   const calculateTotal = () => {
-    productList.handleTotalPrice();
-   }
-    calculateTotal();
+    productList.showAddToCart(access_token, uid);
   }, []);
+
+  useEffect(() => {
+    productList.handleTotalPrice();
+  }, [productList.AddToCartProductList.length])
 
   const handleNav = () => {
     navigate("/");
   };
+
   const handlePayment = () => {
     navigate("/payment")
   }

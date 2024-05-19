@@ -20,7 +20,7 @@ interface InputBody {
   phoneNumber: string;
   note?: string;
   status: string;
-  thumbnail: string[] | null; 
+  thumbnail: string[] | null;
 }
 
 interface AddToCartElement {
@@ -55,11 +55,11 @@ const AdminBillsModify = () => {
 
   const handleImg = (id: number) => {
     navigate(`/admin/products/${id}`);
-  }
+  };
 
   const handleMoreImg = (id: string) => {
-    navigate(`/admin/order/${id}/img`)
-  }
+    navigate(`/admin/order/${id}/img`);
+  };
 
   const fetchOrderData = async (access_token: string | null) => {
     if (!access_token) return;
@@ -111,7 +111,6 @@ const AdminBillsModify = () => {
     }
   }, [orderDetail, thumbnailFetched]);
 
-
   const resetInfo = () => {
     setOrderDetail({
       id: 0,
@@ -145,19 +144,17 @@ const AdminBillsModify = () => {
       },
       handleNavigation
     );
-
-
   };
 
   const {
     register,
     handleSubmit,
     reset,
-    formState : { errors },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: orderDetail,
-    mode: 'onChange',
+    mode: "onChange",
     values: orderDetail,
   });
 
@@ -193,7 +190,10 @@ const AdminBillsModify = () => {
           </div>
         </div>
         <div className="flex flex-row justify-between gap-4 px-8 py-4 bg-[#EEF0F1] h-[75%] w-[85%] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <form onSubmit={handleSubmit(submitForm, onFormError)} className="w-full h-full">
+          <form
+            onSubmit={handleSubmit(submitForm, onFormError)}
+            className="w-full h-full"
+          >
             <div className="flex flex-row justify-between items-center h-full gap-[70px]">
               <div className="flex flex-col justify-between h-[80%] w-full">
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
@@ -206,7 +206,11 @@ const AdminBillsModify = () => {
                     value={orderDetail.name}
                     onChange={handleInfo}
                   />
-                  {errors.name &&  <span className="text-red-500 font-bold text-xl">{errors.name.message}</span>}
+                  {errors.name && (
+                    <span className="text-red-500 font-bold text-xl">
+                      {errors.name.message}
+                    </span>
+                  )}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Số điện thoại:
@@ -218,17 +222,28 @@ const AdminBillsModify = () => {
                     value={orderDetail.phoneNumber}
                     onChange={handleInfo}
                   />
-                   {errors.phoneNumber && <span className="text-red-500 font-bold text-xl">{errors.phoneNumber.message}</span>}
+                  {errors.phoneNumber && (
+                    <span className="text-red-500 font-bold text-xl">
+                      {errors.phoneNumber.message}
+                    </span>
+                  )}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Trạng thái:
-                  <select {...register("status")} value={orderDetail.status}
-                    onChange={handleInfo} className="w-full p-2 border-2 border-solid border-black">
-                    <option selected disabled value="">Trạng thái</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="SHIPPING">SHIPPING</option>
-                    <option value="DELIVERED">DELIVERED</option>
-                    <option value="CANCELLED">CANCELLED</option>
+                  <select
+                    {...register("status")}
+                    value={orderDetail.status}
+                    onChange={handleInfo}
+                    className="w-full p-2 border-2 border-solid border-black"
+                  >
+                    <option selected disabled value="">
+                      Trạng thái
+                    </option>
+                    <option value="PENDING">ĐANG CHỜ</option>
+                    <option value="ASSIGNED">ĐƯỢC GIAO VIỆC</option>
+                    <option value="SHIPPING">ĐANG VẬN CHUYỂN</option>
+                    <option value="DELIVERED">ĐÃ BÁN</option>
+                    <option value="CANCELLED">HỦY ĐƠN HÀNG</option>
                   </select>
                 </label>
               </div>
@@ -254,7 +269,11 @@ const AdminBillsModify = () => {
                     value={orderDetail.address}
                     onChange={handleInfo}
                   />
-                   {errors.address && <span className="text-red-500 font-bold text-xl">{errors.address.message}</span>}
+                  {errors.address && (
+                    <span className="text-red-500 font-bold text-xl">
+                      {errors.address.message}
+                    </span>
+                  )}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                   Sản phẩm
@@ -274,7 +293,13 @@ const AdminBillsModify = () => {
                         </div>
                       </div>
                     ))}
-                    {orderedProduct.length > 4 && <span onClick={() => handleMoreImg(id)}>And {orderedProduct.length - 4} more,<br/><span className="font-bold">nhấn để xem tiếp</span></span>}
+                    {orderedProduct.length > 4 && (
+                      <span onClick={() => handleMoreImg(id)}>
+                        And {orderedProduct.length - 4} more,
+                        <br />
+                        <span className="font-bold">nhấn để xem tiếp</span>
+                      </span>
+                    )}
                   </div>
                 </label>
               </div>

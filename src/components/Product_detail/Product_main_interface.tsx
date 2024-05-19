@@ -13,13 +13,13 @@ import failMessage from "../LoadingFrame/FailMessage.ts";
 
 const Product_main_interface = () => {
   const productInfo = useContext(CartContext);
-  const { accessToken, loading } = useAccessToken();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
-
+  const access_token = localStorage.getItem("access_token");
+  const uid: string | null = localStorage.getItem("user_id");
   const handleAddToCart = () => {
     setIsLoading(true);
-    if (accessToken) {
+    if (access_token) {
       productInfo.handleAddToCart();
       setIsLoading(false);
     } else {
@@ -64,7 +64,7 @@ const Product_main_interface = () => {
               alt="img_detail"
               className="lg:w-[600px] lg:h-[500px] w-[500px] h-[400px] object-cover"
             ></img>
-            {productInfo.productInfo.status === 'ORDERED' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}
+            {productInfo.productInfo.status === 'ORDERED' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Đang giao dịch</div>}
             {productInfo.productInfo.status === 'STOCKOUT' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}  
           </div>
           <div>

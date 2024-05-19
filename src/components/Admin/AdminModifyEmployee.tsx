@@ -268,11 +268,6 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.date_of_birth}
                     onChange={handleInput}
                   />
-                   {errors.date_of_birth && (
-                      <h1 className="text-red-500 font-bold text-xl">
-                        {errors.date_of_birth.message}
-                      </h1>
-                    )}
                 </label>
               </div>
             </div>
