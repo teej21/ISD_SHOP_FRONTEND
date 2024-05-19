@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { AddUser } from '../interface/IUSerInfo';
 
 type OmitID = Omit<AddUser, 'id'>
-const schema: z.ZodType<OmitID> = z.object({
+type OmitPassword = Omit<OmitID, 'password'>
+const schema: z.ZodType<OmitPassword> = z.object({
     email: z.string().email({ message: "Vui lòng nhập địa chỉ email hợp lệ" }),
     gender: z.string().min(1, { message: "Vui lòng nhập giới tính!" }),
     phone_number: z.string().refine(data => data.length === 10, {
@@ -12,7 +13,6 @@ const schema: z.ZodType<OmitID> = z.object({
     full_name: z.string().min(1, {message: 'Vui lòng nhập họ và tên vào đây!'}),
     address: z.string(),
     date_of_birth: z.string().optional(),
-    password: z.string().min(8, {message: 'Mật khẩu phải trên 8 kí tự'})
 });
 
 export default schema;

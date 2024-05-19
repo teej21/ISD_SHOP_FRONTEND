@@ -1,18 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
-import AdminNavigation from "../AdminNavigation.tsx";
-import schema from "../../../validation/AddProductForm.ts";
-import { AddUser } from "../../../interface/IUSerInfo";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { ClickAdmin } from "../../../context/AdminController.tsx";
 import KeyboardReturn from "@mui/icons-material/KeyboardReturn";
 import { ICategories } from "../../../interface/ICategory.ts";
-import { Product, Status } from "../../../interface/IProduct.ts";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import useAccessToken from "../../../composables/getAccessToken.ts";
 import AdminHorizontal from "../AdminHorizontal.tsx";
 export interface ResponseBody {
@@ -46,7 +37,6 @@ const AdminProductDetail = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { accessToken, loading } = useAccessToken();
-  console.log(accessToken);
   const { id } = useParams();
 
   useEffect(() => {

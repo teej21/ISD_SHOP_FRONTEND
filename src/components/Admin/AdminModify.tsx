@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminNavigation from "./AdminNavigation.tsx";
-import schema from "../../validation/AddUserForm.ts";
+import schema from "../../validation/ModifyUserForm.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitErrorHandler, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,6 +16,8 @@ import useAccessToken from "../../composables/getAccessToken.ts";
 import AdminHorizontal from "./AdminHorizontal.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 import failMessage from "../LoadingFrame/FailMessage.ts";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 const AdminModify = () => {
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
@@ -32,6 +34,11 @@ const AdminModify = () => {
   const nav = useContext(ClickAdmin);
   const { id } = useParams();
   const { accessToken, loading } = useAccessToken();
+  const [isText, setIsText] = useState<boolean>(false);
+  
+  const handleText = () => {
+    setIsText(prev => !prev);
+  }
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
@@ -42,8 +49,10 @@ const AdminModify = () => {
         });
         const data = await response.json();
         if (response.ok) {
-          setCustomerDetail(data);
-          
+         let userData = {...data}
+            userData.password =''
+          setCustomerDetail(userData);
+          console.log(userData);       
         }
       } catch (error) {
         console.log(error);
@@ -77,8 +86,7 @@ const AdminModify = () => {
    };
 
   const submitCustomer = async (data: AddUser) => {
-    data.password = "camonquykhach";
-    console.log(data);
+    data.password = customerDetail.password;
     try {
       if (loading) return; 
       const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
@@ -105,6 +113,7 @@ const AdminModify = () => {
     register,
     handleSubmit,
     reset,
+    formState: { errors }
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: customerDetail, mode: 'onChange', values: customerDetail
@@ -159,7 +168,24 @@ const AdminModify = () => {
                   value={customerDetail.full_name}
                   onChange={handleInfo}
                 />
+                 {errors.full_name && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.full_name.message}
+                    </h1>
+                  )}
               </label>
+              <label className="flex flex-col text-xl font-bold gap-[10px]">
+                   Đổi Mật khẩu 
+                   <div className="relative">
+                  <input
+                    type={isText ? 'text' : 'password'}
+                    {...register("password")}
+                    className="w-full p-2 border-2 border-solid border-black"
+                    onChange={handleInfo}
+                  />
+                  {isText ? <VisibilityIcon onClick={handleText}  className="absolute right-3 top-[10%]"></VisibilityIcon> : <VisibilityOffIcon onClick={handleText}  className="absolute right-3 top-[10%]"></VisibilityOffIcon>}
+                  </div>
+                </label>
               <label className="flex flex-col text-xl font-bold gap-[10px]">
                 Số điện thoại:
                 <input
@@ -171,6 +197,11 @@ const AdminModify = () => {
                   onChange={handleInfo}
                 />
               </label>
+              {errors.phone_number && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.phone_number.message}
+                    </h1>
+                  )}
               <label className="flex flex-col text-xl font-bold gap-[10px]">
                 Địa chỉ:
                 <input
@@ -181,6 +212,11 @@ const AdminModify = () => {
                   {...register('address')}
                   onChange={handleInfo}
                 />
+                 {errors.address && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.address.message}
+                    </h1>
+                  )}
               </label>
             </div>
             <div className="flex flex-col justify-between h-[80%] w-full">
@@ -215,6 +251,11 @@ const AdminModify = () => {
                   {...register('email')}
                   onChange={handleInfo}
                 />
+                 {errors.email && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.email.message}
+                    </h1>
+                  )}
               </label>
               <label className="flex flex-col text-xl font-bold gap-[10px]">
                 Ngày sinh:

@@ -12,6 +12,8 @@ import AdminHorizontal from "./AdminHorizontal.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 import failMessage from "../LoadingFrame/FailMessage.ts";
 import getConfigObject from "../../env/env.ts";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 const AdminAddUser = () => {
   const {
     register,
@@ -22,8 +24,11 @@ const AdminAddUser = () => {
   const navigate = useNavigate();
   const nav = useContext(ClickAdmin);
   const { accessToken, loading } = useAccessToken();
+  const [isText, setIsText] = useState<boolean>(false);
+  const handleText = () => {
+    setIsText(prev => !prev);
+  }
   const submitCustomer = async (data: AddUser) => {
-    data.password = getConfigObject('DEV').CUSTOMER_PASSWORD;
     console.log(data);  
     if (loading) return; 
     try {
@@ -127,6 +132,22 @@ const AdminAddUser = () => {
                       {errors.address.message}
                     </h1>
                   )}
+                </label>
+                <label className="flex flex-col text-xl font-bold gap-[10px]">
+                   Mật khẩu
+                   <div className="relative">
+                  <input
+                    type={isText ? 'text' : 'password'}
+                    {...register("password")}
+                    className="w-full p-2 border-2 border-solid border-black"
+                  />
+                  {errors.password && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.password.message}
+                    </h1>
+                  )}
+                  {isText ? <VisibilityIcon onClick={handleText}  className="absolute right-3 top-[10%]"></VisibilityIcon> : <VisibilityOffIcon onClick={handleText}  className="absolute right-3 top-[10%]"></VisibilityOffIcon>}
+                  </div>
                 </label>
               </div>
               <div className="flex flex-col justify-between h-[80%] w-full">

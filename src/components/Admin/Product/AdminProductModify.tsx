@@ -139,6 +139,7 @@ const AdminProductModify = () => {
 
   const submitProduct = async () => {
     try {
+      if(loading) return;
       const formData = new FormData();
 
       console.log("submit infor::", productInfo);
