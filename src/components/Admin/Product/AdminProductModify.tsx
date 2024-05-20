@@ -199,7 +199,19 @@ const AdminProductModify = () => {
   };
 
   const resetInfo = () => {
-    reset();
+    setProductInfo({
+    id: 0,
+    name: "",
+    description: "",
+    price: 0,
+    thumbnailImage: null,
+    categoryId: 1,
+    material: "",
+    width: 0,
+    height: 0,
+    publishYear: 0,
+    status: productInfo.status || "AVAILABLE"
+    })
   };
 
   return (
@@ -245,7 +257,7 @@ const AdminProductModify = () => {
                     onChange={handleInput("name")}
                   />
                   {errors.name && (
-                    <h1 className="text-red-500 font-bold text-base">
+                    <h1 className="text-red-500 font-bold text-xl">
                       {errors.name.message}
                     </h1>
                   )}
@@ -260,7 +272,7 @@ const AdminProductModify = () => {
                     value={productInfo.description}
                   />
                   {errors.description && (
-                    <h1 className="text-red-500 font-bold text-base">
+                    <h1 className="text-red-500 font-bold text-xl">
                       {errors.description.message}
                     </h1>
                   )}
@@ -288,7 +300,7 @@ const AdminProductModify = () => {
                     value={productInfo.price}
                   />
                   {errors.price && (
-                    <h1 className="text-red-500 font-bold text-base">
+                    <h1 className="text-red-500 font-bold text-xl">
                       {errors.price.message}
                     </h1>
                   )}
@@ -329,7 +341,7 @@ const AdminProductModify = () => {
                         </div>
                       )}
                       {errors.thumbnailImage && (
-                        <h1 className="text-red-500 font-bold text-base">
+                        <h1 className="text-red-500 font-bold text-xl">
                           {errors.thumbnailImage.message}
                         </h1>
                       )}
@@ -347,7 +359,7 @@ const AdminProductModify = () => {
                       value={productInfo.material}
                     ></input>
                     {errors.material && (
-                      <h1 className="text-red-500 font-bold text-base">
+                      <h1 className="text-red-500 font-bold text-xl">
                         {errors.material.message}
                       </h1>
                     )}
@@ -362,7 +374,7 @@ const AdminProductModify = () => {
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.publishYear && (
-                      <h1 className="text-red-500 font-bold text-base">
+                      <h1 className="text-red-500 font-bold text-xl">
                         {errors.publishYear.message}
                       </h1>
                     )}
@@ -379,7 +391,7 @@ const AdminProductModify = () => {
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.height && (
-                      <h1 className="text-red-500 font-bold text-base">
+                      <h1 className="text-red-500 font-bold text-xl">
                         {errors.height.message}
                       </h1>
                     )}
@@ -394,7 +406,7 @@ const AdminProductModify = () => {
                       className="w-full p-2 border-2 border-solid border-black"
                     />
                     {errors.width && (
-                      <h1 className="text-red-500 font-bold text-base">
+                      <h1 className="text-red-500 font-bold text-xl">
                         {errors.width.message}
                       </h1>
                     )}

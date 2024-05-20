@@ -46,6 +46,8 @@ const AdminBills = () => {
       headerName: "ID Sản phẩm",
       width: 400,
       renderCell: (params) => {
+        console.log(params);
+        
         const orderDetailList = params.value;
         const productIds = orderDetailList.map((order) => order.id).join(", ");
         return productIds;
