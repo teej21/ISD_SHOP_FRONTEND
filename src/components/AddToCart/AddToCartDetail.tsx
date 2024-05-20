@@ -22,7 +22,7 @@ const AddToCartDetail = () => {
   };
 
   const handlePayment = () => {
-    navigate("/payment")
+    navigate("/add-to-cart/payment")
   }
   return (
     <div>

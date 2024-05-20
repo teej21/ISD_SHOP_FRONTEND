@@ -47,7 +47,7 @@ const Page = () => {
         <Route path="/category/:id" element={<Product_detail />} />
         <Route path="/:id" element={<CategoryTotal />} />
         <Route path="/add-to-cart" element={<AddToCart></AddToCart>} />
-        {accessToken && <Route path="/payment" element={<Payment></Payment>}></Route>}
+        {accessToken && <Route path="/add-to-cart/payment" element={<Payment></Payment>}></Route>}
 
         {role && ["ADMIN", "MANAGER", "EMPLOYEE"].includes(role) && (
           <>

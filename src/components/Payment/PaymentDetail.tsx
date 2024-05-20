@@ -7,6 +7,8 @@ import { Button } from "@mui/material";
 import useAccessToken from "../../composables/getAccessToken.ts";
 import modifyConfirmation from "../../composables/modifyConfirmation.ts";
 import { useNavigate } from "react-router-dom";
+import getOrderById from "../../composables/getOrderById.ts";
+import getOrderProductDetail from "../../composables/getOrderProductDetail.ts";
 const PaymentDetail = () => {
   const {
     register,
@@ -21,16 +23,38 @@ const PaymentDetail = () => {
     navigate('/');
     addToCartList.setAddToCartProductList([]);
   }
+
+  useEffect(() => {
+  const showPaymentProduct = async () => {
+    const listOrder = await getOrderById(userId, accessToken);
+    let listProduct = [];
+
+    listOrder.forEach((order) => {
+      listProduct.push(...order.orderDetailList);
+    });
+      
+    if (userId) {
+      const addToCartProducts = await Promise.all(
+        listProduct.map(async (order) => {            
+          return await getOrderProductDetail(accessToken, order.id);
+        })
+      );
+
+      addToCartList.setAddToCartProductList(addToCartProducts);
+  }
+}
+  showPaymentProduct();
+  }, [])
+
   useEffect(() => {
     const calculateTotal = () => {
       addToCartList.handleTotalPrice();
      }
     calculateTotal();
-  }, []);
+  }, [addToCartList.AddToCartProductList.length]);
 
   const onSubmit = async (data: InputForm) => {
     try {
-      
       if(userId){
       await modifyConfirmation(accessToken, data, handleNav, +userId);
       addToCartList.handleSuccess(11)
