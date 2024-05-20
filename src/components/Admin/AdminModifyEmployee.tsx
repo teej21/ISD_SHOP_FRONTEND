@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import { Button } from "@mui/material";
-import schema from "../../validation/AddUserForm.ts";
+import schema from "../../validation/ModifyUserForm.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -35,7 +35,7 @@ const AdminModifyEmployee = () => {
     setIsText(prev => !prev);
   }
   useEffect(() => {
-    const fetchCustomerDetails = async () => {
+    const fetchCustomerDetails = async () => {      
       if (loading) return; 
       try {
         const response = await fetch(`http://localhost:8686/admin/users/${id}`, {
@@ -79,6 +79,7 @@ const AdminModifyEmployee = () => {
 
   const submitCustomer = async (data: AddUser) => {
     data.password = customerDetail.password;
+    data.date_of_birth = customerDetail.date_of_birth;
     try {
       console.log(data);
       
