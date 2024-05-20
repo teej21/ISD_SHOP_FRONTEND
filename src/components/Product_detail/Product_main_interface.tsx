@@ -10,13 +10,15 @@ import SignInDialog from "../AddToCart/SignInDialog.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 import LoadingState from "../LoadingFrame/Loading.tsx";
 import failMessage from "../LoadingFrame/FailMessage.ts";
-
+import Overlay from "../Login/login/Overlay.tsx";
+import CloseIcon from '@mui/icons-material/Close';
 const Product_main_interface = () => {
   const productInfo = useContext(CartContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSignInDialog, setShowSignInDialog] = useState<boolean>(false);
   const access_token = localStorage.getItem("access_token");
   const uid: string | null = localStorage.getItem("user_id");
+  const [isZoomed, setIsZoomed] = useState<boolean>(false);
   const handleAddToCart = () => {
     setIsLoading(true);
     if (access_token) {
@@ -48,7 +50,7 @@ const Product_main_interface = () => {
         handleClose={() => setShowSignInDialog(false)}
       />}
       {isLoading && <LoadingState></LoadingState>}
-      <div className="flex lg:flex-row flex-col items-center gap-[50px]">
+      <div className={`flex lg:flex-row flex-col items-center gap-[50px]`}>
         <div className="flex flex-col gap-[40px]">
           <div className="flex flex-row mt-[30px] gap-[5px]">
             <span className="font-bold text-[#8D8D8D]">TRANG CHỦ /</span>
@@ -71,11 +73,13 @@ const Product_main_interface = () => {
             <Button
               variant="contained"
               className="bg-[#472A4B] pr-12 py-4 rounded-[10px] lg:block hidden "
+              onClick={() => setIsZoomed(true)}
             >
               <ZoomOutMapIcon className="mr-[30px]"></ZoomOutMapIcon>
               <span className="text-xl font-bold cursor">PHÓNG TO</span>
             </Button>
           </div>
+          {isZoomed && <Overlay><div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[70%] z-10"><img src={productInfo.productInfo.thumbnail} alt="zoom-img" className="w-full h-full object-fit"></img></div><div className="absolute top-2 left-2 text-white"><CloseIcon className="w-[60px] h-[60px] hover:text-[#DF6A6A]" onClick={() => setIsZoomed(false)}></CloseIcon></div></Overlay>}
         </div>
         <div className="flex flex-col gap-[20px] lg:my-24 mb-24 w-screen px-8">
           <div>

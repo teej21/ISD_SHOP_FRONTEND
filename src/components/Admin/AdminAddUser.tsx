@@ -146,7 +146,7 @@ const AdminAddUser = () => {
                       {errors.password.message}
                     </h1>
                   )}
-                  {isText ? <VisibilityIcon onClick={handleText}  className="absolute right-3 top-[10%]"></VisibilityIcon> : <VisibilityOffIcon onClick={handleText}  className="absolute right-3 top-[10%]"></VisibilityOffIcon>}
+                  {isText ? <VisibilityIcon onClick={handleText}  className="absolute right-3 top-[20%]"></VisibilityIcon> : <VisibilityOffIcon onClick={handleText}  className="absolute right-3 top-[20%]"></VisibilityOffIcon>}
                   </div>
                 </label>
               </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+// import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Admin from "../../assets/admin_icon.png";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -36,9 +36,9 @@ const AdminHorizontal = () => {
   }, []);
   return (
     <div className="w-full shadow-shadow_primary flex flex-row items-center gap-[10px] p-4 justify-end">
-      <div className="w-[30px] h-[30px]">
+      {/* <div className="w-[30px] h-[30px]">
         <NotificationsNoneIcon className="w-full h-full object-cover text-[#A2A3A6]"></NotificationsNoneIcon>
-      </div>
+      </div> */}
       <div className="w-[50px] h-[50px]">
         <div>
           <img

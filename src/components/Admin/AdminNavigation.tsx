@@ -7,7 +7,7 @@ import MoneyBag from "../../assets/money_bag.png";
 import Box from "../../assets/box.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+// import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Admin from "../../assets/admin_icon.png";
 import { ClickAdmin } from "../../context/AdminController.tsx";
 import { useNavigate } from "react-router-dom";
@@ -189,11 +189,11 @@ const AdminNavigation = () => {
       </div>
 
       <div className="w-full shadow-shadow_primary flex flex-row items-center gap-[10px] p-4 justify-end">
-        <div className="w-[30px] h-[30px] relative">
+        {/* <div className="w-[30px] h-[30px] relative">
           <NotificationsNoneIcon className="w-full h-full object-cover text-[#A2A3A6]" ></NotificationsNoneIcon>
           {cartContext.isSuccess && <div className="w-[15px] h-[15px] bg-orange-500 rounded-full absolute top-0 right-0 z-10"></div>}
           {hover && <div>Có đơn hàng mới!</div>}
-        </div>
+        </div> */}
         <div className="w-[50px] h-[50px]">
           <div>
             <img
