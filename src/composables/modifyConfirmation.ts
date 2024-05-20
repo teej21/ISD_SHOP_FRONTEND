@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import { Order } from "../interface/IUserInfo.ts";
 import { InputForm } from "../validation/PaymentForm";
-const modifyConfirmation = async (access_token: string | null, params: InputForm, callback, userId: number) => {
+const modifyConfirmation = async (access_token: string | null, params: InputForm, callback, userId: number) => {  
   try {
     const response = await fetch(`http://localhost:8686/orders/user/${userId}`, {
       method: "PUT",
@@ -12,7 +12,7 @@ const modifyConfirmation = async (access_token: string | null, params: InputForm
       body: JSON.stringify(params),
     });
     if(response.ok){
-    const data: Order = await response.json();
+    const data = await response.json();
     Swal.fire({
         title: "Mua hàng thành công!",
         text: "Người tư vấn sẽ liên lạc với bạn sớm, cảm ơn vì đã mua hàng của chúng tôi",

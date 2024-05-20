@@ -66,7 +66,7 @@ const Product_main_interface = () => {
               alt="img_detail"
               className="lg:w-[600px] lg:h-[500px] w-[500px] h-[400px] object-cover"
             ></img>
-            {productInfo.productInfo.status === 'ORDERED' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Đang giao dịch</div>}
+            {productInfo.productInfo.status === 'ORDERED' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Đang có người đặt hàng</div>}
             {productInfo.productInfo.status === 'STOCKOUT' && <div className="text-white text-xl font-bold absolute top-0 bg-[#DF6A6A] rounded-br-full px-8 py-8">Hết hàng</div>}  
           </div>
           <div>

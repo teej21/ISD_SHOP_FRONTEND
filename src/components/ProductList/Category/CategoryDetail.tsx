@@ -23,6 +23,7 @@ const CategoryDetail = () => {
   }
   useEffect(() => {
     const fetchData = async () => {
+      console.log(id);
       try {
         const response = await fetch(`http://localhost:8686/categories/${id}`);
         if (!response.ok) {
