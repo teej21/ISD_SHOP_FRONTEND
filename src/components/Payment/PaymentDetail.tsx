@@ -30,6 +30,7 @@ const PaymentDetail = () => {
 
   const onSubmit = async (data: InputForm) => {
     try {
+      
       if(userId){
       await modifyConfirmation(accessToken, data, handleNav, +userId);
       addToCartList.handleSuccess(11)
