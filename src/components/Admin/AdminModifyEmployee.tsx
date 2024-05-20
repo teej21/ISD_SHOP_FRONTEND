@@ -64,20 +64,6 @@ const AdminModifyEmployee = () => {
     }));
   };
   
-  const resetInfo = () => {
-    setCustomerDetail({
-      id: "",
-      email: "",
-      password: "",
-      gender: "",
-      address: "",
-      phone_number: "",
-      role: "",
-      full_name: "",
-      date_of_birth: "",
-    });
-  };
-
   const submitCustomer = async (data: AddUser) => {
     data.password = customerDetail.password;
     data.date_of_birth = customerDetail.date_of_birth;
@@ -111,10 +97,14 @@ const AdminModifyEmployee = () => {
     navigate(-1);
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } , reset } = useForm({
     resolver: zodResolver(schema),
     defaultValues: customerDetail, mode: 'onChange', values: customerDetail,
   });
+
+  const resetInfo = () => {
+    reset();
+  };
 
   return (
     <div>

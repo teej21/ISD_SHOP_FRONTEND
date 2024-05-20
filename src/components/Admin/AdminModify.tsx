@@ -239,6 +239,11 @@ const AdminModify = () => {
                     <option value="FEMALE">Nữ</option>
                     <option value="other">Khác</option>
                   </select>
+                  {errors.gender && (
+                    <h1 className="text-red-500 font-bold text-xl">
+                      {errors.gender.message}
+                    </h1>
+                  )}
                 </label>
               </div>
               <label className="flex flex-col text-xl font-bold gap-[10px]">
