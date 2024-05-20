@@ -11,7 +11,7 @@ const schema: z.ZodType<OmitPassword> = z.object({
     }),
     role: z.string().min(1, {message: 'Vui lòng nhập role vào đây!'}),
     full_name: z.string().min(1, {message: 'Vui lòng nhập họ và tên vào đây!'}),
-    address: z.string().min(1, {message: 'Vui lòng nhập địa chỉ vào đây!'}),
+    address: z.string().optional(),
 });
 
 export default schema;
