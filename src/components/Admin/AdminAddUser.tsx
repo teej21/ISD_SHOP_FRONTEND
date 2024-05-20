@@ -29,7 +29,6 @@ const AdminAddUser = () => {
     setIsText(prev => !prev);
   }
   const submitCustomer = async (data: AddUser) => {
-    console.log(data);  
     if (loading) return; 
     try {
       const response = await fetch("http://localhost:8686/admin/users",{
