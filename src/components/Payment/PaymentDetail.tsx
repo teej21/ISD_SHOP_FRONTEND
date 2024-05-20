@@ -14,8 +14,8 @@ const PaymentDetail = () => {
     formState: { errors },
   } = useForm<InputForm>({ resolver: zodResolver(schema) });
   const addToCartList = useContext(CartContext);
-  const { accessToken, loading } = useAccessToken();
-  const userId : string | null = localStorage.getItem("userId");
+  const accessToken = localStorage.getItem("access_token");
+  const userId : string | null = localStorage.getItem("user_id");
   const navigate = useNavigate();
   const handleNav = () => {
     navigate('/');

@@ -106,7 +106,7 @@ const AddToCartContext = ({ children }: { children: React.ReactNode }) => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [successState, setSuccessState] = useState<SuccessState>({});
-  const { accessToken, loading } = useAccessToken();
+  const { accessToken } = useAccessToken();
   const uid: string | null = localStorage.getItem("user_id");
 
   const handleAddToCart = async () => {
