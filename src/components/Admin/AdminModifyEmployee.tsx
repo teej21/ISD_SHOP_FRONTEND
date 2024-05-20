@@ -13,6 +13,7 @@ import AdminHorizontal from "./AdminHorizontal.tsx";
 import SuccessMessage from "../LoadingFrame/SuccessMessage.ts";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import failMessage from "../LoadingFrame/FailMessage.ts";
 const AdminModifyEmployee = () => {
   const [customerDetail, setCustomerDetail] = useState<AddUser>({
     id: "",
@@ -95,11 +96,10 @@ const AdminModifyEmployee = () => {
 
       if (response.ok) {
         SuccessMessage("Chỉnh sửa thành công!")
-        console.log(await response.json());
         handleNavigation();
         resetInfo();
       } else {
-        SuccessMessage((await response.json()).error);
+        failMessage((await response.json()).error);
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -159,7 +159,7 @@ const AdminModifyEmployee = () => {
                     value={customerDetail.full_name}
                     onChange={handleInput}
                   />
-                  {errors.full_name && <h1 className="text-base text-red-500">{errors.full_name.message}</h1>}
+                  {errors.full_name && <h1 className="text-xl text-red-500">{errors.full_name.message}</h1>}
                 </label>
                 <label className="flex flex-col text-xl font-bold gap-[10px]">
                    Đổi Mật khẩu 

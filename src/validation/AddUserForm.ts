@@ -10,7 +10,7 @@ const schema: z.ZodType<OmitID> = z.object({
     }),
     role: z.string().min(1, {message: 'Vui lòng nhập role vào đây!'}),
     full_name: z.string().min(1, {message: 'Vui lòng nhập họ và tên vào đây!'}),
-    address: z.string(),
+    address: z.string().optional(),
     date_of_birth: z.string().optional(),
     password: z.string().min(8, {message: 'Mật khẩu phải trên 8 kí tự'})
 });

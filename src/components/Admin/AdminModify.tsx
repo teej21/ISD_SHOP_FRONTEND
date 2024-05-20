@@ -69,7 +69,7 @@ const AdminModify = () => {
       gender: "",
       address: "",
       phone_number: "",
-      role: "",
+      role: "CUSTOMER",
       full_name: "",
       date_of_birth: "",
     });
